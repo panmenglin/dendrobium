@@ -1,4 +1,5 @@
 import { actuator } from './utils/utils';
+import { sep } from 'path';
 
 /**
  * downloadGitRepo
@@ -9,27 +10,33 @@ export default function upDateBlock(importPath: string, blockName: string, callb
 
   return new Promise(async (resolve, reject) => {
 
-    const gitActuator = new actuator({
+    const cmdActuator = new actuator({
       cwd: importPath,
+    }, (error) => { });
+
+    const gitRootPath = await cmdActuator.run('git rev-parse --show-toplevel');
+
+    const gitActuator = new actuator({
+      cwd: gitRootPath.replace(/\n/g, ''),
     }, (error) => {
-    //   spinner && spinner.fail();
+      //   spinner && spinner.fail();
       // reject(error);
     });
 
     let status = await gitActuator.run('git status');
+
     const branchReg = /On branch ([a-z]+)/ig;
     let curBranch = status.match(branchReg);
     curBranch = curBranch ? curBranch[0].split(' ')[2] : '';
 
     const hasStash = status.indexOf('nothing to commit') < 0;
-    console.log(status);
-    
+
     if (hasStash) {
       const changeFileList = await gitActuator.run('git diff --name-only');
       if (changeFileList && changeFileList.indexOf(blockName) >= 0) {
         reject('The content that you have not committed may conflict with the block. Please commit before updating');
         return;
-      } 
+      }
 
       await gitActuator.run('git stash save "update block"');
     }
@@ -37,7 +44,7 @@ export default function upDateBlock(importPath: string, blockName: string, callb
     const updateBlockBranch = `update-block-${+new Date()}`;
     await gitActuator.run(`git checkout -b ${updateBlockBranch}`);
 
-    let log = await gitActuator.run(`git log --pretty=format:"%H" --reverse ButtonBasic`);
+    let log = await gitActuator.run(`git log --pretty=format:"%H" --reverse ${importPath}${sep}${blockName}`);
     const logReg = /([a-z0-9]+)/ig;;
     let oldestLog = log.match(logReg);
     const hash = oldestLog ? oldestLog[0] : '';
@@ -51,28 +58,29 @@ export default function upDateBlock(importPath: string, blockName: string, callb
     status = await gitActuator.run('git status');
     const hasChange = status.indexOf('nothing to commit') < 0;
 
-    // 有变化
+    // content change
     if (hasChange) {
       await gitActuator.run('git add .');
       await gitActuator.run(`git commit -m "refactor: update block ${blockName}"`);
     }
 
     await gitActuator.run(`git checkout ${curBranch}`);
-    
-    gitActuator.run(`git merge ${updateBlockBranch}`).then(() => {
+
+    gitActuator.run(`git merge ${updateBlockBranch}`).then(async () => {
       if (hasStash) {
-        gitActuator.run('git stash pop');
+        await gitActuator.run('git stash pop');
       }
-      gitActuator.run(`git branch -D ${updateBlockBranch}`);
-    }, () => {
+      await gitActuator.run(`git branch -D ${updateBlockBranch}`);
+
+      resolve(blockName);
+    }, async () => {
       if (hasStash) {
-        gitActuator.run('git stash pop');
+        await gitActuator.run('git stash pop');
       }
-      gitActuator.run(`git branch -D ${updateBlockBranch}`);
+      await gitActuator.run(`git branch -D ${updateBlockBranch}`);
+
+      resolve(blockName);
     });
 
-    // spinner.succeed();.
-    const floderName = 1;
-    resolve(floderName);
   });
 }
