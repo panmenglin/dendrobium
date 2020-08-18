@@ -1,5 +1,5 @@
 /**
- * type
+ * types
  */
 
 export interface Snippet {

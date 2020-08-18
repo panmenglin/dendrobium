@@ -1,53 +1,8 @@
-const fs = require('fs');
-const childProcess = require('child_process');
-const path = require('path');
-const { sep } = path;
-const ora = require('ora');
-const rimraf = require('rimraf');
-const mv = require('mv');
 import { actuator } from './utils/utils';
-
-// /**
-//  * 执行器
-//  * @param {*} options 
-//  * @param {*} errorCallback 
-//  */
-// function actuator (options={}, errorCallback) {
-//   return {
-//     run: (cmd) => new Promise((resolve, reject) => {
-//       childProcess.exec(cmd, options, (err, ...arg) => {
-//         if (err) {
-//           errorCallback(err);
-//           return reject(err);
-//         }
-
-//         return resolve(...arg);
-//       });
-//     })
-//   };
-// }
-
-// /**
-//  * mvUnzipFolder
-//  * @description 移动文件
-//  * @param {*} currentPath 
-//  * @param {*} targetPath 
-//  */
-// function mvFolder(currentPath, targetPath) {
-//   return new Promise((resolve, reject) => {
-//     mv(currentPath, targetPath, { mkdirp: true, clobber: false }, err => {
-//       if (err) {
-//         reject(err);
-//       } else {
-//         resolve();
-//       }
-//     });
-//   });
-// }
 
 /**
  * downloadGitRepo
- * @description clone git 项目模版
+ * @description
  * @param {*} target
  */
 export default function upDateBlock(importPath: string, blockName: string, callback: () => void) {
@@ -72,7 +27,7 @@ export default function upDateBlock(importPath: string, blockName: string, callb
     if (hasStash) {
       const changeFileList = await gitActuator.run('git diff --name-only');
       if (changeFileList && changeFileList.indexOf(blockName) >= 0) {
-        reject('您尚未 commit 的内容中可能存在与区块冲突的内容，请先 commit 后再添加');
+        reject('The content that you have not committed may conflict with the block. Please commit before updating');
         return;
       } 
 

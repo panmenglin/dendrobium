@@ -1,7 +1,7 @@
 {
   "name": "dendrobium",
   "displayName": "Dendrobium",
-  "description": "",
+  "description": "an armory system for front-end developers",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.48.0"
@@ -27,7 +27,7 @@
           "type": "object",
           "default": {
             "name": "scf-blocks",
-            "downloadUrl": "https://git.jd.com/scf/scf-blocks.git",
+            "downloadUrl": "",
             "type": "gitlab",
             "branch": "master",
             "path": "scf-block.json"

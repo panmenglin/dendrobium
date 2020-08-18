@@ -17,8 +17,8 @@ export function activate(context: vscode.ExtensionContext) {
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	
+	// set active text editor
 	globalState.update('activeTextEditor', vscode.window.activeTextEditor);
-
     vscode.window.onDidChangeActiveTextEditor(function (editor) {
 		if (editor) {
 			globalState.update('activeTextEditor', editor);
@@ -28,10 +28,6 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand('dendrobium.importBlock', (snippet: Snippet) => {
 		importBlock(context, globalState);
 	}));
-
-	// context.subscriptions.push(vscode.commands.registerCommand('dendrobium.helloWorld', (snippet: Snippet) => {
-	// 	vscode.window.showInformationMessage('Hello World from Dendrobium!');
-	// }));
 
 }
 

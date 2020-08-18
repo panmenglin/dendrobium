@@ -1,5 +1,5 @@
 /**
- * 插入 snippet
+ * import block
  */
 import * as vscode from 'vscode';
 import { getWebViewContent } from './utils/utils';
@@ -34,13 +34,13 @@ export default function importBlock(
     }
 
     panel = window.createWebviewPanel(
-      'materielView', // 只供内部使用，这个webview的标识
-      'Materiel List', // 给用户显示的面板标题
-      ViewColumn.Beside, // 给新的webview面板一个编辑器视图
+      'materielView', // webview id
+      'Materiel List', // panel title
+      ViewColumn.Beside, // view column
       {
-        enableScripts: true, // 启用JS，默认禁用
-        retainContextWhenHidden: true, // webview被隐藏时保持状态，避免被重置
-      } // Webview选项。我们稍后会用上
+        enableScripts: true,
+        retainContextWhenHidden: true,
+      }
     );
 
     materialFlag = true;
@@ -65,7 +65,6 @@ export default function importBlock(
           
             panel.webview.onDidReceiveMessage((message: any) => {
 
-              // console.log('插件收到的消息：', message);
               if (message.blockSelected) {
                 selectBlock(message.blockSelected, state);
               }
@@ -100,7 +99,7 @@ export default function importBlock(
 async function selectBlock(block: BlockConfig, state: Memento, prompt?: string) {
   const pathName = await window.showInputBox({
     ignoreFocusOut: true,
-    prompt: prompt || '请设置物料文件夹名称。例如："Example"',
+    prompt: prompt || 'Please setting floder name. example："Example"',
     value: block.defaultPath,
   });
 
@@ -124,8 +123,6 @@ async function selectBlock(block: BlockConfig, state: Memento, prompt?: string) 
   //     editor.insertSnippet(new SnippetString(content), insertPosition);
 
   if (!fs.existsSync(blockPath) || fs.existsSync(blockPath) && fs.readdirSync(blockPath).length === 0) {
-    console.log('开始下载');
-    // downloadByNpm(blockPath, config);
     downloadByNpm(importPath, blockPath, block).then(res => {
       window.showInformationMessage(chalk.green(`🎉 Success import`));
     });
@@ -137,8 +134,6 @@ async function selectBlock(block: BlockConfig, state: Memento, prompt?: string) 
     }, (err: any) => {
       window.showInformationMessage(chalk.green(`🚧 ${err}`));
     });
-
-    // selectBlock(block);
   }
 
 }
