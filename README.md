@@ -1,65 +1,60 @@
-# dendrobium README
+# Dendrobium 
 
-This is the README for your extension "dendrobium". After writing up a brief description, we recommend including the following sections.
+**文档待完善**
 
-## Features
+依托私有业务组件物料仓库，用于安装和更新业务组件的 VSCode 插件。
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## 特性
 
-For example if there is an image subfolder under your extension project workspace:
+支持符合规则的任何私有仓库接入，提供在 VSCode 中选择组件，下载依赖并在工作区插入组件代码的功能。
 
-\!\[feature X\]\(images/feature-x.png\)
+## 依赖
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+组件库的关联和更新需要依赖 git 环境
 
-## Requirements
+## 插件配置
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+* `dendrobium.materielWarehouse`: 关联你的私有物料仓库
 
-## Extension Settings
+```
+{
+    "name": "scf-blocks",           — 组件库名称
+    "downloadUrl": "",              — git 物料仓库地址
+    "type": "gitlab",               — 物料仓库类型，目前仅支持 gitlab/github
+    "branch": "master",             — 物料仓库分支
+    "path": "scf-block.json"        — 物料列表 json 文件路径
+}
+```
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+## 仓库搭建
 
-For example:
+物料应当可以通过 import 直接应用
 
-This extension contributes the following settings:
+物料列表 json 需要遵循特定的格式
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+```
+{
+    "blocks": [
+        {
+            "title": "button按钮类型",           - 物料名称
+            "value": "button-basic",
+            "key": "button-basic",          
+            "description": "",                  - 物料描述
+            "url": "",
+            "downloadUrl": "",                  - npm 下载地址
+            "type": "block",
+            "path": "button-basic",
+            "isPage": false,
+            "defaultPath": "ButtonBasic",       - 默认安装文件夹名称
+            "img": "",                          - 预览图片地址
+            "tags": ["通用"],
+            "name": "button-按钮类型",
+            "previewUrl": "",                   - 预览地址
+            "features": ["antd"],
+            "branch": "master",
+            "framework": "React"
+        }
+    ]
+}
 
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+```
