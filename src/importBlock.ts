@@ -7,6 +7,7 @@ import downloadGitSparse from './utils/downloadGitSparse';
 import downloadByNpm from './utils/downloadNpm';
 import upDateBlock from './updateBlock';
 import { MaterielConfig, BlockConfig } from './types';
+import getGitConfig from './utils/getGitConfig';
 
 const fs = require('fs');
 const chalk = require('chalk');
@@ -112,7 +113,6 @@ async function selectBlock(block: BlockConfig, state: Memento, path?: string, pr
   }
 
   downloadBLock(block, state, pathName, path);
-
 }
 
 /**
@@ -121,7 +121,7 @@ async function selectBlock(block: BlockConfig, state: Memento, path?: string, pr
  * @param state 
  * @param pathName 
  */
-function downloadBLock(block: BlockConfig, state: Memento, pathName: string, path?: string) {
+async function downloadBLock(block: BlockConfig, state: Memento, pathName: string, path?: string) {
   let editor: any | undefined = state.get('activeTextEditor');
   let activeEditor: vscode.TextEditor[] = window.visibleTextEditors.filter((item: any) => {
     return item.id === editor.id;
@@ -141,16 +141,20 @@ function downloadBLock(block: BlockConfig, state: Memento, pathName: string, pat
       insertBlock(activeEditor[0], block, blockPath, pathName);
     });
   } else {
-
-    // block already exist, update block
-    upDateBlock(importPath, pathName, () => downloadByNpm(importPath, blockPath, block)).then(() => {
-      window.showInformationMessage(chalk.green(`🎉 Success update`));
-      insertBlock(activeEditor[0], block, blockPath, pathName);
-    }, (err: any) => {
-      window.showErrorMessage(chalk.green(`🚧 ${err}`));
-    });
+    const gitUser : any = await getGitConfig(importPath);
+    
+    if (gitUser && gitUser.name) {
+      // block already exist, update block
+      upDateBlock(importPath, pathName, () => downloadByNpm(importPath, blockPath, block)).then(() => {
+        window.showInformationMessage(chalk.green(`🎉 Success update`));
+        insertBlock(activeEditor[0], block, blockPath, pathName);
+      }, (err: any) => {
+        window.showErrorMessage(chalk.green(`🚧 ${err}`));
+      });
+    } else {
+      window.showErrorMessage(chalk.red(`🚧 update block need git envirment, please run 'git init' to create git envirment`));
+    }
   }
-
 }
 
 /**
