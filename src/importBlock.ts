@@ -8,6 +8,7 @@ import downloadByNpm from './utils/downloadNpm';
 import upDateBlock from './updateBlock';
 import { MaterielConfig, BlockConfig } from './types';
 import getGitConfig from './utils/getGitConfig';
+import statistics from './statistics';
 
 const fs = require('fs');
 const chalk = require('chalk');
@@ -138,6 +139,11 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
   if (!fs.existsSync(blockPath) || fs.existsSync(blockPath) && fs.readdirSync(blockPath).length === 0) {
     downloadByNpm(importPath, blockPath, block).then(res => {
       window.showInformationMessage(chalk.green(`🎉 Success import`));
+      statistics({
+        type: 'add',
+        message: ''
+      });
+    
       insertBlock(activeEditor[0], block, blockPath, pathName);
     });
   } else {
@@ -147,6 +153,11 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
       // block already exist, update block
       upDateBlock(importPath, pathName, () => downloadByNpm(importPath, blockPath, block)).then(() => {
         window.showInformationMessage(chalk.green(`🎉 Success update`));
+        statistics({
+          type: 'update',
+          message: ''
+        });
+
         insertBlock(activeEditor[0], block, blockPath, pathName);
       }, (err: any) => {
         window.showErrorMessage(chalk.green(`🚧 ${err}`));
@@ -203,6 +214,11 @@ async function insertBlock(editor: any, block: BlockConfig, blockPath: string, p
   const blockRelationPath = pathTansform(insertPath, blockPath);
 
   await editor.insertSnippet(new SnippetString(`import ${block.defaultPath} from '${blockRelationPath}'` + '\n'), new Position(insertLineNum, 0));
+
+  statistics({
+    type: 'insert',
+    message: ''
+  });
 
   window.showInformationMessage(chalk.green(`🎉 Success insert`));
 

@@ -9,6 +9,12 @@
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "block",
+    "materiel",
+    "snippets",
+    "ice"
+  ],
   "activationEvents": [
     "*"
   ],
@@ -46,7 +52,7 @@
       "editor/context": [
         {
           "command": "dendrobium.importBlock",
-          "group": "inline"
+          "group": "7_modification"
         }
       ]
     }

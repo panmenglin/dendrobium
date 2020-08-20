@@ -4,7 +4,7 @@ import { actuator } from './utils';
  * getGitConfig
  * @description git git config
  */
-export default function getGitConfig (cwd: string) {
+export default function getGitConfig (cwd?: string) {
     const cmdActuator = new actuator({
         cwd,
     }, (error) => { });
