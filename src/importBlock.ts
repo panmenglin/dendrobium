@@ -24,7 +24,7 @@ export default function importBlock(
   context: ExtensionContext,
   state: Memento,
 ) {
-  const materielConfig: MaterielConfig | undefined = workspace.getConfiguration().get('dendrobium.materielWarehouse');
+  const materielConfig: MaterielConfig[] | undefined = workspace.getConfiguration().get('dendrobium.materielWarehouse');
 
   if (!materielConfig) {
     return;
@@ -62,8 +62,8 @@ export default function importBlock(
   const htmlcontent = getWebViewContent(context, 'src/view/materiel/materiel.html');
   panel.webview.html = htmlcontent;
 
-  downloadGitSparse(materielConfig.path, {
-    ...materielConfig,
+  downloadGitSparse(materielConfig[0].path, {
+    ...materielConfig[0],
     message: `🚚 Fetching block list`
   })
     .then(

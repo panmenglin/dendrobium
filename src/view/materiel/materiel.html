@@ -3,51 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dendrobium</title>
     <link rel="stylesheet" href="./materiel.css">
 </head>
 <body>
-    <div id="blockContainer"></div>
+    <div class="tabs">
+        <div class="tabs-item active">tab1</div>
+        <div class="tabs-item">tab2</div>
+        <div class="tabs-item">tab3</div>
+    </div>
+    <div class="search">
+        <input type="text" name="" id="keyword">
+    </div>
+    <div class="container">
+        <div id="blockContainer"></div>
+        <div class="pagination">
+        </div>
+    </div>
 </body>
-<script>
-    const vscode = acquireVsCodeApi();
-
-    window.addEventListener('message', event => {
-        const message = event.data;
-
-        if (message.blocks) {
-            blockListRender(message.blocks.blocks);
-        }
-    })
-
-    function blockListRender(blocks) {
-        let list = '';
-        blocks.map((item, index) => {
-            list += `<div class="block-item">
-                    <p class="block-title">${item.title}</p>
-                    <p class="block-desc">${item.description}</p>
-                    <div class="block-snapshot">
-                        <img src="${item.img}"/>
-                    </div>
-
-                    <div class="block-operation">
-                        <a href="javascript:;" class="op-add" itemIndex="${index}">添加</a>   
-                        <a href="${item.previewUrl}" target="_blank">预览</a>
-                    </div>
-                </div>`
-        });
-
-        document.getElementById('blockContainer').innerHTML = list;
-
-        document.getElementById("blockContainer").addEventListener("click", (e) => {
-            if (e.target.className === 'op-add') {
-                const itemIndex = e.target.attributes.itemIndex.value;
-                const selected = blocks[itemIndex];
-
-                vscode.postMessage({blockSelected: selected});
-            }
-        });
-    }
-
-</script>
+<script src="./jquery-3.5.1.slim.min.js"></script>
+<script src="./materiel.js"></script>
 </html>

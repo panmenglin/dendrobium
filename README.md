@@ -17,13 +17,13 @@
 * `dendrobium.materielWarehouse`: 关联你的私有物料仓库
 
 ```
-{
+[{
     "name": "scf-blocks",           — 组件库名称
     "downloadUrl": "",              — git 物料仓库地址
     "type": "gitlab",               — 物料仓库类型，目前仅支持 gitlab/github
     "branch": "master",             — 物料仓库分支
     "path": "scf-block.json"        — 物料列表 json 文件路径
-}
+}]
 ```
 
 ## 仓库搭建
