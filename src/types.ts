@@ -2,20 +2,6 @@
  * types
  */
 
-export interface Snippet {
-    id: string;
-    title: string;
-    fileName: string;
-    description: string | null;
-    visibility: string;
-    author: Author;
-    updatedAt: string;
-    createdAt: string;
-    projectId: string | null;
-    webUrl: string;
-    rawUrl: string;
-}
-
 export interface Author {
     id: number;
     name: string;

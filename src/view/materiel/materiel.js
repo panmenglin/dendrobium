@@ -1,7 +1,12 @@
 const vscode = acquireVsCodeApi();
+let intl = {};
+
+vscode.postMessage({ ready: true });
 
 window.addEventListener("message", (event) => {
   const message = event.data;
+
+  console.log(JSON.stringify(message));
 
   // tab
   if (message.warehouse) {
@@ -22,7 +27,12 @@ window.addEventListener("message", (event) => {
       $(this).addClass("active").siblings().removeClass("active");
       // $('.loading').show();
     });
+  }
 
+  if (message.intl) {
+    intl = message.intl;
+    
+    $('.search input').attr('placeholder',intl['searchPlaceholder']);
   }
 
   // block
@@ -60,7 +70,7 @@ function blockListRender(blocks) {
   const pageSize = 2;
   let maxPageNo = Math.ceil(blocks.length / pageSize);
 
-  let pagination = maxPageNo > 1 ? '<div class="op-prev">上一页</div>' : "";
+  let pagination = maxPageNo > 1 ? `<div class="op-prev">${intl['previousPage'] || '上一页'}</div>` : "";
 
   for (let index = 0; index < maxPageNo; index++) {
     pagination += `<div class="op-pager" pageNo="${index + 1}">${
@@ -68,7 +78,7 @@ function blockListRender(blocks) {
     }</div>`;
   }
 
-  pagination += maxPageNo > 1 ? '<div class="op-next">下一页</div>' : "";
+  pagination += maxPageNo > 1 ? `<div class="op-next">${intl['nextPage'] || '下一页'}</div>` : "";
 
   $(".pagination").html(pagination);
   $(".op-pager").eq(0).addClass("cur");
@@ -115,8 +125,8 @@ function blockListRender(blocks) {
                       </div>
 
                       <div class="block-operation">
-                          <a href="javascript:;" class="op-add" itemIndex="${index}">添加</a>   
-                          <a href="${item.previewUrl}" target="_blank">预览</a>
+                          <a href="javascript:;" class="op-add" itemIndex="${index}">${intl['add'] || '添加'}</a>   
+                          <a href="${item.previewUrl}" target="_blank">${intl['preview'] || '预览'}</a>
                       </div>
                   </div>`;
       });

@@ -9,6 +9,7 @@ import upDateBlock from './updateBlock';
 import { MaterielConfig, BlockConfig } from './types';
 import getGitConfig from './utils/getGitConfig';
 import statistics from './statistics';
+import localize from './locales';
 
 const fs = require('fs');
 const chalk = require('chalk');
@@ -17,10 +18,14 @@ const { sep } = path;
 
 import { window, Memento, Position, workspace, ViewColumn, ExtensionContext, SnippetString } from 'vscode';
 
+
+const language: 'zh-cn' | 'en' = workspace.getConfiguration().get('dendrobium.language') || 'zh-cn';
+const intl = localize(language);
+
 let materialFlag = false;
 let panel: any = undefined;
 
-export default function importBlock(
+export default async function importBlock(
   context: ExtensionContext,
   state: Memento,
 ) {
@@ -33,7 +38,7 @@ export default function importBlock(
   let editor: any | undefined = state.get('activeTextEditor');
 
   if (!editor) {
-    window.showErrorMessage(chalk.red(`🚧 Please focus text editor`));
+    window.showErrorMessage(chalk.red(intl.get('noTextEditor')));
     return;
   }
 
@@ -53,6 +58,28 @@ export default function importBlock(
     }
   );
 
+  panel.webview.onDidReceiveMessage(async (message: any) => {
+    console.log(123);
+
+    if (message.ready) {
+      panel.webview.postMessage({
+        warehouse: materielConfig,
+        intl: intl.getAll()
+      });
+    }
+
+    if (message.blockSelected) {
+
+      const uri = await window.showOpenDialog({
+        canSelectFolders: true,
+        canSelectFiles: false,
+        canSelectMany: false
+      });
+
+      selectBlock(message.blockSelected, state, uri ? uri[0].path : uri);
+    }
+  }, undefined, context.subscriptions);
+  
   materialFlag = true;
 
   panel.onDidDispose(() => {
@@ -61,10 +88,7 @@ export default function importBlock(
 
   const htmlcontent = getWebViewContent(context, 'src/view/materiel/materiel.html');
   panel.webview.html = htmlcontent;
-
-  panel.webview.postMessage({
-    warehouse: materielConfig
-  });
+  
 
   downloadGitSparse(materielConfig[0].path, {
     ...materielConfig[0],
@@ -72,32 +96,16 @@ export default function importBlock(
   })
     .then(
       (path) => {
-        window.showInformationMessage(chalk.green(`🎉 Success git clone`));
         const blockList = JSON.parse(fs.readFileSync(path, 'utf-8'));
 
         panel.webview.postMessage({
           blocks: blockList,
         });
-
-        panel.webview.onDidReceiveMessage(async (message: any) => {
-
-          if (message.blockSelected) {
-
-            const uri = await window.showOpenDialog({
-              canSelectFolders: true,
-              canSelectFiles: false,
-              canSelectMany: false
-            });
-
-            selectBlock(message.blockSelected, state, uri ? uri[0].path : uri);
-          }
-        }, undefined, context.subscriptions);
       },
       err => {
-        window.showErrorMessage(chalk.red(`🚧 ${err}`));
+        window.showErrorMessage(chalk.red(`${err}`));
       }
     );
-
 }
 
 /**
@@ -110,7 +118,7 @@ export default function importBlock(
 async function selectBlock(block: BlockConfig, state: Memento, path?: string, prompt?: string) {
   const pathName = await window.showInputBox({
     ignoreFocusOut: true,
-    prompt: prompt || 'Please setting floder name. example："Example"',
+    prompt: prompt || intl.get('setFolderName'),
     value: block.defaultPath,
   });
 
@@ -144,7 +152,7 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
 
   if (!fs.existsSync(blockPath) || fs.existsSync(blockPath) && fs.readdirSync(blockPath).length === 0) {
     downloadByNpm(importPath, blockPath, block).then(res => {
-      window.showInformationMessage(chalk.green(`🎉 Success import`));
+      window.showInformationMessage(chalk.green(intl.get('successImport')));
       statistics({
         type: 'add',
         message: ''
@@ -153,15 +161,15 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
       insertBlock(activeEditor[0], block, blockPath, pathName);
     });
   } else {
-    vscode.window.showInformationMessage("Folder already exist, do you want update content?", 'Yes', 'Cancel')
+    vscode.window.showInformationMessage(intl.get('updateComfirm'), intl.get('yes'), intl.get('cancel'))
       .then(async (answer) => {
-        if (answer === 'Yes') {
+        if (answer === intl.get('yes')) {
           const gitUser: any = await getGitConfig(importPath);
 
           if (gitUser && gitUser.name) {
             // block already exist, update block
             upDateBlock(importPath, pathName, () => downloadByNpm(importPath, blockPath, block)).then(() => {
-              window.showInformationMessage(chalk.green(`🎉 Success update`));
+              window.showInformationMessage(chalk.green(intl.get('successUpdate')));
               statistics({
                 type: 'update',
                 message: ''
@@ -172,7 +180,7 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
               window.showErrorMessage(chalk.green(`🚧 ${err}`));
             });
           } else {
-            window.showErrorMessage(chalk.red(`🚧 update block need git envirment, please run 'git init' to create git envirment`));
+            window.showErrorMessage(chalk.red(intl.get('noGit')));
           }
         }
       });
@@ -231,6 +239,6 @@ async function insertBlock(editor: any, block: BlockConfig, blockPath: string, p
     message: ''
   });
 
-  window.showInformationMessage(chalk.green(`🎉 Success insert`));
+  window.showInformationMessage(chalk.green(intl.get('successInsert')));
 
 }

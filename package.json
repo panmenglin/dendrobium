@@ -24,6 +24,11 @@
       "type": "object",
       "title": "Dendrobium configuration",
       "properties": {
+        "dendrobium.language": {
+          "type": "string",
+          "default": "zh-cn",
+          "description": "Plugin language. example: 'en', 'zh-cn'"
+        },
         "dendrobium.materielWarehouse": {
           "type": "array",
           "default": [{
