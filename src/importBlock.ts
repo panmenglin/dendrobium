@@ -37,7 +37,7 @@ export default function importBlock(
     return;
   }
 
-  // 阻止重复加载
+  // prevent duplicate loading
   if (materialFlag && panel) {
     panel.reveal(ViewColumn.Beside);
     return;
@@ -62,6 +62,10 @@ export default function importBlock(
   const htmlcontent = getWebViewContent(context, 'src/view/materiel/materiel.html');
   panel.webview.html = htmlcontent;
 
+  panel.webview.postMessage({
+    warehouse: materielConfig
+  });
+
   downloadGitSparse(materielConfig[0].path, {
     ...materielConfig[0],
     message: `🚚 Fetching block list`
@@ -71,7 +75,9 @@ export default function importBlock(
         window.showInformationMessage(chalk.green(`🎉 Success git clone`));
         const blockList = JSON.parse(fs.readFileSync(path, 'utf-8'));
 
-        panel.webview.postMessage({ blocks: blockList });
+        panel.webview.postMessage({
+          blocks: blockList,
+        });
 
         panel.webview.onDidReceiveMessage(async (message: any) => {
 
@@ -143,28 +149,33 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
         type: 'add',
         message: ''
       });
-    
+
       insertBlock(activeEditor[0], block, blockPath, pathName);
     });
   } else {
-    const gitUser : any = await getGitConfig(importPath);
-    
-    if (gitUser && gitUser.name) {
-      // block already exist, update block
-      upDateBlock(importPath, pathName, () => downloadByNpm(importPath, blockPath, block)).then(() => {
-        window.showInformationMessage(chalk.green(`🎉 Success update`));
-        statistics({
-          type: 'update',
-          message: ''
-        });
+    vscode.window.showInformationMessage("Folder already exist, do you want update content?", 'Yes', 'Cancel')
+      .then(async (answer) => {
+        if (answer === 'Yes') {
+          const gitUser: any = await getGitConfig(importPath);
 
-        insertBlock(activeEditor[0], block, blockPath, pathName);
-      }, (err: any) => {
-        window.showErrorMessage(chalk.green(`🚧 ${err}`));
+          if (gitUser && gitUser.name) {
+            // block already exist, update block
+            upDateBlock(importPath, pathName, () => downloadByNpm(importPath, blockPath, block)).then(() => {
+              window.showInformationMessage(chalk.green(`🎉 Success update`));
+              statistics({
+                type: 'update',
+                message: ''
+              });
+
+              insertBlock(activeEditor[0], block, blockPath, pathName);
+            }, (err: any) => {
+              window.showErrorMessage(chalk.green(`🚧 ${err}`));
+            });
+          } else {
+            window.showErrorMessage(chalk.red(`🚧 update block need git envirment, please run 'git init' to create git envirment`));
+          }
+        }
       });
-    } else {
-      window.showErrorMessage(chalk.red(`🚧 update block need git envirment, please run 'git init' to create git envirment`));
-    }
   }
 }
 

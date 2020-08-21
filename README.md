@@ -1,55 +1,60 @@
 # Dendrobium 
 
-**文档待完善**
+**Improving**
 
-依托私有业务组件物料仓库，用于安装和更新业务组件的 VSCode 插件。
+Depending on private material warehouse, it‘s a VSCode plugin which used to install and update your business components.
 
-## 特性
 
-支持符合规则的任何私有仓库接入，提供在 VSCode 中选择组件，下载依赖并在工作区插入组件代码的功能。
+## Features
 
-## 依赖
+It supports the access of any private warehouse that conforms to the rules, and provides the function of selecting components in vscode, downloading dependencies and inserting component codes in the workspace.
 
-组件库的关联和更新需要依赖 git 环境
 
-## 插件配置
+## Dependence
 
-* `dendrobium.materielWarehouse`: 关联你的私有物料仓库
+The association and update of component library depends on git environment
+
+
+## Setting
+
+* `dendrobium.materielWarehouse`: It is associated with your private material warehouse and supports the maintenance of multiple warehouses
+
+
 
 ```
 [{
-    "name": "scf-blocks",           — 组件库名称
-    "downloadUrl": "",              — git 物料仓库地址
-    "type": "gitlab",               — 物料仓库类型，目前仅支持 gitlab/github
-    "branch": "master",             — 物料仓库分支
-    "path": "scf-block.json"        — 物料列表 json 文件路径
+    "name": "scf-blocks",           — name
+    "downloadUrl": "",              — git path
+    "type": "gitlab",               — warehouse type, example: gitlab or github
+    "branch": "master",             — git branch
+    "path": "scf-block.json"        — ths json file path of materirl list
 }]
 ```
 
-## 仓库搭建
+## Warehouse
 
-物料应当可以通过 import 直接应用
+Materials should be able to be directly applied through 'import'
 
-物料列表 json 需要遵循特定的格式
+Material list JSON needs to follow a specific format:
 
 ```
 {
     "blocks": [
         {
-            "title": "button按钮类型",           - 物料名称
+            "title": "button",           - display title
             "value": "button-basic",
             "key": "button-basic",          
-            "description": "",                  - 物料描述
+            "description": "",                  - block description
             "url": "",
-            "downloadUrl": "",                  - npm 下载地址
+            "downloadUrl": "",                  - npm download url
             "type": "block",
             "path": "button-basic",
             "isPage": false,
-            "defaultPath": "ButtonBasic",       - 默认安装文件夹名称
-            "img": "",                          - 预览图片地址
-            "tags": ["通用"],
-            "name": "button-按钮类型",
-            "previewUrl": "",                   - 预览地址
+            "defaultPath": "ButtonBasic",       - default install block folder name
+            "img": "",                          - preview image url
+            "tags": ["normal"],
+            "name": "button",
+            "previewUrl": "",                   - preview url
             "features": ["antd"],
             "branch": "master",
             "framework": "React"
@@ -58,3 +63,8 @@
 }
 
 ```
+
+## The Origin Of Name
+The plugin is named after Dendrobium Gundam which one of the earliest weapon depot systems in Gundam.
+
+![avatar](./doc/image/GP03-DENDROBIUM-GUNDAM.jpg)
