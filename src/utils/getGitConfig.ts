@@ -1,10 +1,12 @@
 import { actuator } from './utils';
+const chalk = require('chalk');
+import { window } from 'vscode';
 
 /**
  * getGitConfig
  * @description git git config
  */
-export default function getGitConfig (cwd?: string) {
+export default function getGitConfig (cwd?: string, intl?: { get: (key: string) => void }) {
     const cmdActuator = new actuator({
         cwd,
     }, (error) => { });
@@ -29,6 +31,12 @@ export default function getGitConfig (cwd?: string) {
 
         } catch (error) {
             console.error('get git config failed');
+            if (intl) {
+                window.showErrorMessage(chalk.red(intl.get('gitConfigFailed')));
+            } else {
+                
+            }
+
             reject(error);
         } finally {
             resolve(user);

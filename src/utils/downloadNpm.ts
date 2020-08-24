@@ -72,7 +72,7 @@ export default async function downloadByNpm(importPath: string, blockPath: strin
           rimraf.sync(`${blockPath}_tmp`);
           
           spinner.stop();
-          console.log(`\n ${logSymbols.success}`, chalk.green(`🎉 Success install`));
+          // console.log(`\n ${logSymbols.success}`, chalk.green(`🎉 Success install`));
   
           resolve(blockName);
         }

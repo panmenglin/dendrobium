@@ -12,7 +12,12 @@ const en = {
     preview: 'Preview',
     previousPage: 'Previous Page',
     nextPage: 'Next Page',
-    searchPlaceholder: 'entry keywords search'
+    searchPlaceholder: 'entry keywords search',
+    loadingMaterial: 'Loading material warehouse',
+    fetchingConfig: 'fetching config ...',
+    initMaterialView: 'init material view ...',
+    materialViewReady: 'material view ready',
+    gitConfigFailed: 'get git config failed'
 };
 
 export default en;

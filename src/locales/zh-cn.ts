@@ -12,7 +12,12 @@ const zhCN = {
     preview: '预览',
     previousPage: '上一页',
     nextPage: '下一页',
-    searchPlaceholder: '输入关键词检索'
+    searchPlaceholder: '输入关键词检索',
+    loadingMaterial: '加载物料仓库',
+    fetchingConfig: '获取配置',
+    initMaterialView: '初始化物料仓库界面',
+    materialViewReady: '物料仓库加载完成',
+    gitConfigFailed: '获取 git 信息失败'
 };
 
 export default zhCN;

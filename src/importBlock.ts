@@ -16,8 +16,7 @@ const chalk = require('chalk');
 const path = require('path');
 const { sep } = path;
 
-import { window, Memento, Position, workspace, ViewColumn, ExtensionContext, SnippetString } from 'vscode';
-
+import { window, Memento, Position, workspace, ViewColumn, ExtensionContext, SnippetString, Progress } from 'vscode';
 
 const language: 'zh-cn' | 'en' = workspace.getConfiguration().get('dendrobium.language') || 'zh-cn';
 const intl = localize(language);
@@ -48,9 +47,58 @@ export default async function importBlock(
     return;
   }
 
+
+  vscode.window.withProgress({
+    location: vscode.ProgressLocation.Notification,
+    title: intl.get('loadingMaterial'),
+  }, (progress, token) => {
+
+    progress.report({ increment: 0, message: intl.get('fetchingConfig') });
+
+    const progressPromise = new Promise((resolve) => {
+      downloadGitSparse(materielConfig[0].path, {
+        ...materielConfig[0],
+        message: `🚚 ${intl.get('loadingMaterial')}`
+      })
+        .then(
+          (path) => {
+            const blockList = JSON.parse(fs.readFileSync(path, 'utf-8'));
+
+            progress.report({ increment: 60, message: intl.get('initMaterialView') });
+
+            initMaterialPanel(context, state, materielConfig, blockList, resolve, progress);
+          },
+          err => {
+            window.showErrorMessage(chalk.red(`${err}`));
+          }
+        );
+    });
+
+    return progressPromise;
+  });
+}
+
+
+/**
+ * init material panel
+ * @param context 
+ * @param state 
+ * @param config 
+ * @param blockList 
+ * @param resolve 
+ * @param progress 
+ */
+function initMaterialPanel(
+  context: ExtensionContext,
+  state: Memento,
+  config: MaterielConfig[] | undefined,
+  blockList: string,
+  resolve: () => void,
+  progress: Progress<{ increment: number, message: string }>
+) {
   panel = window.createWebviewPanel(
-    'materielView', // webview id
-    'Materiel List', // panel title
+    'materialView', // webview id
+    'Material List', // panel title
     ViewColumn.Beside, // view column
     {
       enableScripts: true,
@@ -59,13 +107,18 @@ export default async function importBlock(
   );
 
   panel.webview.onDidReceiveMessage(async (message: any) => {
-    console.log(123);
+    setTimeout(() => {
+      resolve();
+    }, 300);
 
     if (message.ready) {
       panel.webview.postMessage({
-        warehouse: materielConfig,
-        intl: intl.getAll()
+        warehouse: config,
+        intl: intl.getAll(),
+        blocks: blockList,
       });
+
+      progress.report({ increment: 100, message: intl.get('materialViewReady') });
     }
 
     if (message.blockSelected) {
@@ -79,7 +132,7 @@ export default async function importBlock(
       selectBlock(message.blockSelected, state, uri ? uri[0].path : uri);
     }
   }, undefined, context.subscriptions);
-  
+
   materialFlag = true;
 
   panel.onDidDispose(() => {
@@ -88,25 +141,10 @@ export default async function importBlock(
 
   const htmlcontent = getWebViewContent(context, 'src/view/materiel/materiel.html');
   panel.webview.html = htmlcontent;
-  
 
-  downloadGitSparse(materielConfig[0].path, {
-    ...materielConfig[0],
-    message: `🚚 Fetching block list`
-  })
-    .then(
-      (path) => {
-        const blockList = JSON.parse(fs.readFileSync(path, 'utf-8'));
-
-        panel.webview.postMessage({
-          blocks: blockList,
-        });
-      },
-      err => {
-        window.showErrorMessage(chalk.red(`${err}`));
-      }
-    );
 }
+
+
 
 /**
  * select block
@@ -152,7 +190,8 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
 
   if (!fs.existsSync(blockPath) || fs.existsSync(blockPath) && fs.readdirSync(blockPath).length === 0) {
     downloadByNpm(importPath, blockPath, block).then(res => {
-      window.showInformationMessage(chalk.green(intl.get('successImport')));
+      window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
+
       statistics({
         type: 'add',
         message: ''
@@ -164,12 +203,13 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
     vscode.window.showInformationMessage(intl.get('updateComfirm'), intl.get('yes'), intl.get('cancel'))
       .then(async (answer) => {
         if (answer === intl.get('yes')) {
-          const gitUser: any = await getGitConfig(importPath);
+          const gitUser: any = await getGitConfig(importPath, intl);
 
           if (gitUser && gitUser.name) {
             // block already exist, update block
             upDateBlock(importPath, pathName, () => downloadByNpm(importPath, blockPath, block)).then(() => {
-              window.showInformationMessage(chalk.green(intl.get('successUpdate')));
+              window.setStatusBarMessage(chalk.green(intl.get('successUpdate')), 1000);
+
               statistics({
                 type: 'update',
                 message: ''
@@ -217,28 +257,39 @@ async function insertBlock(editor: any, block: BlockConfig, blockPath: string, p
   const lines = editor._documentData._lines;
 
   const jsContentReg = new RegExp(".*(import){1}.*from.*", "g");
+  const blockRelationPath = pathTansform(insertPath, blockPath);
+  const insertDependence = `import ${block.defaultPath} from '${blockRelationPath}'`;
 
   let insertLineNum = 0;
+  let alreadyImport = false;
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index];
     if (line && jsContentReg.exec(line)) {
       insertLineNum = index;
     }
 
-    if (((insertLineNum === 0 && index > 10) || (insertLineNum > 0 && index - insertLineNum > 3)) && !jsContentReg.exec(line)) {
+    if (line.indexOf(insertDependence) >= 0) {
+      alreadyImport = true;
+      break;
+    }
+
+    if (((insertLineNum === 0 && index > 10) || (insertLineNum > 0 && index - insertLineNum > 5)) && !jsContentReg.exec(line)) {
       break;
     }
   }
 
-  const blockRelationPath = pathTansform(insertPath, blockPath);
+  if (alreadyImport) {
+    window.setStatusBarMessage(chalk.green(intl.get('successInsert')), 1000);
+    return;
+  }
 
-  await editor.insertSnippet(new SnippetString(`import ${block.defaultPath} from '${blockRelationPath}'` + '\n'), new Position(insertLineNum, 0));
+  await editor.insertSnippet(new SnippetString(`${insertDependence};` + '\n'), new Position(insertLineNum, 0));
 
   statistics({
     type: 'insert',
     message: ''
   });
 
-  window.showInformationMessage(chalk.green(intl.get('successInsert')));
+  window.setStatusBarMessage(chalk.green(intl.get('successInsert')), 1000);
 
 }

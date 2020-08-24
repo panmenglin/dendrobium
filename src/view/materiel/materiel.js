@@ -6,8 +6,6 @@ vscode.postMessage({ ready: true });
 window.addEventListener("message", (event) => {
   const message = event.data;
 
-  console.log(JSON.stringify(message));
-
   // tab
   if (message.warehouse) {
     let tabs = "";
