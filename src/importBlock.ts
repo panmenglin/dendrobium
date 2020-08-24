@@ -10,13 +10,15 @@ import { MaterielConfig, BlockConfig } from './types';
 import getGitConfig from './utils/getGitConfig';
 import statistics from './statistics';
 import localize from './locales';
+import insertBlock from './insertBlock';
+import insertSnippet from './insertSnippet';
 
 const fs = require('fs');
 const chalk = require('chalk');
 const path = require('path');
 const { sep } = path;
 
-import { window, Memento, Position, workspace, ViewColumn, ExtensionContext, SnippetString, Progress } from 'vscode';
+import { window, Memento, workspace, ViewColumn, ExtensionContext, Progress } from 'vscode';
 
 const language: 'zh-cn' | 'en' = workspace.getConfiguration().get('dendrobium.language') || 'zh-cn';
 const intl = localize(language);
@@ -78,6 +80,30 @@ export default async function importBlock(
   });
 }
 
+/**
+ * change warehourse
+ * @param config 
+ */
+function changeWarehourse(config: MaterielConfig) {
+  downloadGitSparse(config.path, {
+    ...config,
+    message: `🚚 ${intl.get('loadingMaterial')}`
+  })
+    .then(
+      (path) => {
+        const blockList = JSON.parse(fs.readFileSync(path, 'utf-8'));
+
+        panel.webview.postMessage({
+          blocks: blockList,
+        });
+      },
+      err => {
+        window.showErrorMessage(chalk.red(`${err}`));
+      }
+    );
+}
+
+
 
 /**
  * init material panel
@@ -111,6 +137,7 @@ function initMaterialPanel(
       resolve();
     }, 300);
 
+    // webview ready
     if (message.ready) {
       panel.webview.postMessage({
         warehouse: config,
@@ -121,6 +148,7 @@ function initMaterialPanel(
       progress.report({ increment: 100, message: intl.get('materialViewReady') });
     }
 
+    // selected block
     if (message.blockSelected) {
 
       const uri = await window.showOpenDialog({
@@ -131,6 +159,12 @@ function initMaterialPanel(
 
       selectBlock(message.blockSelected, state, uri ? uri[0].path : uri);
     }
+
+    // change warehourse
+    if (message.warehouseSelected) {
+      changeWarehourse(message.warehouseSelected);
+    }
+
   }, undefined, context.subscriptions);
 
   materialFlag = true;
@@ -143,7 +177,6 @@ function initMaterialPanel(
   panel.webview.html = htmlcontent;
 
 }
-
 
 
 /**
@@ -168,6 +201,7 @@ async function selectBlock(block: BlockConfig, state: Memento, path?: string, pr
   downloadBLock(block, state, pathName, path);
 }
 
+
 /**
  * download block
  * @param block 
@@ -189,7 +223,7 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
   const blockPath = `${importPath}${sep}${pathName}`;
 
   if (!fs.existsSync(blockPath) || fs.existsSync(blockPath) && fs.readdirSync(blockPath).length === 0) {
-    downloadByNpm(importPath, blockPath, block).then(res => {
+    downloadByNpm(importPath, blockPath, block).then((res: any) => {
       window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
 
       statistics({
@@ -197,7 +231,16 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
         message: ''
       });
 
-      insertBlock(activeEditor[0], block, blockPath, pathName);
+      // insert snippet
+      if (res.snippet) {
+        insertSnippet(activeEditor[0], res.snippet, intl);
+      }
+
+      // insert block
+      if (res.blockName) {
+        insertBlock(activeEditor[0], block, blockPath, intl);
+      }
+
     });
   } else {
     vscode.window.showInformationMessage(intl.get('updateComfirm'), intl.get('yes'), intl.get('cancel'))
@@ -207,7 +250,7 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
 
           if (gitUser && gitUser.name) {
             // block already exist, update block
-            upDateBlock(importPath, pathName, () => downloadByNpm(importPath, blockPath, block)).then(() => {
+            upDateBlock(importPath, pathName, () => downloadByNpm(importPath, blockPath, block)).then((res: any) => {
               window.setStatusBarMessage(chalk.green(intl.get('successUpdate')), 1000);
 
               statistics({
@@ -215,7 +258,15 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
                 message: ''
               });
 
-              insertBlock(activeEditor[0], block, blockPath, pathName);
+              // insert snippet
+              if (res.snippet) {
+                insertSnippet(activeEditor[0], res.snippet, intl);
+              }
+
+              // insert block
+              if (res.blockName) {
+                insertBlock(activeEditor[0], block, blockPath, intl);
+              }
             }, (err: any) => {
               window.showErrorMessage(chalk.green(`🚧 ${err}`));
             });
@@ -225,71 +276,4 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
         }
       });
   }
-}
-
-/**
- * insert block
- * @param editor 
- * @param block 
- * @param pathName 
- */
-async function insertBlock(editor: any, block: BlockConfig, blockPath: string, pathName: string) {
-
-  const filePath = editor.document.uri.path;
-  const insertPath = filePath.replace(/\/(\w|\.)+$/, '');
-
-  const selection = editor ? editor.selection : undefined;
-
-  if (!selection) {
-    return;
-  }
-
-  // insert block tag
-
-  const insertPosition = new Position(selection.active.line, selection.active.character);
-  const content = `<${block.defaultPath}/>`;
-
-  await editor.insertSnippet(new SnippetString(content), insertPosition);
-
-
-  // insert block dependencies
-
-  const lines = editor._documentData._lines;
-
-  const jsContentReg = new RegExp(".*(import){1}.*from.*", "g");
-  const blockRelationPath = pathTansform(insertPath, blockPath);
-  const insertDependence = `import ${block.defaultPath} from '${blockRelationPath}'`;
-
-  let insertLineNum = 0;
-  let alreadyImport = false;
-  for (let index = 0; index < lines.length; index++) {
-    const line = lines[index];
-    if (line && jsContentReg.exec(line)) {
-      insertLineNum = index;
-    }
-
-    if (line.indexOf(insertDependence) >= 0) {
-      alreadyImport = true;
-      break;
-    }
-
-    if (((insertLineNum === 0 && index > 10) || (insertLineNum > 0 && index - insertLineNum > 5)) && !jsContentReg.exec(line)) {
-      break;
-    }
-  }
-
-  if (alreadyImport) {
-    window.setStatusBarMessage(chalk.green(intl.get('successInsert')), 1000);
-    return;
-  }
-
-  await editor.insertSnippet(new SnippetString(`${insertDependence};` + '\n'), new Position(insertLineNum, 0));
-
-  statistics({
-    type: 'insert',
-    message: ''
-  });
-
-  window.setStatusBarMessage(chalk.green(intl.get('successInsert')), 1000);
-
 }

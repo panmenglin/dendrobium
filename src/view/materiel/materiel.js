@@ -18,27 +18,30 @@ window.addEventListener("message", (event) => {
     $(".tabs").html(tabs);
     $(".tabs-item").eq(0).addClass("active").siblings().removeClass("active");
 
-    $('.search input').show();
+    $(".search input").show();
 
     // tab
     $(".tabs-item").click(function () {
       $(this).addClass("active").siblings().removeClass("active");
-      // $('.loading').show();
+      $('.loading').show();
+
+      const selectedWareHourse = message.warehouse[$(this).attr('key')];
+      vscode.postMessage({ warehouseSelected: selectedWareHourse });
     });
   }
 
   if (message.intl) {
     intl = message.intl;
-    
-    $('.search input').attr('placeholder',intl['searchPlaceholder']);
+
+    $(".search input").attr("placeholder", intl["searchPlaceholder"]);
   }
 
   // block
   if (message.blocks) {
     let blocks = message.blocks.blocks;
-    blocks = blocks.concat(blocks);
-    blocks = blocks.concat(blocks);
-    blocks = blocks.concat(blocks);
+    // blocks = blocks.concat(blocks);
+    // blocks = blocks.concat(blocks);
+    // blocks = blocks.concat(blocks);
     blocks = JSON.parse(JSON.stringify(blocks));
 
     blocks.map((item, index) => {
@@ -68,7 +71,10 @@ function blockListRender(blocks) {
   const pageSize = 2;
   let maxPageNo = Math.ceil(blocks.length / pageSize);
 
-  let pagination = maxPageNo > 1 ? `<div class="op-prev">${intl['previousPage'] || '上一页'}</div>` : "";
+  let pagination =
+    maxPageNo > 1
+      ? `<div class="op-prev">${intl["previousPage"] || "上一页"}</div>`
+      : "";
 
   for (let index = 0; index < maxPageNo; index++) {
     pagination += `<div class="op-pager" pageNo="${index + 1}">${
@@ -76,7 +82,10 @@ function blockListRender(blocks) {
     }</div>`;
   }
 
-  pagination += maxPageNo > 1 ? `<div class="op-next">${intl['nextPage'] || '下一页'}</div>` : "";
+  pagination +=
+    maxPageNo > 1
+      ? `<div class="op-next">${intl["nextPage"] || "下一页"}</div>`
+      : "";
 
   $(".pagination").html(pagination);
   $(".op-pager").eq(0).addClass("cur");
@@ -112,10 +121,10 @@ function blockListRender(blocks) {
   renderPageList();
   function renderPageList() {
     let list = "";
-    blocks
-      .slice((pageNo - 1) * pageSize, pageNo * pageSize)
-      .map((item, index) => {
-        list += `<div class="block-item">
+    const beginIndex = (pageNo - 1) * pageSize;
+
+    blocks.slice(beginIndex, pageNo * pageSize).map((item, index) => {
+      list += `<div class="block-item">
                       <p class="block-title">${item.title}</p>
                       <p class="block-desc">${item.description}</p>
                       <div class="block-snapshot">
@@ -123,15 +132,19 @@ function blockListRender(blocks) {
                       </div>
 
                       <div class="block-operation">
-                          <a href="javascript:;" class="op-add" itemIndex="${index}">${intl['add'] || '添加'}</a>   
-                          <a href="${item.previewUrl}" target="_blank">${intl['preview'] || '预览'}</a>
+                          <a href="javascript:;" class="op-add" itemIndex="${
+                            beginIndex + index
+                          }">${intl["add"] || "添加"}</a>   
+                          <a href="${item.previewUrl}" target="_blank">${
+        intl["preview"] || "预览"
+      }</a>
                       </div>
                   </div>`;
-      });
+    });
 
     $("#blockContainer").html(list);
 
-    $('.loading').hide();
+    $(".loading").hide();
 
     // block click
     $(".op-add").click(function () {
@@ -141,5 +154,4 @@ function blockListRender(blocks) {
       vscode.postMessage({ blockSelected: selected });
     });
   }
-
 }
