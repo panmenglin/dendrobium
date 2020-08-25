@@ -41,13 +41,13 @@ Material list JSON needs to follow a specific format:
 {
     "blocks": [
         {
-            "title": "button",           - display title
+            "title": "button",                  - display title
             "value": "button-basic",
             "key": "button-basic",          
             "description": "",                  - block description
             "url": "",
             "downloadUrl": "",                  - npm download url
-            "type": "block",
+            "type": "component",                - component or snippet
             "path": "button-basic",
             "isPage": false,
             "defaultPath": "ButtonBasic",       - default install block folder name

@@ -1,35 +1,12 @@
-const fetch = require('isomorphic-fetch');
 const ora = require('ora');
 const path = require('path');
 const { sep } = path;
 const rimraf = require('rimraf');
 const targz = require('targz');
 const fs = require('fs');
-const logSymbols = require('log-symbols');
-const chalk = require('chalk');
 
 import { BlockConfig } from '../types';
-import { mvUnzipFolder } from './utils';
-
-function getLatestTarball(url: string) {
-  return fetch(url).then(async (res: any) => {
-    const text = await res.text();
-    const tarball = text.match(/"(.+\.tgz)"/g);
-    return tarball[0].replace(/"/g, '');
-  });
-}
-
-
-function downloadTemplate(url: string, downloadPath: string) {
-  return fetch(url).then(async (res: any) => {
-    const { body } = res;
-    const file = fs.createWriteStream(downloadPath);
-    body.pipe(file);
-    return new Promise(resolve => {
-      body.on('end', resolve);
-    });
-  });
-}
+import { mvUnzipFolder, getLatestTarball, downloadTemplate } from './utils';
 
 /**
  * download by npm

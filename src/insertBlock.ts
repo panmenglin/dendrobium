@@ -23,7 +23,7 @@ export default async function insertBlock(editor: any, block: BlockConfig, block
 
   // insert block tag
 
-  if (block.type === 'block') {
+  if (block.type === 'component') {
     const insertPosition = new Position(selection.active.line, selection.active.character);
     const content = `<${block.defaultPath}/>`;
     await editor.insertSnippet(new SnippetString(content), insertPosition);
@@ -55,18 +55,17 @@ export default async function insertBlock(editor: any, block: BlockConfig, block
     }
   }
 
+  statistics({
+    type: 'insert',
+    message: ''
+  });
+
   if (alreadyImport) {
     window.setStatusBarMessage(chalk.green(intl.get('successInsert')), 1000);
     return;
   }
 
   await editor.insertSnippet(new SnippetString(`${insertDependence};` + '\n'), new Position(insertLineNum, 0));
-
-  statistics({
-    type: 'insert',
-    message: ''
-  });
-
   window.setStatusBarMessage(chalk.green(intl.get('successInsert')), 1000);
 
 }

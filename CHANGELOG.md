@@ -1,9 +1,16 @@
-## <small>0.0.1 (2020-08-19)</small>
+## <small>0.0.1 (2020-08-25)</small>
 
 * feat: add insert Block ([d2df68d](https://github.com/panmenglin/dendrobium/commit/d2df68d))
+* feat: add insert snippet ([8a94ee3](https://github.com/panmenglin/dendrobium/commit/8a94ee3))
+* feat: add locales ([c236b19](https://github.com/panmenglin/dendrobium/commit/c236b19))
+* feat: add material statistic ([45b51a5](https://github.com/panmenglin/dendrobium/commit/45b51a5))
 * feat: check git config ([7eb829a](https://github.com/panmenglin/dendrobium/commit/7eb829a))
 * feat: material manage ([c095b7a](https://github.com/panmenglin/dendrobium/commit/c095b7a))
+* refactor: add process and update some functon ([eb12b49](https://github.com/panmenglin/dendrobium/commit/eb12b49))
+* refactor: update insert block ([c728db5](https://github.com/panmenglin/dendrobium/commit/c728db5))
+* refactor: update materiel view ([640c147](https://github.com/panmenglin/dendrobium/commit/640c147))
 * refactor: update some message ([b0095a7](https://github.com/panmenglin/dendrobium/commit/b0095a7))
+* docs: update readme & changelog ([60fc11f](https://github.com/panmenglin/dendrobium/commit/60fc11f))
 
 
 

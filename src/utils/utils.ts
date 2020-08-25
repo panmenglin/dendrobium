@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 const mv = require('mv');
 const childProcess = require('child_process');
+const fetch = require('isomorphic-fetch');
 
 export function getWebViewContent(context: any, templatePath: string) {
   const resourcePath = path.join(context.extensionPath, templatePath);
@@ -97,4 +98,33 @@ export function pathTansform(pathA: string, pathB: string) {
   }
 
   return relationPath;
+}
+
+
+/**
+ * get tar ball
+ * @param url 
+ */
+export function getLatestTarball(url: string) {
+  return fetch(url).then(async (res: any) => {
+    const text = await res.text();
+    const tarball = text.match(/"(.+\.tgz)"/g);
+    return tarball[0].replace(/"/g, '');
+  });
+}
+
+/**
+ * download template
+ * @param url 
+ * @param downloadPath 
+ */
+export function downloadTemplate(url: string, downloadPath: string) {
+  return fetch(url).then(async (res: any) => {
+    const { body } = res;
+    const file = fs.createWriteStream(downloadPath);
+    body.pipe(file);
+    return new Promise(resolve => {
+      body.on('end', resolve);
+    });
+  });
 }
