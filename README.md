@@ -4,7 +4,7 @@
 
 <h1 align="center">Dendrobium</h1>
 
-English | [简体中文](./docs/README-zh_CN.md)
+English | [简体中文](./docs/README.zh-CN.md)
 
 **Improving**
 
