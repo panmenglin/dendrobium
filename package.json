@@ -2,12 +2,16 @@
   "name": "dendrobium",
   "displayName": "Dendrobium",
   "description": "an armory system for front-end developers",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "panmenglin",
   "engines": {
     "vscode": "^1.48.0"
   },
   "icon": "dendrobium.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/panmenglin/dendrobium.git"
+  },
   "categories": [
     "Other"
   ],
