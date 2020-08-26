@@ -67,13 +67,15 @@ Material list JSON needs to follow a specific format:
 ## The Origin Of Name
 The plugin is named after Dendrobium Gundam which one of the earliest weapon depot systems in Gundam.
 
-![avatar](./doc/image/GP03-DENDROBIUM-GUNDAM.jpg)
+![avatar](./docs/image/GP03-DENDROBIUM-GUNDAM.jpg)
 
 
 ## To Do List
 
 1、auto install the dependence of blocks
+
 2、material list distinguish react from vue
+
 3、plugin icons
 
 

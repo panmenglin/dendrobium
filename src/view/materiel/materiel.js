@@ -127,6 +127,10 @@ function blockListRender(blocks) {
       list += `<div class="block-item">
                       <p class="block-title">${item.title}</p>
                       <p class="block-desc">${item.description}</p>
+                      <div class="tags">
+                        <span class="tag-item">React</span>
+                        <span class="tag-item">Vue</span>
+                      </div>
                       <div class="block-snapshot">
                           <img src="${item.img}"/>
                       </div>

@@ -66,6 +66,14 @@
   font-size: 12px;
 }
 
+.tags {
+  margin: 10px 0;
+}
+
+.tag-item {
+  border-radius: 2px;
+}
+
 .block-snapshot {
   height: 100px;
 }
