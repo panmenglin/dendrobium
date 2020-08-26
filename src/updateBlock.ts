@@ -6,7 +6,7 @@ import { sep } from 'path';
  * @description
  * @param {*} target
  */
-export default function upDateBlock(importPath: string, blockName: string, callback: () => void) {
+export default function upDateBlock(importPath: string, blockName: string, intl: { get: (key: string) => void }, callback: () => void) {
 
   return new Promise(async (resolve, reject) => {
 
@@ -34,7 +34,7 @@ export default function upDateBlock(importPath: string, blockName: string, callb
     if (hasStash) {
       const changeFileList = await gitActuator.run('git diff --name-only');
       if (changeFileList && changeFileList.indexOf(blockName) >= 0) {
-        reject('The content that you have not committed may conflict with the block. Please commit before updating');
+        reject(intl.get('pleaseCommit'));
         return;
       }
 
@@ -45,6 +45,7 @@ export default function upDateBlock(importPath: string, blockName: string, callb
     await gitActuator.run(`git checkout -b ${updateBlockBranch}`);
 
     let log = await gitActuator.run(`git log --pretty=format:"%H" --reverse ${importPath}${sep}${blockName}`);
+
     const logReg = /([a-z0-9]+)/ig;;
     let oldestLog = log.match(logReg);
     const hash = oldestLog ? oldestLog[0] : '';
@@ -53,7 +54,7 @@ export default function upDateBlock(importPath: string, blockName: string, callb
       await gitActuator.run(`git reset --hard ${hash}`);
     }
 
-    await callback();
+    const blockConfig = await callback();
 
     status = await gitActuator.run('git status');
     const hasChange = status.indexOf('nothing to commit') < 0;
@@ -72,14 +73,14 @@ export default function upDateBlock(importPath: string, blockName: string, callb
       }
       await gitActuator.run(`git branch -D ${updateBlockBranch}`);
 
-      resolve(blockName);
+      resolve(blockConfig);
     }, async () => {
       if (hasStash) {
         await gitActuator.run('git stash pop');
       }
       await gitActuator.run(`git branch -D ${updateBlockBranch}`);
 
-      resolve(blockName);
+      resolve(blockConfig);
     });
 
   });

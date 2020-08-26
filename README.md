@@ -1,4 +1,10 @@
-# Dendrobium 
+<p align="center">
+    <img width="160" src="https://github.com/panmenglin/dendrobium/raw/master/dendrobium.png">
+</p>
+
+<h1 align="center">Dendrobium</h1>
+
+English | [简体中文](./docs/README-zh_CN.md)
 
 **Improving**
 
@@ -76,7 +82,6 @@ The plugin is named after Dendrobium Gundam which one of the earliest weapon dep
 
 2、material list distinguish react from vue
 
-3、plugin icons
 
 
 

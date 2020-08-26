@@ -22,7 +22,6 @@ export default async function insertBlock(editor: any, block: BlockConfig, block
   }
 
   // insert block tag
-
   if (block.type === 'component') {
     const insertPosition = new Position(selection.active.line, selection.active.character);
     const content = `<${block.defaultPath}/>`;

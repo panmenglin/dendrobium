@@ -157,6 +157,11 @@ function initMaterialPanel(
         canSelectMany: false
       });
 
+      if (uri && uri[0].path.indexOf(' ') >= 0) {
+        window.showErrorMessage(chalk.red(intl.get('blankInName')));
+        return;
+      }
+
       selectBlock(message.blockSelected, state, uri ? uri[0].path : uri);
     }
 
@@ -250,7 +255,7 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
 
           if (gitUser && gitUser.name) {
             // block already exist, update block
-            upDateBlock(importPath, pathName, () => downloadByNpm(importPath, blockPath, block)).then((res: any) => {
+            upDateBlock(importPath, pathName, intl, () => downloadByNpm(importPath, blockPath, block)).then((res: any) => {
               window.setStatusBarMessage(chalk.green(intl.get('successUpdate')), 1000);
 
               statistics({
@@ -268,7 +273,7 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
                 insertBlock(activeEditor[0], block, blockPath, intl);
               }
             }, (err: any) => {
-              window.showErrorMessage(chalk.green(`🚧 ${err}`));
+              window.showErrorMessage(chalk.red(`🚧 ${err}`));
             });
           } else {
             window.showErrorMessage(chalk.red(intl.get('noGit')));

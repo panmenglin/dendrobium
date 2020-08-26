@@ -17,7 +17,9 @@ const en = {
     fetchingConfig: 'fetching config ...',
     initMaterialView: 'init material view ...',
     materialViewReady: 'material view ready',
-    gitConfigFailed: 'get git config failed'
+    gitConfigFailed: 'get git config failed',
+    pleaseCommit: 'The content that you have not committed may conflict with the block. Please commit before updating',
+    blankInName: 'Blank can not in folder name'
 };
 
 export default en;

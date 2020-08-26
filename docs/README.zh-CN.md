@@ -1,5 +1,10 @@
+<p align="center">
+    <img width="160" src="https://github.com/panmenglin/dendrobium/raw/master/dendrobium.png">
+</p>
 
-# Dendrobium 
+<h1 align="center">Dendrobium</h1>
+
+[English](../README-zh_CN.md) | 简体中文
 
 **文档完善中**
 
@@ -126,8 +131,6 @@ Dendrobium（石斛兰）的命名来源于高达 0083 星尘的回忆，是高�
 1、根据配置自动安装物料的依赖项
 
 2、物料列表展示区分 vue 和 react
-
-3、插件图标
 
 
 
