@@ -67,7 +67,7 @@ Material list JSON needs to follow a specific format:
 ## The Origin Of Name
 The plugin is named after Dendrobium Gundam which one of the earliest weapon depot systems in Gundam.
 
-![avatar](./docs/image/GP03-DENDROBIUM-GUNDAM.jpg)
+![avatar](https://github.com/panmenglin/dendrobium/raw/master/docs/image/GP03-DENDROBIUM-GUNDAM.jpg)
 
 
 ## To Do List

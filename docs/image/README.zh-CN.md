@@ -118,7 +118,7 @@ LsTool.flat()
 
 Dendrobium（石斛兰）的命名来源于高达 0083 星尘的回忆，是高达中最早的武器库系统之一
 
-![avatar](./docs/image/GP03-DENDROBIUM-GUNDAM.jpg)
+![avatar](https://github.com/panmenglin/dendrobium/raw/master/docs/image/GP03-DENDROBIUM-GUNDAM.jpg)
 
 
 ## 待办
