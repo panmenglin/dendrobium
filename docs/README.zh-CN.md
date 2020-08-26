@@ -23,7 +23,7 @@ It supports the access of any private warehouse that conforms to the rules, and 
 
 ## 插件设置
 
-* `dendrobium.materielWarehouse`: 用于配置插件关联的物料仓库信息
+* `dendrobium.materialWarehouse`: 用于配置插件关联的物料仓库信息
 
 ```
 [{

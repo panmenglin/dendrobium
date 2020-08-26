@@ -11,7 +11,7 @@ export interface Author {
     webUrl: string;
 }
 
-export interface MaterielConfig {
+export interface MaterialConfig {
     name: string;
     downloadUrl: string;
     type: string;

@@ -6,7 +6,7 @@ import { getWebViewContent, pathTansform } from './utils/utils';
 import downloadGitSparse from './utils/downloadGitSparse';
 import downloadByNpm from './utils/downloadNpm';
 import upDateBlock from './updateBlock';
-import { MaterielConfig, BlockConfig } from './types';
+import { MaterialConfig, BlockConfig } from './types';
 import getGitConfig from './utils/getGitConfig';
 import statistics from './statistics';
 import localize from './locales';
@@ -30,9 +30,9 @@ export default async function importBlock(
   context: ExtensionContext,
   state: Memento,
 ) {
-  const materielConfig: MaterielConfig[] | undefined = workspace.getConfiguration().get('dendrobium.materielWarehouse');
+  const materialConfig: MaterialConfig[] | undefined = workspace.getConfiguration().get('dendrobium.materialWarehouse');
 
-  if (!materielConfig) {
+  if (!materialConfig) {
     return;
   }
 
@@ -57,9 +57,9 @@ export default async function importBlock(
 
     progress.report({ increment: 0, message: intl.get('fetchingConfig') });
 
-    const progressPromise = new Promise((resolve) => {
-      downloadGitSparse(materielConfig[0].path, {
-        ...materielConfig[0],
+    const progressPromise = new Promise((resolve, reject) => {
+      downloadGitSparse(materialConfig[0].path, {
+        ...materialConfig[0],
         message: `🚚 ${intl.get('loadingMaterial')}`
       })
         .then(
@@ -68,10 +68,11 @@ export default async function importBlock(
 
             progress.report({ increment: 60, message: intl.get('initMaterialView') });
 
-            initMaterialPanel(context, state, materielConfig, blockList, resolve, progress);
+            initMaterialPanel(context, state, materialConfig, blockList, resolve, progress);
           },
           err => {
             window.showErrorMessage(chalk.red(`${err}`));
+            reject();
           }
         );
     });
@@ -84,7 +85,7 @@ export default async function importBlock(
  * change warehourse
  * @param config 
  */
-function changeWarehourse(config: MaterielConfig) {
+function changeWarehourse(config: MaterialConfig) {
   downloadGitSparse(config.path, {
     ...config,
     message: `🚚 ${intl.get('loadingMaterial')}`
@@ -117,14 +118,14 @@ function changeWarehourse(config: MaterielConfig) {
 function initMaterialPanel(
   context: ExtensionContext,
   state: Memento,
-  config: MaterielConfig[] | undefined,
+  config: MaterialConfig[] | undefined,
   blockList: string,
   resolve: () => void,
   progress: Progress<{ increment: number, message: string }>
 ) {
   panel = window.createWebviewPanel(
     'materialView', // webview id
-    'Material List', // panel title
+    intl.get('materialView'), // panel title
     ViewColumn.Beside, // view column
     {
       enableScripts: true,
@@ -178,7 +179,7 @@ function initMaterialPanel(
     materialFlag = false;
   });
 
-  const htmlcontent = getWebViewContent(context, 'src/view/materiel/materiel.html');
+  const htmlcontent = getWebViewContent(context, 'src/view/material/material.html');
   panel.webview.html = htmlcontent;
 
 }

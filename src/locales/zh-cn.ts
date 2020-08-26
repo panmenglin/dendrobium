@@ -19,7 +19,8 @@ const zhCN = {
     materialViewReady: '物料仓库加载完成',
     gitConfigFailed: '获取 git 信息失败',
     pleaseCommit: '你尚未 commit 的内容可能会与更新的物料发生冲突，请先 commit 之后再尝试更新',
-    blankInName: '目录中文件名不能包含空格'
+    blankInName: '目录中文件名不能包含空格',
+    materialView: '物料仓库'
 };
 
 export default zhCN;

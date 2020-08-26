@@ -8,7 +8,7 @@
 * feat: material manage ([c095b7a](https://github.com/panmenglin/dendrobium/commit/c095b7a))
 * refactor: add process and update some functon ([eb12b49](https://github.com/panmenglin/dendrobium/commit/eb12b49))
 * refactor: update insert block ([c728db5](https://github.com/panmenglin/dendrobium/commit/c728db5))
-* refactor: update materiel view ([640c147](https://github.com/panmenglin/dendrobium/commit/640c147))
+* refactor: update material view ([640c147](https://github.com/panmenglin/dendrobium/commit/640c147))
 * refactor: update some message ([b0095a7](https://github.com/panmenglin/dendrobium/commit/b0095a7))
 * docs: update readme & changelog ([60fc11f](https://github.com/panmenglin/dendrobium/commit/60fc11f))
 

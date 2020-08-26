@@ -71,7 +71,11 @@
 }
 
 .tag-item {
-  border-radius: 2px;
+  display: inline-block;
+  border-radius: 3px;
+  margin: 5px 8px 5px 0;
+  padding: 3px 8px;
+  border: 1px solid var(--vscode-editorRuler-foreground);
 }
 
 .block-snapshot {

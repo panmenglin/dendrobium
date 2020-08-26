@@ -23,7 +23,7 @@ The association and update of component library depends on git environment
 
 ## Setting
 
-* `dendrobium.materielWarehouse`: It is associated with your private material warehouse and supports the maintenance of multiple warehouses
+* `dendrobium.materialWarehouse`: It is associated with your private material warehouse and supports the maintenance of multiple warehouses
 
 
 

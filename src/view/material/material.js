@@ -1,3 +1,6 @@
+/**
+ * material list
+ */
 const vscode = acquireVsCodeApi();
 let intl = {};
 
@@ -39,20 +42,22 @@ window.addEventListener("message", (event) => {
   // block
   if (message.blocks) {
     let blocks = message.blocks.blocks;
-    // blocks = blocks.concat(blocks);
-    // blocks = blocks.concat(blocks);
-    // blocks = blocks.concat(blocks);
+
     blocks = JSON.parse(JSON.stringify(blocks));
 
-    blocks.map((item, index) => {
-      item.title = `${item.title}${index}`;
-    });
+    // blocks.map((item, index) => {
+    //   item.title = `${item.title}${index}`;
+    // });
 
     blockListRender(blocks);
     bindSearch(blocks);
   }
 });
 
+/**
+ * search
+ * @param {*} blocks 
+ */
 function bindSearch(blocks) {
   $("#keyword").keyup(function () {
     const keyword = $(this).val();
@@ -64,7 +69,10 @@ function bindSearch(blocks) {
   });
 }
 
-// view render
+/**
+ * view render
+ * @param {*} blocks 
+ */
 function blockListRender(blocks) {
   // pagination
   let pageNo = 1;

@@ -17,7 +17,7 @@
   ],
   "keywords": [
     "block",
-    "materiel",
+    "material",
     "snippets",
     "ice"
   ],
@@ -35,7 +35,7 @@
           "default": "zh-cn",
           "description": "Plugin language. example: 'en', 'zh-cn'"
         },
-        "dendrobium.materielWarehouse": {
+        "dendrobium.materialWarehouse": {
           "type": "array",
           "default": [{
             "name": "scf-blocks",
@@ -44,7 +44,7 @@
             "branch": "master",
             "path": "scf-block.json"
           }],
-          "description": "Your materiel warehouse configuration."
+          "description": "Your material warehouse configuration."
         }
       }
     },

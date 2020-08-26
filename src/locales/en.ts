@@ -19,7 +19,8 @@ const en = {
     materialViewReady: 'material view ready',
     gitConfigFailed: 'get git config failed',
     pleaseCommit: 'The content that you have not committed may conflict with the block. Please commit before updating',
-    blankInName: 'Blank can not in folder name'
+    blankInName: 'Blank can not in folder name',
+    materialView: 'Material List'
 };
 
 export default en;
