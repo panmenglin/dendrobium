@@ -76,11 +76,6 @@ The plugin is named after Dendrobium Gundam which one of the earliest weapon dep
 ![avatar](https://github.com/panmenglin/dendrobium/raw/master/docs/image/GP03-DENDROBIUM-GUNDAM.jpg)
 
 
-## To Do List
-
-1、auto install the dependence of blocks
-
-2、material list distinguish react from vue
 
 
 

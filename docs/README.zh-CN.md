@@ -12,9 +12,15 @@
 
 ## 特性
 
-It supports the access of any private warehouse that conforms to the rules, and provides the function of selecting components in vscode, downloading dependencies and inserting component codes in the workspace.
 
-支持通过插件设置关联私有物料仓库，并提供组件及代码片段的安装和更新
+私有物料仓库：
+插件支持通过设置关联任何符合规范的私有物料仓库，并提供组件及代码片段的安装和更新功能
+
+版本管理：
+更新组件时候会自动产生一条 merge 记录，如果新旧组件文件中产生冲突将会提示用户手动 merge 以保证代码的准确性
+
+组件依赖：
+在安装或更新组件时，会自动合并项目与组件 package.json 中的依赖，并以当前项目依赖配置为主，合并后将提示用户确认并决定是否执行安装
 
 
 ## 依赖
