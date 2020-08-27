@@ -2,7 +2,7 @@
  * import block
  */
 import * as vscode from 'vscode';
-import { getWebViewContent, pathTansform } from './utils/utils';
+import { getWebViewContent } from './utils/utils';
 import downloadGitSparse from './utils/downloadGitSparse';
 import downloadByNpm from './utils/downloadNpm';
 import upDateBlock from './updateBlock';
@@ -12,6 +12,7 @@ import statistics from './statistics';
 import localize from './locales';
 import insertBlock from './insertBlock';
 import insertSnippet from './insertSnippet';
+import updatePackage from './updatePackage';
 
 const fs = require('fs');
 const chalk = require('chalk');
@@ -214,18 +215,19 @@ async function selectBlock(block: BlockConfig, state: Memento, path?: string, pr
  * @param state 
  * @param pathName 
  */
-async function downloadBLock(block: BlockConfig, state: Memento, pathName: string, path?: string) {
+async function downloadBLock(block: BlockConfig, state: Memento, pathName: string, floderPath?: string) {
   let editor: any | undefined = state.get('activeTextEditor');
   let activeEditor: vscode.TextEditor[] = window.visibleTextEditors.filter((item: any) => {
     return item.id === editor.id;
   });
+
 
   if (!activeEditor[0]) {
     return;
   }
 
   const filePath = activeEditor[0].document.uri.path;
-  const importPath = path ? path : filePath.replace(/\/(\w|\.)+$/, '');
+  const importPath = floderPath ? floderPath : filePath.replace(/\/(\w|\.)+$/, '');
   const blockPath = `${importPath}${sep}${pathName}`;
 
   if (!fs.existsSync(blockPath) || fs.existsSync(blockPath) && fs.readdirSync(blockPath).length === 0) {
@@ -245,6 +247,10 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
       // insert block
       if (res.blockName) {
         insertBlock(activeEditor[0], block, blockPath, intl);
+      }
+
+      if (res.packageJson) {
+        updatePackage(filePath, res.packageJson, intl);
       }
 
     });
@@ -273,6 +279,12 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
               if (res.blockName) {
                 insertBlock(activeEditor[0], block, blockPath, intl);
               }
+
+              // update package
+              if (res.packageJson) {
+                updatePackage(filePath, res.packageJson, intl);
+              }
+
             }, (err: any) => {
               window.showErrorMessage(chalk.red(`🚧 ${err}`));
             });

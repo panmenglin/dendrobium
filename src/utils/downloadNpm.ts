@@ -43,6 +43,17 @@ export default async function downloadByNpm(importPath: string, blockPath: strin
       async function (err: any) {
         rimraf.sync(blockPath);
 
+        const packageJsonPath = `${blockPath}_tmp${sep}package${sep}package.json`;
+        let packageJson = '';
+        if (fs.existsSync(packageJsonPath)) {
+          packageJson = fs.readFileSync(packageJsonPath, 'utf-8');
+
+          if (packageJson) {
+            packageJson = JSON.parse(packageJson);
+          }
+        }
+
+
         await mvUnzipFolder(`${blockPath}_tmp${sep}package${sep}src`, blockPath);
 
         rimraf.sync(tgzFileName);
@@ -64,7 +75,8 @@ export default async function downloadByNpm(importPath: string, blockPath: strin
 
         resolve({
           blockName,
-          snippet
+          snippet,
+          packageJson
         });
       }
     );

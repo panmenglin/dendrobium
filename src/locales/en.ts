@@ -20,7 +20,8 @@ const en = {
     gitConfigFailed: 'get git config failed',
     pleaseCommit: 'The content that you have not committed may conflict with the block. Please commit before updating',
     blankInName: 'Blank can not in folder name',
-    materialView: 'Material List'
+    materialView: 'Material List',
+    packageUpdated: 'The dependency in the package.json has changed, please run commond to install dependency, example: npm install or yarn install'
 };
 
 export default en;

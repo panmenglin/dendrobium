@@ -20,7 +20,8 @@ const zhCN = {
     gitConfigFailed: '获取 git 信息失败',
     pleaseCommit: '你尚未 commit 的内容可能会与更新的物料发生冲突，请先 commit 之后再尝试更新',
     blankInName: '目录中文件名不能包含空格',
-    materialView: '物料仓库'
+    materialView: '物料仓库',
+    packageUpdated: 'package.json 中的依赖发生了变化，请执行相关命令安装，例如：npm insatll 或 yarn install'
 };
 
 export default zhCN;

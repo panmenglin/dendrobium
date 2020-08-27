@@ -1,4 +1,5 @@
 import * as path from 'path';
+const { sep } = path;
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 const mv = require('mv');
@@ -127,4 +128,35 @@ export function downloadTemplate(url: string, downloadPath: string) {
       body.on('end', resolve);
     });
   });
+}
+
+
+/**
+ * get project root path
+ */
+const rootPathMap: any = {};
+export function getRootPath(filePath: string): any {
+
+  if (rootPathMap[filePath]) {
+    return rootPathMap[filePath];
+  }
+
+  const rootPath = circularPathGetPackageJson(filePath);
+  rootPathMap[filePath] = rootPath;
+
+  return rootPath;
+}
+
+function circularPathGetPackageJson(filePath: string): any {
+  if (!filePath || filePath === '/') {
+    return false;
+  }
+
+  const packageJsonPath = `${filePath}${sep}package.json`;
+
+  if (fs.existsSync(packageJsonPath)) {
+    return filePath;
+  } else {
+    return getRootPath(path.join(filePath, '../'));
+  }
 }
