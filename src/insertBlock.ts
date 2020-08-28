@@ -56,7 +56,8 @@ export default async function insertBlock(editor: any, block: BlockConfig, block
 
   statistics({
     type: 'insert',
-    message: ''
+    message: '',
+    block
   });
 
   if (alreadyImport) {

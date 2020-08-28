@@ -2,7 +2,7 @@
   "name": "dendrobium",
   "displayName": "Dendrobium",
   "description": "an armory system for front-end developers",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "panmenglin",
   "engines": {
     "vscode": "^1.48.0"
@@ -19,7 +19,8 @@
     "block",
     "material",
     "snippets",
-    "ice"
+    "ice",
+    "umi"
   ],
   "activationEvents": [
     "*"
@@ -35,15 +36,35 @@
           "default": "zh-cn",
           "description": "Plugin language. example: 'en', 'zh-cn'"
         },
+        "dendrobium.statistics": {
+          "type": "object",
+          "default": {
+            "reportApi": {
+              "url": "",
+              "method": "POST",
+              "format": {
+                "type": "$TYPE",
+                "message": "$MESSAGE",
+                "wareHouse": "$WAREHOUSE",
+                "blockName": "$BLOCKNAME",
+                "blockKey": "$BLOCKKEY",
+                "other": ""
+              }
+            }
+          },
+          "description": "statistics report api"
+        },
         "dendrobium.materialWarehouse": {
           "type": "array",
-          "default": [{
-            "name": "scf-blocks",
-            "downloadUrl": "",
-            "type": "gitlab",
-            "branch": "master",
-            "path": "scf-block.json"
-          }],
+          "default": [
+            {
+              "name": "scf-blocks",
+              "downloadUrl": "",
+              "type": "gitlab",
+              "branch": "master",
+              "path": "scf-block.json"
+            }
+          ],
           "description": "Your material warehouse configuration."
         }
       }
@@ -76,6 +97,7 @@
     "@types/glob": "^7.1.3",
     "@types/mocha": "^8.0.0",
     "@types/node": "^14.0.27",
+    "@types/node-fetch": "^2.5.7",
     "@types/vscode": "^1.48.0",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
@@ -89,6 +111,7 @@
     "chalk": "^4.1.0",
     "isomorphic-fetch": "^2.2.1",
     "mv": "^2.1.1",
+    "node-fetch": "^2.6.0",
     "ora": "^5.0.0",
     "targz": "^1.0.1"
   }

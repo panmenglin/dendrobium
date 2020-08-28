@@ -82,11 +82,12 @@ export default async function importBlock(
   });
 }
 
+
 /**
- * change warehourse
+ * change warehouse
  * @param config 
  */
-function changeWarehourse(config: MaterialConfig) {
+function changeWarehouse(config: MaterialConfig) {
   downloadGitSparse(config.path, {
     ...config,
     message: `🚚 ${intl.get('loadingMaterial')}`
@@ -104,7 +105,6 @@ function changeWarehourse(config: MaterialConfig) {
       }
     );
 }
-
 
 
 /**
@@ -167,9 +167,9 @@ function initMaterialPanel(
       selectBlock(message.blockSelected, state, uri ? uri[0].path : uri);
     }
 
-    // change warehourse
+    // change warehouse
     if (message.warehouseSelected) {
-      changeWarehourse(message.warehouseSelected);
+      changeWarehouse(message.warehouseSelected);
     }
 
   }, undefined, context.subscriptions);
@@ -236,12 +236,13 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
 
       statistics({
         type: 'add',
-        message: ''
+        message: '',
+        block
       });
 
       // insert snippet
       if (res.snippet) {
-        insertSnippet(activeEditor[0], res.snippet, intl);
+        insertSnippet(activeEditor[0], res.snippet, block, intl);
       }
 
       // insert block
@@ -267,12 +268,13 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
 
               statistics({
                 type: 'update',
-                message: ''
+                message: '',
+                block
               });
 
               // insert snippet
               if (res.snippet) {
-                insertSnippet(activeEditor[0], res.snippet, intl);
+                insertSnippet(activeEditor[0], res.snippet, block, intl);
               }
 
               // insert block

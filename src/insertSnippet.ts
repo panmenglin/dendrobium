@@ -1,8 +1,7 @@
-import { BlockConfig } from './types';
 import { window, Position, SnippetString } from 'vscode';
-import { pathTansform } from './utils/utils';
 const chalk = require('chalk');
 import statistics from './statistics';
+import { BlockConfig } from './types';
 
 /**
  * insert block
@@ -10,10 +9,7 @@ import statistics from './statistics';
  * @param block 
  * @param pathName 
  */
-export default async function insertSnippet (editor: any, snippet: string, intl: { get: (key: string) => void }) {
-
-    const filePath = editor.document.uri.path;
-    const insertPath = filePath.replace(/\/(\w|\.)+$/, '');
+export default async function insertSnippet (editor: any, snippet: string, block: BlockConfig, intl: { get: (key: string) => void }) {
   
     const selection = editor ? editor.selection : undefined;
   
@@ -28,10 +24,10 @@ export default async function insertSnippet (editor: any, snippet: string, intl:
   
     await editor.insertSnippet(new SnippetString(content), insertPosition);
   
-  
     statistics({
       type: 'insertSnippet',
-      message: ''
+      message: '',
+      block
     });
   
     window.setStatusBarMessage(chalk.green(intl.get('successInsert')), 1000);

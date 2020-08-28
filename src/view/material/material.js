@@ -3,6 +3,7 @@
  */
 const vscode = acquireVsCodeApi();
 let intl = {};
+let selectedWareHouse = {};
 
 vscode.postMessage({ ready: true });
 
@@ -28,8 +29,8 @@ window.addEventListener("message", (event) => {
       $(this).addClass("active").siblings().removeClass("active");
       $('.loading').show();
 
-      const selectedWareHourse = message.warehouse[$(this).attr('key')];
-      vscode.postMessage({ warehouseSelected: selectedWareHourse });
+      selectedWareHouse = message.warehouse[$(this).attr('key')];
+      vscode.postMessage({ warehouseSelected: selectedWareHouse });
     });
   }
 
@@ -162,6 +163,9 @@ function blockListRender(blocks) {
     $(".op-add").click(function () {
       const itemIndex = $(this).attr("itemIndex");
       const selected = blocks[itemIndex];
+
+
+      selected.warehouse = selectedWareHouse;
 
       vscode.postMessage({ blockSelected: selected });
     });

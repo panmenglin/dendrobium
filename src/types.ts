@@ -37,6 +37,7 @@ export interface BlockConfig {
     features: [string];
     branch: string;
     framework: string;
+    wareHouse?: MaterialConfig
 }
   
 
@@ -44,4 +45,17 @@ export interface StatisticsMessage {
     type: string;
     message: string;
     user?: {name?: string, email?: string};
+    block: BlockConfig
+}
+
+export interface ReportApi {
+    url: string;
+    method: "POST" | "GET";
+    format?: {
+        [propName: string]: string;
+    }
+}
+
+export interface StatisticsConfig {
+    reportApi?: ReportApi
 }

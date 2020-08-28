@@ -19,8 +19,7 @@ export default function upDateBlock(importPath: string, blockName: string, intl:
     const gitActuator = new actuator({
       cwd: gitRootPath.replace(/\n/g, ''),
     }, (error) => {
-      //   spinner && spinner.fail();
-      // reject(error);
+      reject(error);
     });
 
     let status = await gitActuator.run('git status');

@@ -4,6 +4,12 @@ const fs = require('fs');
 const path = require('path');
 const { sep } = path;
 
+/**
+ * update package
+ * @param filePath 
+ * @param blockJson 
+ * @param intl 
+ */
 export default function updatePackage(filePath: string, blockJson: {
     dependencies?: {},
     devDependencies?: {}
