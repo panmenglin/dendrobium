@@ -13,16 +13,16 @@ import { actuator, mvFolder } from './utils';
  * @description clone git 项目模版
  * @param {*} target
  */
-export default function downloadGitSparse(floderName: string, config: any) {
-  const tmpFloderName = `.tmp_${floderName}`;
-  const cwd = `${env.appRoot}${sep}dendrobiumTmp${sep}${tmpFloderName}`;
+export default function downloadGitSparse(folderName: string, config: any) {
+  const tmpfolderName = `.tmp_${folderName}`;
+  const cwd = `${env.appRoot}${sep}dendrobiumTmp${sep}${tmpfolderName}`;
 
   if (!fs.existsSync(`${env.appRoot}${sep}dendrobiumTmp`)) {
     fs.mkdirSync(`${env.appRoot}${sep}dendrobiumTmp`);
   }
   
   rimraf.sync(cwd);
-  rimraf.sync(`${env.appRoot}${sep}dendrobiumTmp${sep}${floderName}`);
+  rimraf.sync(`${env.appRoot}${sep}dendrobiumTmp${sep}${folderName}`);
 
   return new Promise(async (resolve, reject) => {
 
@@ -49,12 +49,12 @@ export default function downloadGitSparse(floderName: string, config: any) {
 
     await gitActuator.run(`git pull origin ${config.branch}`);
 
-    await mvFolder(`${cwd}${sep}${config.path}`, `${env.appRoot}${sep}dendrobiumTmp${sep}${floderName}`);
+    await mvFolder(`${cwd}${sep}${config.path}`, `${env.appRoot}${sep}dendrobiumTmp${sep}${folderName}`);
     
     rimraf.sync(cwd);
 
     spinner.succeed();
     
-    resolve(`${env.appRoot}${sep}dendrobiumTmp${sep}${floderName}`);
+    resolve(`${env.appRoot}${sep}dendrobiumTmp${sep}${folderName}`);
   });
 }

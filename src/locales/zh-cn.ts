@@ -21,7 +21,11 @@ const zhCN = {
     pleaseCommit: '你尚未 commit 的内容可能会与更新的物料发生冲突，请先 commit 之后再尝试更新',
     blankInName: '目录中文件名不能包含空格',
     materialView: '物料仓库',
-    packageUpdated: 'package.json 中的依赖发生了变化，请执行相关命令安装，例如：npm insatll 或 yarn install'
+    packageUpdated: 'package.json 中的依赖发生了变化，请执行相关命令安装，例如：npm insatll 或 yarn install',
+    inputBlockName: '请输入组件名称',
+    inputBlockDescription: '请输入组件描述',
+    folderAlreadyExist: '该组件已存在，请更换其他名称'
+
 };
 
 export default zhCN;

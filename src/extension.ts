@@ -2,6 +2,8 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import importBlock from './importBlock';
+import createBlock from './createBlock';
+import localize from './locales';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -24,9 +26,18 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
+	const language: 'zh-cn' | 'en' = vscode.workspace.getConfiguration().get('dendrobium.language') || 'zh-cn';
+	const intl = localize(language);
+
 	context.subscriptions.push(vscode.commands.registerCommand('dendrobium.importBlock', () => {
-		importBlock(context, globalState);
+		importBlock(context, globalState, intl);
 	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('dendrobium.createBlock', (uri) => {
+		createBlock(context, globalState, uri, intl);
+	}));
+
+	
 
 }
 

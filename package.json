@@ -73,6 +73,10 @@
       {
         "command": "dendrobium.importBlock",
         "title": "Import Block"
+      },
+      {
+        "command": "dendrobium.createBlock",
+        "title": "Create Block"
       }
     ],
     "menus": {
@@ -80,6 +84,12 @@
         {
           "command": "dendrobium.importBlock",
           "group": "7_modification"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "dendrobium.createBlock",
+          "group": "z_commands"
         }
       ]
     }

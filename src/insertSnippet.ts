@@ -9,7 +9,7 @@ import { BlockConfig } from './types';
  * @param block 
  * @param pathName 
  */
-export default async function insertSnippet (editor: any, snippet: string, block: BlockConfig, intl: { get: (key: string) => void }) {
+export default async function insertSnippet (editor: any, snippet: string, block: BlockConfig, intl: { get: (key: string) => string }) {
   
     const selection = editor ? editor.selection : undefined;
   

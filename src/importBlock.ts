@@ -21,15 +21,13 @@ const { sep } = path;
 
 import { window, Memento, workspace, ViewColumn, ExtensionContext, Progress } from 'vscode';
 
-const language: 'zh-cn' | 'en' = workspace.getConfiguration().get('dendrobium.language') || 'zh-cn';
-const intl = localize(language);
-
 let materialFlag = false;
 let panel: any = undefined;
 
 export default async function importBlock(
   context: ExtensionContext,
   state: Memento,
+  intl: { get: (key: string) => string }
 ) {
   const materialConfig: MaterialConfig[] | undefined = workspace.getConfiguration().get('dendrobium.materialWarehouse');
 
@@ -215,7 +213,7 @@ async function selectBlock(block: BlockConfig, state: Memento, path?: string, pr
  * @param state 
  * @param pathName 
  */
-async function downloadBLock(block: BlockConfig, state: Memento, pathName: string, floderPath?: string) {
+async function downloadBLock(block: BlockConfig, state: Memento, pathName: string, folderPath?: string) {
   let editor: any | undefined = state.get('activeTextEditor');
   let activeEditor: vscode.TextEditor[] = window.visibleTextEditors.filter((item: any) => {
     return item.id === editor.id;
@@ -227,7 +225,7 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
   }
 
   const filePath = activeEditor[0].document.uri.path;
-  const importPath = floderPath ? floderPath : filePath.replace(/\/(\w|\.)+$/, '');
+  const importPath = folderPath ? folderPath : filePath.replace(/\/(\w|\.)+$/, '');
   const blockPath = `${importPath}${sep}${pathName}`;
 
   if (!fs.existsSync(blockPath) || fs.existsSync(blockPath) && fs.readdirSync(blockPath).length === 0) {

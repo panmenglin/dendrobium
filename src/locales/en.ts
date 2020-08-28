@@ -1,6 +1,6 @@
 const en = {
     noTextEditor: '🚧 Please focus text editor',
-    setFolderName: 'Please setting floder name. example："Button"',
+    setFolderName: 'Please setting folder name. example："Button"',
     successImport: '🎉 Success import',
     updateComfirm: 'Folder already exist, do you want update content?',
     yes: 'Yes',
@@ -21,7 +21,10 @@ const en = {
     pleaseCommit: 'The content that you have not committed may conflict with the block. Please commit before updating',
     blankInName: 'Blank can not in folder name',
     materialView: 'Material List',
-    packageUpdated: 'The dependency in the package.json has changed, please run commond to install dependency, example: npm install or yarn install'
+    packageUpdated: 'The dependency in the package.json has changed, please run commond to install dependency, example: npm install or yarn install',
+    inputBlockName: 'Please input block name',
+    inputBlockDescription: 'Please input block description',
+    folderAlreadyExist: '🚧 the folder already exist, please re-enter a different name.'
 };
 
 export default en;
