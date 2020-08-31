@@ -27,9 +27,9 @@ window.addEventListener("message", (event) => {
     // tab
     $(".tabs-item").click(function () {
       $(this).addClass("active").siblings().removeClass("active");
-      $('.loading').show();
+      $(".loading").show();
 
-      selectedWareHouse = message.warehouse[$(this).attr('key')];
+      selectedWareHouse = message.warehouse[$(this).attr("key")];
       vscode.postMessage({ warehouseSelected: selectedWareHouse });
     });
   }
@@ -57,13 +57,13 @@ window.addEventListener("message", (event) => {
 
 /**
  * search
- * @param {*} blocks 
+ * @param {*} blocks
  */
 function bindSearch(blocks) {
   $("#keyword").keyup(function () {
     const keyword = $(this).val();
     const filterBlocks = blocks.filter((item) => {
-      return item.title.indexOf(keyword) >= 0;
+      return item.title.indexOf(keyword) >= 0 || item.tags.indexOf(keyword) >= 0 ;
     });
 
     blockListRender(filterBlocks);
@@ -72,7 +72,7 @@ function bindSearch(blocks) {
 
 /**
  * view render
- * @param {*} blocks 
+ * @param {*} blocks
  */
 function blockListRender(blocks) {
   // pagination
@@ -133,24 +133,29 @@ function blockListRender(blocks) {
     const beginIndex = (pageNo - 1) * pageSize;
 
     blocks.slice(beginIndex, pageNo * pageSize).map((item, index) => {
+      let tags = "";
+      if (item.tags) {
+        item.tags.map((tag) => {
+          tags += `<span class="tag-item">${tag}</span>`;
+        });
+      }
+
       list += `<div class="block-item">
                       <p class="block-title">${item.title}</p>
                       <p class="block-desc">${item.description}</p>
-                      <div class="tags">
-                        <span class="tag-item">React</span>
-                        <span class="tag-item">Vue</span>
-                      </div>
-                      <div class="block-snapshot">
-                          <img src="${item.img}"/>
-                      </div>
-
+                      <div class="tags"> ${tags} </div>
+                      ${
+                        item.img
+                          ? `<div class="block-snapshot"> <img src="${item.img}"/> </div>`
+                          : ""
+                      }
                       <div class="block-operation">
                           <a href="javascript:;" class="op-add" itemIndex="${
                             beginIndex + index
                           }">${intl["add"] || "添加"}</a>   
-                          <a href="${item.previewUrl}" target="_blank">${
-        intl["preview"] || "预览"
-      }</a>
+                          <a href="${
+                            item.previewUrl || item.url
+                          }" target="_blank">${intl["preview"] || "预览"}</a>
                       </div>
                   </div>`;
     });
@@ -163,7 +168,6 @@ function blockListRender(blocks) {
     $(".op-add").click(function () {
       const itemIndex = $(this).attr("itemIndex");
       const selected = blocks[itemIndex];
-
 
       selected.warehouse = selectedWareHouse;
 

@@ -9,7 +9,6 @@ import upDateBlock from './updateBlock';
 import { MaterialConfig, BlockConfig } from './types';
 import getGitConfig from './utils/getGitConfig';
 import statistics from './statistics';
-import localize from './locales';
 import insertBlock from './insertBlock';
 import insertSnippet from './insertSnippet';
 import updatePackage from './updatePackage';
@@ -27,7 +26,7 @@ let panel: any = undefined;
 export default async function importBlock(
   context: ExtensionContext,
   state: Memento,
-  intl: { get: (key: string) => string }
+  intl: { get: (key: string) => string, getAll: () => any }
 ) {
   const materialConfig: MaterialConfig[] | undefined = workspace.getConfiguration().get('dendrobium.materialWarehouse');
 
@@ -67,7 +66,7 @@ export default async function importBlock(
 
             progress.report({ increment: 60, message: intl.get('initMaterialView') });
 
-            initMaterialPanel(context, state, materialConfig, blockList, resolve, progress);
+            initMaterialPanel(context, state, materialConfig, blockList, resolve, progress, intl);
           },
           err => {
             window.showErrorMessage(chalk.red(`${err}`));
@@ -85,7 +84,10 @@ export default async function importBlock(
  * change warehouse
  * @param config 
  */
-function changeWarehouse(config: MaterialConfig) {
+function changeWarehouse(
+  config: MaterialConfig,
+  intl: { get: (key: string) => string }
+) {
   downloadGitSparse(config.path, {
     ...config,
     message: `🚚 ${intl.get('loadingMaterial')}`
@@ -120,7 +122,8 @@ function initMaterialPanel(
   config: MaterialConfig[] | undefined,
   blockList: string,
   resolve: () => void,
-  progress: Progress<{ increment: number, message: string }>
+  progress: Progress<{ increment: number, message: string }>,
+  intl: { get: (key: string) => string, getAll: () => any }
 ) {
   panel = window.createWebviewPanel(
     'materialView', // webview id
@@ -162,12 +165,12 @@ function initMaterialPanel(
         return;
       }
 
-      selectBlock(message.blockSelected, state, uri ? uri[0].path : uri);
+      selectBlock(message.blockSelected, state, intl, uri ? uri[0].path : uri);
     }
 
     // change warehouse
     if (message.warehouseSelected) {
-      changeWarehouse(message.warehouseSelected);
+      changeWarehouse(message.warehouseSelected, intl);
     }
 
   }, undefined, context.subscriptions);
@@ -191,7 +194,19 @@ function initMaterialPanel(
  * @param path 
  * @param prompt 
  */
-async function selectBlock(block: BlockConfig, state: Memento, path?: string, prompt?: string) {
+async function selectBlock(
+  block: BlockConfig, 
+  state: Memento, 
+  intl: { get: (key: string) => string },
+  path?: string, 
+  prompt?: string
+) {
+
+  if (block.type === 'npm') {
+    downloadBLock(block, state, block.defaultPath, intl, path);
+    return;
+  }
+
   const pathName = await window.showInputBox({
     ignoreFocusOut: true,
     prompt: prompt || intl.get('setFolderName'),
@@ -203,7 +218,7 @@ async function selectBlock(block: BlockConfig, state: Memento, path?: string, pr
     return;
   }
 
-  downloadBLock(block, state, pathName, path);
+  downloadBLock(block, state, pathName, intl, path);
 }
 
 
@@ -213,7 +228,13 @@ async function selectBlock(block: BlockConfig, state: Memento, path?: string, pr
  * @param state 
  * @param pathName 
  */
-async function downloadBLock(block: BlockConfig, state: Memento, pathName: string, folderPath?: string) {
+async function downloadBLock(
+  block: BlockConfig, 
+  state: Memento, 
+  pathName: string, 
+  intl: { get: (key: string) => string },
+  folderPath?: string
+) {
   let editor: any | undefined = state.get('activeTextEditor');
   let activeEditor: vscode.TextEditor[] = window.visibleTextEditors.filter((item: any) => {
     return item.id === editor.id;
@@ -249,7 +270,7 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
       }
 
       if (res.packageJson) {
-        updatePackage(filePath, res.packageJson, intl);
+        updatePackage(filePath, res.packageJson, block, intl);
       }
 
     });
@@ -282,7 +303,7 @@ async function downloadBLock(block: BlockConfig, state: Memento, pathName: strin
 
               // update package
               if (res.packageJson) {
-                updatePackage(filePath, res.packageJson, intl);
+                updatePackage(filePath, res.packageJson, block, intl);
               }
 
             }, (err: any) => {

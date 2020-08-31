@@ -3,6 +3,7 @@ import { getRootPath } from './utils/utils';
 const fs = require('fs');
 const path = require('path');
 const { sep } = path;
+import { BlockConfig } from './types';
 
 /**
  * update package
@@ -10,10 +11,17 @@ const { sep } = path;
  * @param blockJson 
  * @param intl 
  */
-export default function updatePackage(filePath: string, blockJson: {
-    dependencies?: {},
-    devDependencies?: {}
-}, intl: { get: (key: string) => string }) {
+export default function updatePackage(
+    filePath: string, 
+    blockJson: {
+        name: string,
+        version: string,
+        dependencies?: {},
+        devDependencies?: {}
+    }, 
+    block: BlockConfig,
+    intl: { get: (key: string) => string }
+) {
     const rootPath = getRootPath(filePath);
     const packagePath = `${rootPath}${sep}package.json`;
 
@@ -22,6 +30,10 @@ export default function updatePackage(filePath: string, blockJson: {
 
     jsonData.dependencies = Object.assign(blockJson.dependencies || {}, jsonData.dependencies || {});
     jsonData.devDependencies = Object.assign(blockJson.devDependencies || {}, jsonData.devDependencies || {});
+
+    if (block.type === 'npm') {
+        jsonData.dependencies[blockJson.name] = blockJson.version;
+    }
 
     const packageTpl = JSON.stringify(jsonData, undefined, '\t');
 

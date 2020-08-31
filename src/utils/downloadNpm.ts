@@ -71,6 +71,10 @@ export default async function downloadByNpm(importPath: string, blockPath: strin
 
         rimraf.sync(snippetPath);
 
+        if (config.type === 'npm') {
+          rimraf.sync(blockPath);
+        }
+
         spinner.stop();
 
         resolve({

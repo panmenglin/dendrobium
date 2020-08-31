@@ -33,8 +33,16 @@ export default async function insertBlock(editor: any, block: BlockConfig, block
   const lines = editor._documentData._lines;
 
   const jsContentReg = new RegExp(".*(import){1}.*from.*", "g");
+
+
   const blockRelationPath = pathTansform(insertPath, blockPath);
-  const insertDependence = `import ${block.defaultPath} from '${blockRelationPath}'`;
+
+  let insertDependence = '';
+  if (block.type === 'npm') {
+    insertDependence = `import ${block.defaultPath} from '${block.name}'`;
+  } else {
+    insertDependence = `import ${block.defaultPath} from '${blockRelationPath}'`;
+  }
 
   let insertLineNum = 0;
   let alreadyImport = false;

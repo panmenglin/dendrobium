@@ -70,7 +70,7 @@ Material list JSON needs to follow a specific format:
             "description": "",                  - block description
             "url": "",
             "downloadUrl": "",                  - npm download url
-            "type": "component",                - component or snippet
+            "type": "component",                - component or snippet or npm
             "path": "button-basic",
             "isPage": false,
             "defaultPath": "ButtonBasic",       - default install block folder name
@@ -78,7 +78,7 @@ Material list JSON needs to follow a specific format:
             "tags": ["normal"],
             "name": "button",
             "previewUrl": "",                   - preview url
-            "features": ["antd"],
+            "features": ["],
             "branch": "master",
             "framework": "React"
         }
