@@ -39,6 +39,8 @@
 
 ## 插件设置
 
+* `dendrobium.language` : 用于配置插件提醒及部分操作的语言，可设置 zh-cn 或 en，默认为中文
+
 * `dendrobium.materialWarehouse`: 用于配置插件关联的物料仓库信息
 
 ```
@@ -49,6 +51,33 @@
     "branch": "master",             — 仓库分支
     "path": "scf-block.json"        — 物料列表 json 文件路径
 }]
+```
+
+* `dendrobium.statistics`: 用于配置私有仓库所需的统计接口
+
+在数据上报时，其中对应模版变量会被替换为实际值
+
+$TYPE         操作类型
+$MESSAGE      日志信息
+$WAREHOUSE    仓库地址
+$BLOCKNAME    区块名称
+$BLOCKKEY     区块值
+
+```
+{
+    "reportApi": {
+        "url": "",
+        "method": "POST",
+        "format": {
+            "type": "$TYPE",
+            "message": "$MESSAGE",
+            "wareHouse": "$WAREHOUSE",
+            "blockName": "$BLOCKNAME",
+            "blockKey": "$BLOCKKEY",
+            "other": ""
+        }
+    }
+}
 ```
 
 ## 物料仓库
@@ -142,11 +171,6 @@ Dendrobium（石斛兰）的命名来源于高达 0083 星尘的回忆，是高�
 ![avatar](https://github.com/panmenglin/dendrobium/raw/master/docs/image/GP03-DENDROBIUM-GUNDAM.jpg)
 
 
-## 待办
-
-1、根据配置自动安装物料的依赖项
-
-2、物料列表展示区分 vue 和 react
 
 
 

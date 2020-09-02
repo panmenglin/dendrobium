@@ -62,8 +62,10 @@ window.addEventListener("message", (event) => {
 function bindSearch(blocks) {
   $("#keyword").keyup(function () {
     const keyword = $(this).val();
+    const keywordRegExp = new RegExp(keyword, 'i');
+
     const filterBlocks = blocks.filter((item) => {
-      return item.title.indexOf(keyword) >= 0 || item.tags.indexOf(keyword) >= 0 ;
+      return item.title.indexOf(keyword) >= 0 || keywordRegExp.test(item.tags);
     });
 
     blockListRender(filterBlocks);

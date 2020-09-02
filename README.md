@@ -39,10 +39,9 @@ The association and update of component library depends on git environment
 
 
 ## Setting
+* `dendrobium.language` : The language used to configure plug-in reminders and some operations. "zh-cn" or "en" can be set. The default is Chinese
 
 * `dendrobium.materialWarehouse`: It is associated with your private material warehouse and supports the maintenance of multiple warehouses
-
-
 
 ```
 [{
@@ -52,6 +51,33 @@ The association and update of component library depends on git environment
     "branch": "master",             — git branch
     "path": "scf-block.json"        — ths json file path of materirl list
 }]
+```
+
+* `dendrobium.statistics`: Used to configure the statistical interfaces required for private warehouses
+
+When reporting data, the corresponding template variable will be replaced with the actual value
+
+$TYPE         operation type
+$MESSAGE      log information
+$WAREHOUSE    warehouse git address
+$BLOCKNAME    block name
+$BLOCKKEY     block key
+
+```
+{
+    "reportApi": {
+        "url": "",
+        "method": "POST",
+        "format": {
+            "type": "$TYPE",
+            "message": "$MESSAGE",
+            "wareHouse": "$WAREHOUSE",
+            "blockName": "$BLOCKNAME",
+            "blockKey": "$BLOCKKEY",
+            "other": ""
+        }
+    }
+}
 ```
 
 ## Warehouse
