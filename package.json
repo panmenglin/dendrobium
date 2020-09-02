@@ -2,7 +2,7 @@
   "name": "dendrobium",
   "displayName": "Dendrobium",
   "description": "an armory system for front-end developers",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "publisher": "panmenglin",
   "engines": {
     "vscode": "^1.48.0"

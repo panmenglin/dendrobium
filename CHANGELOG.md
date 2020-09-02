@@ -1,8 +1,9 @@
-## <small>0.0.6 (2020-08-31)</small>
+## <small>0.0.7 (2020-09-02)</small>
 
 * docs: add to do list ([0fdfb5c](https://github.com/panmenglin/dendrobium/commit/0fdfb5c))
 * docs: update change log ([26a90c0](https://github.com/panmenglin/dendrobium/commit/26a90c0))
 * docs: update changelog ([4fe7618](https://github.com/panmenglin/dendrobium/commit/4fe7618))
+* docs: update configuration description ([2f38ee1](https://github.com/panmenglin/dendrobium/commit/2f38ee1))
 * docs: update doc ([b898aae](https://github.com/panmenglin/dendrobium/commit/b898aae))
 * docs: update docs ([10c0d4e](https://github.com/panmenglin/dendrobium/commit/10c0d4e))
 * docs: update docs / publish new version ([82d63eb](https://github.com/panmenglin/dendrobium/commit/82d63eb))
@@ -15,6 +16,7 @@
 * feat: add insert snippet ([8a94ee3](https://github.com/panmenglin/dendrobium/commit/8a94ee3))
 * feat: add locales ([c236b19](https://github.com/panmenglin/dendrobium/commit/c236b19))
 * feat: add material statistic ([45b51a5](https://github.com/panmenglin/dendrobium/commit/45b51a5))
+* feat: add npm type ([b06ba16](https://github.com/panmenglin/dendrobium/commit/b06ba16))
 * feat: add statistics config ([aaf460a](https://github.com/panmenglin/dendrobium/commit/aaf460a))
 * feat: auto update dependence in package.json ([f734093](https://github.com/panmenglin/dendrobium/commit/f734093))
 * feat: check git config ([7eb829a](https://github.com/panmenglin/dendrobium/commit/7eb829a))
