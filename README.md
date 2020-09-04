@@ -104,9 +104,7 @@ Material list JSON needs to follow a specific format:
             "tags": ["normal"],
             "name": "button",
             "previewUrl": "",                   - preview url
-            "features": ["],
-            "branch": "master",
-            "framework": "React"
+            "features": [],
         }
     ]
 }

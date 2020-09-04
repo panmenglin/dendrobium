@@ -147,7 +147,7 @@ LsTool.flat()
             "description": "",                  - 描述
             "url": "",
             "downloadUrl": "",                  - npm 下载地址
-            "type": "component",                - 物料类型，component 或 snippet
+            "type": "component",                - 物料类型，component 或 snippet 或 npm
             "path": "button-basic",
             "isPage": false,
             "defaultPath": "ButtonBasic",       - 默认安装的文件名和引用的名称
@@ -155,9 +155,7 @@ LsTool.flat()
             "tags": ["normal"],
             "name": "button",
             "previewUrl": "",                   - 预览地址
-            "features": ["antd"],
-            "branch": "master",
-            "framework": "React"
+            "features": [],
         }
     ]
 }

@@ -6,6 +6,12 @@ const mv = require('mv');
 const childProcess = require('child_process');
 const fetch = require('isomorphic-fetch');
 
+
+/**
+ * get webview content
+ * @param context 
+ * @param templatePath 
+ */
 export function getWebViewContent(context: any, templatePath: string) {
   const resourcePath = path.join(context.extensionPath, templatePath);
   const dirPath = path.dirname(resourcePath);
@@ -16,6 +22,12 @@ export function getWebViewContent(context: any, templatePath: string) {
   return html;
 }
 
+
+/**
+ * mv unzip folder
+ * @param currentPath 
+ * @param targetPath 
+ */
 export function mvUnzipFolder(currentPath: string, targetPath: string) {
   return new Promise((resolve, reject) => {
     mv(currentPath, targetPath, { mkdirp: true }, (err: any) => {
@@ -34,7 +46,7 @@ interface Actuator {
 }
 
 /**
- * 执行器
+ * commond actuator
  * @param {*} options 
  * @param {*} errorCallback 
  */
@@ -72,6 +84,12 @@ export function mvFolder(currentPath: string, targetPath: string) {
   });
 }
 
+
+/**
+ * tansform position path to relation path
+ * @param pathA 
+ * @param pathB 
+ */
 export function pathTansform(pathA: string, pathB: string) {
   const pathArrA = pathA.split('/');
   const pathArrB = pathB.split('/');
@@ -147,6 +165,11 @@ export function getRootPath(filePath: string): any {
   return rootPath;
 }
 
+
+/**
+ * get package.json
+ * @param filePath 
+ */
 function circularPathGetPackageJson(filePath: string): any {
   if (!filePath || filePath === '/') {
     return false;
