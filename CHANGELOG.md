@@ -1,5 +1,7 @@
-## <small>0.0.17 (2020-09-23)</small>
+## 0.1.0 (2020-09-23)
 
+* fix: fix block update ([b070536](https://github.com/panmenglin/dendrobium/commit/b070536))
+* fix: publish installation version ([23231eb](https://github.com/panmenglin/dendrobium/commit/23231eb))
 * docs: add to do list ([0fdfb5c](https://github.com/panmenglin/dendrobium/commit/0fdfb5c))
 * docs: update change log ([26a90c0](https://github.com/panmenglin/dendrobium/commit/26a90c0))
 * docs: update changelog ([4fe7618](https://github.com/panmenglin/dendrobium/commit/4fe7618))
@@ -29,7 +31,6 @@
 * refactor: update insert block ([c728db5](https://github.com/panmenglin/dendrobium/commit/c728db5))
 * refactor: update materiel view ([640c147](https://github.com/panmenglin/dendrobium/commit/640c147))
 * refactor: update some message ([b0095a7](https://github.com/panmenglin/dendrobium/commit/b0095a7))
-* fix: fix block update ([b070536](https://github.com/panmenglin/dendrobium/commit/b070536))
 
 
 
