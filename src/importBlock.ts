@@ -47,7 +47,6 @@ export default async function importBlock(
     return;
   }
 
-
   vscode.window.withProgress({
     location: vscode.ProgressLocation.Notification,
     title: intl.get('loadingMaterial'),
@@ -153,17 +152,20 @@ function initMaterialPanel(
 
     // selected block
     if (message.blockSelected) {
+      let uri;
+      if (message.blockSelected.type !== 'npm') {
+        uri = await window.showOpenDialog({
+          canSelectFolders: true,
+          canSelectFiles: false,
+          canSelectMany: false
+        });
 
-      const uri = await window.showOpenDialog({
-        canSelectFolders: true,
-        canSelectFiles: false,
-        canSelectMany: false
-      });
-
-      if (uri && uri[0].path.indexOf(' ') >= 0) {
-        window.showErrorMessage(chalk.red(intl.get('blankInName')));
-        return;
+        if (uri && uri[0].path.indexOf(' ') >= 0) {
+          window.showErrorMessage(chalk.red(intl.get('blankInName')));
+          return;
+        }
       }
+
 
       selectBlock(message.blockSelected, state, intl, uri ? uri[0].path : uri);
     }
@@ -181,7 +183,7 @@ function initMaterialPanel(
     materialFlag = false;
   });
 
-  const htmlcontent = getWebViewContent(context, 'src/view/material/material.html');
+  const htmlcontent = getWebViewContent(context, 'view/material/material.html');
   panel.webview.html = htmlcontent;
 
 }

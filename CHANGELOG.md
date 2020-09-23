@@ -1,4 +1,4 @@
-## <small>0.0.7 (2020-09-02)</small>
+## <small>0.0.17 (2020-09-23)</small>
 
 * docs: add to do list ([0fdfb5c](https://github.com/panmenglin/dendrobium/commit/0fdfb5c))
 * docs: update change log ([26a90c0](https://github.com/panmenglin/dendrobium/commit/26a90c0))
@@ -7,10 +7,12 @@
 * docs: update doc ([b898aae](https://github.com/panmenglin/dendrobium/commit/b898aae))
 * docs: update docs ([10c0d4e](https://github.com/panmenglin/dendrobium/commit/10c0d4e))
 * docs: update docs / publish new version ([82d63eb](https://github.com/panmenglin/dendrobium/commit/82d63eb))
+* docs: update docs of config ([6bc6593](https://github.com/panmenglin/dendrobium/commit/6bc6593))
 * docs: update package.json icon ([5a48771](https://github.com/panmenglin/dendrobium/commit/5a48771))
 * docs: update package.json repository and icon ([7484d44](https://github.com/panmenglin/dendrobium/commit/7484d44))
 * docs: update readme & changelog ([60fc11f](https://github.com/panmenglin/dendrobium/commit/60fc11f))
 * docs: update readme link ([7a57311](https://github.com/panmenglin/dendrobium/commit/7a57311))
+* chore: new version ([f0790dc](https://github.com/panmenglin/dendrobium/commit/f0790dc))
 * feat: add Create Block ([4f3699a](https://github.com/panmenglin/dendrobium/commit/4f3699a))
 * feat: add insert Block ([d2df68d](https://github.com/panmenglin/dendrobium/commit/d2df68d))
 * feat: add insert snippet ([8a94ee3](https://github.com/panmenglin/dendrobium/commit/8a94ee3))
