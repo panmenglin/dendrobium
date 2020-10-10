@@ -12,21 +12,18 @@ import { mvUnzipFolder, getLatestTarball, downloadTemplate } from './utils';
  * download by npm
  * @param {*} config 
  */
-export default async function downloadByNpm(importPath: string, blockPath: string, config: BlockConfig) {
+export default async function downloadByNpm(importPath: string, blockPath: string, config: BlockConfig, progress: any, intl: { get: (key: string) => string }) {
   return new Promise(async (resolve, reject) => {
 
     let blockName: string | undefined = config.value;
 
-    let spinner = ora('🚚 Downloading...');
-    spinner.start();
+    progress.report({ increment: 30, message: intl.get('downloading') });
 
     const downloadUrl: string = await getLatestTarball(config.downloadUrl);
 
     await downloadTemplate(downloadUrl, `${importPath}${sep}${blockName}.tgz`);
-    spinner.stop();
 
-    spinner = ora('Unzipping files...');
-    spinner.start();
+    progress.report({ increment: 60, message: intl.get('unzipping') });
 
     const tgzFileName = `${importPath}${sep}${blockName}.tgz`;
     rimraf.sync(blockPath);
@@ -75,7 +72,6 @@ export default async function downloadByNpm(importPath: string, blockPath: strin
           rimraf.sync(blockPath);
         }
 
-        spinner.stop();
 
         resolve({
           blockName,

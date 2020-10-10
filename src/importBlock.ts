@@ -197,10 +197,10 @@ function initMaterialPanel(
  * @param prompt 
  */
 async function selectBlock(
-  block: BlockConfig, 
-  state: Memento, 
+  block: BlockConfig,
+  state: Memento,
   intl: { get: (key: string) => string },
-  path?: string, 
+  path?: string,
   prompt?: string
 ) {
 
@@ -231,9 +231,9 @@ async function selectBlock(
  * @param pathName 
  */
 async function downloadBLock(
-  block: BlockConfig, 
-  state: Memento, 
-  pathName: string, 
+  block: BlockConfig,
+  state: Memento,
+  pathName: string,
   intl: { get: (key: string) => string },
   folderPath?: string
 ) {
@@ -251,70 +251,78 @@ async function downloadBLock(
   const importPath = folderPath ? folderPath : filePath.replace(/\/(\w|\.)+$/, '');
   const blockPath = `${importPath}${sep}${pathName}`;
 
-  if (!fs.existsSync(blockPath) || fs.existsSync(blockPath) && fs.readdirSync(blockPath).length === 0) {
-    downloadByNpm(importPath, blockPath, block).then((res: any) => {
-      window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
+  vscode.window.withProgress({
+    location: vscode.ProgressLocation.Notification,
+    title: intl.get('loadingInstall'),
+  }, (progress, token) => {
 
-      statistics({
-        type: 'add',
-        message: '',
-        block
-      });
+    if (!fs.existsSync(blockPath) || fs.existsSync(blockPath) && fs.readdirSync(blockPath).length === 0) {
+      return downloadByNpm(importPath, blockPath, block, progress, intl).then((res: any) => {
+        window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
 
-      // insert snippet
-      if (res.snippet) {
-        insertSnippet(activeEditor[0], res.snippet, block, intl);
-      }
+        statistics({
+          type: 'add',
+          message: '',
+          block
+        });
 
-      // insert block
-      if (res.blockName) {
-        insertBlock(activeEditor[0], block, blockPath, intl);
-      }
-
-      if (res.packageJson) {
-        updatePackage(filePath, res.packageJson, block, intl);
-      }
-
-    });
-  } else {
-    vscode.window.showInformationMessage(intl.get('updateComfirm'), intl.get('yes'), intl.get('cancel'))
-      .then(async (answer) => {
-        if (answer === intl.get('yes')) {
-          const gitUser: any = await getGitConfig(importPath, intl);
-
-          if (gitUser && gitUser.name) {
-            // block already exist, update block
-            upDateBlock(importPath, pathName, intl, () => downloadByNpm(importPath, blockPath, block)).then((res: any) => {
-              window.setStatusBarMessage(chalk.green(intl.get('successUpdate')), 1000);
-
-              statistics({
-                type: 'update',
-                message: '',
-                block
-              });
-
-              // insert snippet
-              if (res.snippet) {
-                insertSnippet(activeEditor[0], res.snippet, block, intl);
-              }
-
-              // insert block
-              if (res.blockName) {
-                insertBlock(activeEditor[0], block, blockPath, intl);
-              }
-
-              // update package
-              if (res.packageJson) {
-                updatePackage(filePath, res.packageJson, block, intl);
-              }
-
-            }, (err: any) => {
-              window.showErrorMessage(chalk.red(`🚧 ${err}`));
-            });
-          } else {
-            window.showErrorMessage(chalk.red(intl.get('noGit')));
-          }
+        // insert snippet
+        if (res.snippet) {
+          insertSnippet(activeEditor[0], res.snippet, block, intl);
         }
+
+        // insert block
+        if (res.blockName) {
+          insertBlock(activeEditor[0], block, blockPath, intl);
+        }
+
+        if (res.packageJson) {
+          updatePackage(filePath, res.packageJson, block, intl);
+        }
+
       });
-  }
+    } else {
+      return vscode.window.showInformationMessage(intl.get('updateComfirm'), intl.get('yes'), intl.get('cancel'))
+        .then(async (answer) => {
+          if (answer === intl.get('yes')) {
+            const gitUser: any = await getGitConfig(importPath, intl);
+
+            if (gitUser && gitUser.name) {
+              // block already exist, update block
+              return upDateBlock(importPath, pathName, intl, () => downloadByNpm(importPath, blockPath, block, progress, intl)).then((res: any) => {
+                window.setStatusBarMessage(chalk.green(intl.get('successUpdate')), 1000);
+
+                statistics({
+                  type: 'update',
+                  message: '',
+                  block
+                });
+
+                // insert snippet
+                if (res.snippet) {
+                  insertSnippet(activeEditor[0], res.snippet, block, intl);
+                }
+
+                // insert block
+                if (res.blockName) {
+                  insertBlock(activeEditor[0], block, blockPath, intl);
+                }
+
+                // update package
+                if (res.packageJson) {
+                  updatePackage(filePath, res.packageJson, block, intl);
+                }
+
+              }, (err: any) => {
+                window.showErrorMessage(chalk.red(`🚧 ${err}`));
+              });
+            } else {
+              window.showErrorMessage(chalk.red(intl.get('noGit')));
+            }
+          }
+        });
+    }
+
+  });
+
 }

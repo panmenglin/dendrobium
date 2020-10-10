@@ -12,13 +12,13 @@ import { BlockConfig } from './types';
  * @param intl 
  */
 export default function updatePackage(
-    filePath: string, 
+    filePath: string,
     blockJson: {
         name: string,
         version: string,
         dependencies?: {},
         devDependencies?: {}
-    }, 
+    },
     block: BlockConfig,
     intl: { get: (key: string) => string }
 ) {

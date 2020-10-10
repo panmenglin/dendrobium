@@ -73,9 +73,9 @@ async function initBlock(config: any) {
 
   const jsonTemplate = {
     "name": "",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "",
-    "main": "src/index.ts",
+    "main": "src/index.js",
     "scripts": {},
     "dependencies": {
     }

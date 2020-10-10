@@ -2,7 +2,7 @@
   "name": "dendrobium",
   "displayName": "Dendrobium",
   "description": "an armory system for front-end developers",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "panmenglin",
   "engines": {
     "vscode": "^1.48.0"
@@ -72,11 +72,11 @@
     "commands": [
       {
         "command": "dendrobium.importBlock",
-        "title": "Import Block"
+        "title": "安装组件"
       },
       {
         "command": "dendrobium.createBlock",
-        "title": "Create Block"
+        "title": "创建组件"
       }
     ],
     "menus": {

@@ -62,7 +62,7 @@ window.addEventListener("message", (event) => {
 function bindSearch(blocks) {
   $("#keyword").keyup(function () {
     const keyword = $(this).val();
-    const keywordRegExp = new RegExp(keyword, 'i');
+    const keywordRegExp = new RegExp(keyword, "i");
 
     const filterBlocks = blocks.filter((item) => {
       return item.title.indexOf(keyword) >= 0 || keywordRegExp.test(item.tags);
@@ -170,10 +170,40 @@ function blockListRender(blocks) {
     $(".op-add").click(function () {
       const itemIndex = $(this).attr("itemIndex");
       const selected = blocks[itemIndex];
-
       selected.warehouse = selectedWareHouse;
 
-      vscode.postMessage({ blockSelected: selected });
+      if (selected.type === "npm") {
+        $(".shadow").show();
+
+        // insert project
+        $("#leftButton")
+          .off()
+          .click(function () {
+            vscode.postMessage({
+              blockSelected: {
+                ...selected,
+                type: "snippet",
+              },
+            });
+
+            $(".shadow").hide();
+          });
+
+        // as npm dependencies
+        $("#rightButton")
+          .off()
+          .click(function () {
+            vscode.postMessage({ blockSelected: selected });
+
+            $(".shadow").hide();
+          });
+      } else {
+        vscode.postMessage({ blockSelected: selected });
+      }
+    });
+
+    $("#close").click(function () {
+      $(".shadow").hide();
     });
   }
 }
