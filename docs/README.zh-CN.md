@@ -155,7 +155,6 @@ LsTool.flat()
             "tags": ["normal"],
             "name": "button",
             "previewUrl": "",                   - 预览地址
-            "features": [],
         }
     ]
 }

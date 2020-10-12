@@ -25,9 +25,22 @@ const en = {
     blankInName: 'Blank can not in folder name',
     materialView: 'Material List',
     packageUpdated: 'The dependency in the package.json has changed, please run commond to install dependency, example: npm install or yarn install',
-    inputBlockName: 'Please input block name',
-    inputBlockDescription: 'Please input block description',
-    folderAlreadyExist: '🚧 the folder already exist, please re-enter a different name.'
+    inputBlockCName: ' custom name',
+    inputBlockName: ' block name',
+    inputBlockDescription: ' block description',
+    folderAlreadyExist: '🚧 the folder already exist, please re-enter a different name.',
+    selectBlockType: 'Please select block type',
+    inputBlockUrl: 'Please input git path of the block',
+    inputBlockDownloadUrl: ' npm download url of the block',
+    selectBlockTags: 'Please select block tags',
+    inputBlockNpmName: ' name of the block in npm',
+    inputBlockPreviewUrl: ' preview url of the block',
+    needInput: 'Please input',
+    needSelect: 'Please select',
+    createBlockSuccess: 'Create Success',
+    inputBlockPath: ' block folder path',
+    inputBlockDefaultPath: ' block default install path',
+    validateInput: ' right'
 };
 
 export default en;

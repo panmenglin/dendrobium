@@ -34,7 +34,7 @@ export interface BlockConfig {
     tags: [string];
     name: string;
     previewUrl: string;
-    features: [string];
+    features?: [string];
     branch: string;
     framework: string;
     wareHouse?: MaterialConfig

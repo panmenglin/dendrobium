@@ -25,10 +25,22 @@ const zhCN = {
     blankInName: '目录中文件名不能包含空格',
     materialView: '物料仓库',
     packageUpdated: 'package.json 中的依赖发生了变化，请执行相关命令安装，例如：npm insatll 或 yarn install',
-    inputBlockName: '请输入组件名称',
-    inputBlockDescription: '请输入组件描述',
-    folderAlreadyExist: '该组件已存在，请更换其他名称'
-
+    inputBlockCName: '区块中文名',
+    inputBlockName: '区块名称',
+    inputBlockDescription: '组件描述',
+    folderAlreadyExist: '该组件已存在，请更换其他名称',
+    selectBlockType: '请选择区块类型',
+    inputBlockUrl: '请输入区块 git 地址（至具体目录层级）',
+    inputBlockDownloadUrl: '区块文件 npm 下载地址',
+    selectBlockTags: '请选择区块标签',
+    inputBlockNpmName: ' npm 组件名称',
+    inputBlockPreviewUrl: '区块预览地址',
+    needInput: '请输入',
+    needSelect: '请选择',
+    createBlockSuccess: '区块创建成功',
+    inputBlockPath: '区块所在文件夹',
+    inputBlockDefaultPath: '区块默认安装目录',
+    validateInput: '正确的'
 };
 
 export default zhCN;
