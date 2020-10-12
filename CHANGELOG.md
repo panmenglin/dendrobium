@@ -1,4 +1,4 @@
-## <small>0.1.2 (2020-10-10)</small>
+## <small>0.1.3 (2020-10-12)</small>
 
 * feat: add Create Block ([4f3699a](https://github.com/panmenglin/dendrobium/commit/4f3699a))
 * feat: add insert Block ([d2df68d](https://github.com/panmenglin/dendrobium/commit/d2df68d))
@@ -9,12 +9,14 @@
 * feat: add statistics config ([aaf460a](https://github.com/panmenglin/dendrobium/commit/aaf460a))
 * feat: auto update dependence in package.json ([f734093](https://github.com/panmenglin/dendrobium/commit/f734093))
 * feat: check git config ([7eb829a](https://github.com/panmenglin/dendrobium/commit/7eb829a))
+* feat: create block by interpretation ([228e423](https://github.com/panmenglin/dendrobium/commit/228e423))
 * feat: if material type is npm user can select install type / add download progress display ([a796f18](https://github.com/panmenglin/dendrobium/commit/a796f18))
 * feat: material manage ([c095b7a](https://github.com/panmenglin/dendrobium/commit/c095b7a))
 * docs: add to do list ([0fdfb5c](https://github.com/panmenglin/dendrobium/commit/0fdfb5c))
+* docs: publish new version ([2412801](https://github.com/panmenglin/dendrobium/commit/2412801))
 * docs: update change log ([26a90c0](https://github.com/panmenglin/dendrobium/commit/26a90c0))
-* docs: update changelog ([4fe7618](https://github.com/panmenglin/dendrobium/commit/4fe7618))
 * docs: update changelog ([39b6f36](https://github.com/panmenglin/dendrobium/commit/39b6f36))
+* docs: update changelog ([4fe7618](https://github.com/panmenglin/dendrobium/commit/4fe7618))
 * docs: update configuration description ([2f38ee1](https://github.com/panmenglin/dendrobium/commit/2f38ee1))
 * docs: update doc ([b898aae](https://github.com/panmenglin/dendrobium/commit/b898aae))
 * docs: update docs ([10c0d4e](https://github.com/panmenglin/dendrobium/commit/10c0d4e))
