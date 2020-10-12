@@ -40,7 +40,9 @@ const en = {
     createBlockSuccess: 'Create Success',
     inputBlockPath: ' block folder path',
     inputBlockDefaultPath: ' block default install path',
-    validateInput: ' right'
+    validateInput: ' right',
+    businessComponents: 'Business Components',
+    tools: 'Tools'
 };
 
 export default en;

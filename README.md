@@ -116,8 +116,9 @@ The plugin is named after Dendrobium Gundam which one of the earliest weapon dep
 ![avatar](https://github.com/panmenglin/dendrobium/raw/master/docs/image/GP03-DENDROBIUM-GUNDAM.jpg)
 
 
+## Other
 
-
+Look forward to your use and feedback. [Rating & Review](https://marketplace.visualstudio.com/items?itemName=panmenglin.dendrobium&ssr=false#review-details)
 
 
 

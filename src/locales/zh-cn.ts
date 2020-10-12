@@ -40,7 +40,9 @@ const zhCN = {
     createBlockSuccess: '区块创建成功',
     inputBlockPath: '区块所在文件夹',
     inputBlockDefaultPath: '区块默认安装目录',
-    validateInput: '正确的'
+    validateInput: '正确的',
+    businessComponents: '业务组件',
+    tools: '工具类',
 };
 
 export default zhCN;

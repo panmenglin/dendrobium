@@ -168,6 +168,11 @@ Dendrobium（石斛兰）的命名来源于高达 0083 星尘的回忆，是高�
 ![avatar](https://github.com/panmenglin/dendrobium/raw/master/docs/image/GP03-DENDROBIUM-GUNDAM.jpg)
 
 
+## 其他
+
+期待你的使用和反馈 [Rating & Review](https://marketplace.visualstudio.com/items?itemName=panmenglin.dendrobium&ssr=false#review-details)
+
+
 
 
 

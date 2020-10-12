@@ -188,8 +188,8 @@ export default async function createBlock(
     [
       "React",
       "Vue",
-      "业务组件",
-      "工具类",
+      intl.get('businessComponents'),
+      intl.get('tools'),
     ],
     {
       canPickMany: true,
