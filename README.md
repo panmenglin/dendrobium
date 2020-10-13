@@ -4,64 +4,64 @@
 
 <h1 align="center">Dendrobium</h1>
 
-English | [简体中文](./docs/README.zh-CN.md)
+[English](./docs/README.en.md) | 简体中文
 
-**Improving**
+**文档完善中**
 
-Depending on private material warehouse, it‘s a VSCode plugin which used to install and update your business components.
+基于私有仓库的 VSCode 物料管理插件
 
-## Inspiration Source
+## 灵感来源
 
 [umi-ui](https://github.com/umijs/umi-ui)
 
-## Features
+## 特性
 
 
-Private Warehouse:
-It supports the access of any private warehouse that conforms to the rules, and provides the function of selecting components in vscode, downloading dependencies and inserting component codes in the workspace.
+私有物料仓库：
+插件支持通过设置关联任何符合规范的私有物料仓库，并提供组件及代码片段的安装和更新功能
 
-Version Manage:
-When updating a component, a merge record will be generated automatically. If there is a conflict between the old and new component files, you will be prompted to merge manually to ensure the accuracy of the code
+版本管理：
+更新组件时候会自动产生一条 merge 记录，如果新旧组件文件中产生冲突将会提示用户手动 merge 以保证代码的准确性
 
-Dependency:
-Projects and components are automatically merged when components are installed or updated package.json After merging, you will be prompted to confirm and decide whether to perform the installation
+组件依赖：
+在安装或更新组件时，会自动合并项目与组件 package.json 中的依赖，并以当前项目依赖配置为主，合并后将提示用户确认并决定是否执行安装
 
-Statistical Interface：
-Through the configuration of statistical interface information, the user can report data when adding or updating components, so as to facilitate the statistics of private warehouse usage
+预留统计接口：
+通过配置统计接口信息，在用户添加或更新组件时上报数据，方便私有仓库使用情况的统计
 
-Create A New Component：
-Help you initialize the component template
-
-
-## Dependence
-
-The association and update of component library depends on git environment
+创建组件：
+初始化组件模版
 
 
-## Setting
-* `dendrobium.language` : The language used to configure plug-in reminders and some operations. "zh-cn" or "en" can be set. The default is Chinese
+## 依赖
 
-* `dendrobium.materialWarehouse`: It is associated with your private material warehouse and supports the maintenance of multiple warehouses
+物料仓库的关联以及物料更新依赖 git 环境，并进行了版本管理。
+
+## 插件设置
+
+* `dendrobium.language` : 用于配置插件提醒及部分操作的语言，可设置 zh-cn 或 en，默认为中文
+
+* `dendrobium.materialWarehouse`: 用于配置插件关联的物料仓库信息
 
 ```
 [{
-    "name": "scf-blocks",           — name
-    "downloadUrl": "",              — git path
-    "type": "gitlab",               — warehouse type, example: gitlab or github
-    "branch": "master",             — git branch
-    "path": "scf-block.json"        — ths json file path of materirl list
+    "name": "scf-blocks",           — 名称
+    "downloadUrl": "",              — 仓库 git 地址
+    "type": "gitlab",               — 仓库类型, 例如: gitlab 或 github
+    "branch": "master",             — 仓库分支
+    "path": "scf-block.json"        — 物料列表 json 文件路径
 }]
 ```
 
-* `dendrobium.statistics`: Used to configure the statistical interfaces required for private warehouses
+* `dendrobium.statistics`: 用于配置私有仓库所需的统计接口
 
-When reporting data, the corresponding template variable will be replaced with the actual value
+在数据上报时，其中对应模版变量会被替换为实际值
 
-$TYPE         operation type
-$MESSAGE      log information
-$WAREHOUSE    warehouse git address
-$BLOCKNAME    block name
-$BLOCKKEY     block key
+$TYPE         操作类型
+$MESSAGE      日志信息
+$WAREHOUSE    仓库地址
+$BLOCKNAME    区块名称
+$BLOCKKEY     区块值
 
 ```
 {
@@ -80,45 +80,99 @@ $BLOCKKEY     block key
 }
 ```
 
-## Warehouse
+## 物料仓库
 
-Materials should be able to be directly applied through 'import'
+### 开发需求
 
-Material list JSON needs to follow a specific format:
+组件应当符合 es6 标准，支持通过 import 引入，例如
+
+```javascript
+import React from "react";
+import styles from "./index.less";
+import { Button } from "antd";
+
+export default () => (
+  <div className={styles.container}>
+    <div id="components-button-demo-basic">
+      <div>
+        <Button type="primary">Primary</Button>
+        <Button>Default</Button>
+        <Button type="dashed">Dashed</Button>
+        <Button type="link">Link</Button>
+      </div>
+    </div>
+  </div>
+);
+
+```
+
+
+代码片段文件维护在 snippet.bium 下，例如：
+
+```javascript
+// index.ts
+
+export default {
+  /**
+   * 路由拍平
+   * @param {*} arr
+   */
+  flat(arr) {
+    return arr.reduce((prev, cur) => {
+      return prev.concat(Array.isArray(cur) ? this.flat(cur) : cur);
+    }, []);
+  },
+}
+
+```
+
+
+```javascript
+// snippet.bium
+LsTool.flat()
+```
+
+### 物料列表配置
+
+
+物料列表 json 需要符合特定的格式:
 
 ```
 {
     "blocks": [
         {
-            "title": "button",                  - display title
+            "title": "button",                  - 展示名称
             "value": "button-basic",
             "key": "button-basic",          
-            "description": "",                  - block description
+            "description": "",                  - 描述
             "url": "",
-            "downloadUrl": "",                  - npm download url
-            "type": "component",                - component or snippet or npm
+            "downloadUrl": "",                  - npm 下载地址
+            "type": "component",                - 物料类型，component 或 snippet 或 npm
             "path": "button-basic",
             "isPage": false,
-            "defaultPath": "ButtonBasic",       - default install block folder name
-            "img": "",                          - preview image url
+            "defaultPath": "ButtonBasic",       - 默认安装的文件名和引用的名称
+            "img": "",                          - 预览图片地址
             "tags": ["normal"],
             "name": "button",
-            "previewUrl": "",                   - preview url
+            "previewUrl": "",                   - 预览地址
         }
     ]
 }
 
 ```
 
-## The Origin Of Name
-The plugin is named after Dendrobium Gundam which one of the earliest weapon depot systems in Gundam.
+## 命名
+
+Dendrobium（石斛兰）的命名来源于高达 0083 星尘的回忆，是高达中最早的武器库系统之一
 
 ![avatar](https://github.com/panmenglin/dendrobium/raw/master/docs/image/GP03-DENDROBIUM-GUNDAM.jpg)
 
 
-## Other
+## 其他
 
-Look forward to your use and feedback. [Rating & Review](https://marketplace.visualstudio.com/items?itemName=panmenglin.dendrobium&ssr=false#review-details)
+期待你的使用和反馈 [Rating & Review](https://marketplace.visualstudio.com/items?itemName=panmenglin.dendrobium&ssr=false#review-details)
+
+
 
 
 

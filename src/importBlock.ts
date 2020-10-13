@@ -28,12 +28,16 @@ export default async function importBlock(
   state: Memento,
   intl: { get: (key: string) => string, getAll: () => any }
 ) {
-  const materialConfig: MaterialConfig[] | undefined = workspace.getConfiguration().get('dendrobium.materialWarehouse');
 
-  if (!materialConfig) {
+  const materialConfig: MaterialConfig[] | undefined = workspace.getConfiguration().get('dendrobium.materialWarehouse');;
+
+  // do not set material config
+  if (!materialConfig || materialConfig.length === 0) {
+    window.showErrorMessage(chalk.red(intl.get('noMaterialConfig')));
     return;
   }
 
+  // can not find text editor
   let editor: any | undefined = state.get('activeTextEditor');
 
   if (!editor) {
@@ -241,7 +245,6 @@ async function downloadBLock(
   let activeEditor: vscode.TextEditor[] = window.visibleTextEditors.filter((item: any) => {
     return item.id === editor.id;
   });
-
 
   if (!activeEditor[0]) {
     return;

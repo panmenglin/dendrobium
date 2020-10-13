@@ -1,5 +1,6 @@
 const zhCN = {
     noTextEditor: '🚧 请选择你要插入的位置',
+    noMaterialConfig: '🚧 请先配置物料仓库',
     setFolderName: '请设置安装物料的文件夹名称, 例如："Button"',
     successImport: '🎉 安装成功',
     updateComfirm: '物料已存在，你想要更新它吗？',

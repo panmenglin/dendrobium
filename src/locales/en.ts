@@ -1,5 +1,6 @@
 const en = {
     noTextEditor: '🚧 Please focus text editor',
+    noMaterialConfig: '🚧 Please set material config',
     setFolderName: 'Please setting folder name. example："Button"',
     successImport: '🎉 Success import',
     updateComfirm: 'Folder already exist, do you want update content?',
