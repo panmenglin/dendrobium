@@ -27,6 +27,24 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "treeView",
+          "title": "Demdrobium Sinppets",
+          "icon": "./dendrobium.png"
+        }
+      ]
+    },
+    "views": {
+      "treeView": [
+        {
+          "id": "treeView-item",
+          "name": "item",
+          "when": ""
+        }
+      ]
+    },
     "configuration": {
       "type": "object",
       "title": "Dendrobium configuration",

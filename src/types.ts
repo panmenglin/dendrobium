@@ -37,7 +37,9 @@ export interface BlockConfig {
     features?: [string];
     branch: string;
     framework: string;
-    wareHouse?: MaterialConfig
+    wareHouse?: MaterialConfig;
+    snippets?: string;
+    parentCode?: string;
 }
   
 

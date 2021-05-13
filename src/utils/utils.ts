@@ -29,7 +29,7 @@ export function getWebViewContent(context: any, templatePath: string) {
  * @param targetPath 
  */
 export function mvUnzipFolder(currentPath: string, targetPath: string) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     mv(currentPath, targetPath, { mkdirp: true }, (err: any) => {
       if (err) {
         reject(err);
@@ -52,7 +52,7 @@ interface Actuator {
  */
 export const actuator = function (this: Actuator, options = {}, errorCallback: (err: any) => void) {
   return {
-    run: (cmd: string) => new Promise((resolve, reject) => {
+    run: (cmd: string) => new Promise<void>((resolve, reject) => {
       childProcess.exec(cmd, options, (err: any, ...arg: any) => {
         if (err) {
           errorCallback(err);
@@ -73,7 +73,7 @@ export const actuator = function (this: Actuator, options = {}, errorCallback: (
  * @param {*} targetPath 
  */
 export function mvFolder(currentPath: string, targetPath: string) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     mv(currentPath, targetPath, { mkdirp: true, clobber: false }, (err: any) => {
       if (err) {
         reject(err);

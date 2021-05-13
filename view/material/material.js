@@ -11,9 +11,9 @@ window.addEventListener("message", (event) => {
   const message = event.data;
 
   // tab
-  if (message.warehouse) {
+  if (message.library) {
     let tabs = "";
-    message.warehouse.map((item, index) => {
+    message.library.map((item, index) => {
       tabs += `<div class="tabs-item" key="${index}">${
         item.title || item.name
       }</div>`;
@@ -29,7 +29,7 @@ window.addEventListener("message", (event) => {
       $(this).addClass("active").siblings().removeClass("active");
       $(".loading").show();
 
-      selectedWareHouse = message.warehouse[$(this).attr("key")];
+      selectedWareHouse = message.library[$(this).attr("key")];
       vscode.postMessage({ warehouseSelected: selectedWareHouse });
     });
   }
@@ -41,14 +41,17 @@ window.addEventListener("message", (event) => {
   }
 
   // block
-  if (message.blocks) {
-    let blocks = message.blocks.blocks;
+  if (message.components) {
+    let blocks = message.components;
 
-    blocks = JSON.parse(JSON.stringify(blocks));
+    // blocks = JSON.parse(JSON.stringify(blocks));
+    // console.log(12121212);
+    // console.log(blocks);
 
-    // blocks.map((item, index) => {
-    //   item.title = `${item.title}${index}`;
-    // });
+    // console.log(blocks);
+    // // blocks.map((item, index) => {
+    // //   item.title = `${item.title}${index}`;
+    // // });
 
     blockListRender(blocks);
     bindSearch(blocks);
@@ -77,6 +80,9 @@ function bindSearch(blocks) {
  * @param {*} blocks
  */
 function blockListRender(blocks) {
+
+  console.log('blocks', blocks);
+
   // pagination
   let pageNo = 1;
   const pageSize = 2;
@@ -157,7 +163,7 @@ function blockListRender(blocks) {
                           }">${intl["add"] || "添加"}</a>   
                           <a href="${
                             item.previewUrl || item.url
-                          }" target="_blank">${intl["preview"] || "预览"}</a>
+                          }" target="_blank">${intl["preview"] || "文档"}</a>
                       </div>
                   </div>`;
     });
@@ -172,34 +178,34 @@ function blockListRender(blocks) {
       const selected = blocks[itemIndex];
       selected.warehouse = selectedWareHouse;
 
-      if (selected.type === "npm") {
-        $(".shadow").show();
+      // if (selected.type === "npm") {
+      //   $(".shadow").show();
 
-        // insert project
-        $("#leftButton")
-          .off()
-          .click(function () {
-            vscode.postMessage({
-              blockSelected: {
-                ...selected,
-                type: "snippet",
-              },
-            });
+      //   // insert project
+      //   $("#leftButton")
+      //     .off()
+      //     .click(function () {
+      //       vscode.postMessage({
+      //         blockSelected: {
+      //           ...selected,
+      //           type: "snippet",
+      //         },
+      //       });
 
-            $(".shadow").hide();
-          });
+      //       $(".shadow").hide();
+      //     });
 
-        // as npm dependencies
-        $("#rightButton")
-          .off()
-          .click(function () {
-            vscode.postMessage({ blockSelected: selected });
+      //   // as npm dependencies
+      //   $("#rightButton")
+      //     .off()
+      //     .click(function () {
+      //       vscode.postMessage({ blockSelected: selected });
 
-            $(".shadow").hide();
-          });
-      } else {
+      //       $(".shadow").hide();
+      //     });
+      // } else {
         vscode.postMessage({ blockSelected: selected });
-      }
+      // }
     });
 
     $("#close").click(function () {

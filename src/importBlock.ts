@@ -12,6 +12,7 @@ import statistics from './statistics';
 import insertBlock from './insertBlock';
 import insertSnippet from './insertSnippet';
 import updatePackage from './updatePackage';
+import { getLibrary, getSnippets } from './service';
 
 const fs = require('fs');
 const chalk = require('chalk');
@@ -51,34 +52,53 @@ export default async function importBlock(
     return;
   }
 
+
   vscode.window.withProgress({
     location: vscode.ProgressLocation.Notification,
     title: intl.get('loadingMaterial'),
-  }, (progress, token) => {
+  }, async (progress, token) => {
 
     progress.report({ increment: 0, message: intl.get('fetchingConfig') });
 
-    const progressPromise = new Promise((resolve, reject) => {
-      downloadGitSparse(materialConfig[0].path, {
-        ...materialConfig[0],
-        message: `🚚 ${intl.get('loadingMaterial')}`
-      })
-        .then(
-          (path) => {
-            const blockList = JSON.parse(fs.readFileSync(path, 'utf-8'));
+    const library = await getLibrary();
 
-            progress.report({ increment: 60, message: intl.get('initMaterialView') });
+    // const blockList = JSON.parse(fs.readFileSync(path, 'utf-8'));
+    // progress.report({ increment: 60, message: intl.get('initMaterialView') });
 
-            initMaterialPanel(context, state, materialConfig, blockList, resolve, progress, intl);
-          },
-          err => {
-            window.showErrorMessage(chalk.red(`${err}`));
-            reject();
-          }
-        );
-    });
+    // const libraryMay: { [key: string]: string } = {};
 
-    return progressPromise;
+    // library..map((item: any) => {
+    //   libraryMay[item.code] = item;
+    // });
+
+
+    initLibraryPanel(context, state, materialConfig,
+      library.library,
+      // resolve, 
+      progress,
+      intl);
+
+    // const progressPromise = new Promise<void>((resolve, reject) => {
+    //   downloadGitSparse(materialConfig[0].path, {
+    //     ...materialConfig[0],
+    //     message: `🚚 ${intl.get('loadingMaterial')}`
+    //   })
+    //     .then(
+    //       (path) => {
+    //         const blockList = JSON.parse(fs.readFileSync(path, 'utf-8'));
+
+    //         progress.report({ increment: 60, message: intl.get('initMaterialView') });
+
+    //         initMaterialPanel(context, state, materialConfig, blockList, resolve, progress, intl);
+    //       },
+    //       err => {
+    //         window.showErrorMessage(chalk.red(`${err}`));
+    //         reject();
+    //       }
+    //     );
+    // });
+
+    // return progressPromise;
   });
 }
 
@@ -87,26 +107,37 @@ export default async function importBlock(
  * change warehouse
  * @param config 
  */
-function changeWarehouse(
+async function changeWarehouse(
   config: MaterialConfig,
   intl: { get: (key: string) => string }
 ) {
-  downloadGitSparse(config.path, {
-    ...config,
-    message: `🚚 ${intl.get('loadingMaterial')}`
-  })
-    .then(
-      (path) => {
-        const blockList = JSON.parse(fs.readFileSync(path, 'utf-8'));
 
-        panel.webview.postMessage({
-          blocks: blockList,
-        });
-      },
-      err => {
-        window.showErrorMessage(chalk.red(`${err}`));
-      }
-    );
+  const components = await getLibrary({
+    path: config.path
+  });
+
+
+  panel.webview.postMessage({
+    components: components.components
+  });
+
+  // getLibrary()
+  // downloadGitSparse(config.path, {
+  //   ...config,
+  //   message: `🚚 ${intl.get('loadingMaterial')}`
+  // })
+  //   .then(
+  //     (path) => {
+  //       const blockList = JSON.parse(fs.readFileSync(path, 'utf-8'));
+
+  //       panel.webview.postMessage({
+  //         blocks: blockList,
+  //       });
+  //     },
+  //     err => {
+  //       window.showErrorMessage(chalk.red(`${err}`));
+  //     }
+  //   );
 }
 
 
@@ -119,12 +150,12 @@ function changeWarehouse(
  * @param resolve 
  * @param progress 
  */
-function initMaterialPanel(
+function initLibraryPanel(
   context: ExtensionContext,
   state: Memento,
   config: MaterialConfig[] | undefined,
-  blockList: string,
-  resolve: () => void,
+  blockList: any,
+  // resolve: () => void,
   progress: Progress<{ increment: number, message: string }>,
   intl: { get: (key: string) => string, getAll: () => any }
 ) {
@@ -138,40 +169,46 @@ function initMaterialPanel(
     }
   );
 
+
   panel.webview.onDidReceiveMessage(async (message: any) => {
-    setTimeout(() => {
-      resolve();
-    }, 300);
+    // setTimeout(() => {
+    //   resolve();
+    // }, 300);
 
     // webview ready
     if (message.ready) {
       panel.webview.postMessage({
         warehouse: config,
         intl: intl.getAll(),
-        blocks: blockList,
+        // blocks: blockList,
+        library: blockList,
       });
+
+      changeWarehouse(blockList[0], intl);
 
       progress.report({ increment: 100, message: intl.get('materialViewReady') });
     }
 
     // selected block
     if (message.blockSelected) {
-      let uri;
-      if (message.blockSelected.type !== 'npm') {
-        uri = await window.showOpenDialog({
-          canSelectFolders: true,
-          canSelectFiles: false,
-          canSelectMany: false
-        });
+      // let uri;
+      // if (message.blockSelected.type !== 'npm') {
+      //   uri = await window.showOpenDialog({
+      //     canSelectFolders: true,
+      //     canSelectFiles: false,
+      //     canSelectMany: false
+      //   });
 
-        if (uri && uri[0].path.indexOf(' ') >= 0) {
-          window.showErrorMessage(chalk.red(intl.get('blankInName')));
-          return;
-        }
-      }
+      //   if (uri && uri[0].path.indexOf(' ') >= 0) {
+      //     window.showErrorMessage(chalk.red(intl.get('blankInName')));
+      //     return;
+      //   }
+      // }
 
 
-      selectBlock(message.blockSelected, state, intl, uri ? uri[0].path : uri);
+      selectBlock(message.blockSelected, state, intl,
+        // uri ? uri[0].path : uri
+      );
     }
 
     // change warehouse
@@ -194,7 +231,8 @@ function initMaterialPanel(
 
 
 /**
- * select block
+ * select component
+ * 安装组件和代码片段
  * @param block 
  * @param state 
  * @param path 
@@ -204,27 +242,68 @@ async function selectBlock(
   block: BlockConfig,
   state: Memento,
   intl: { get: (key: string) => string },
-  path?: string,
+  // path?: string,
   prompt?: string
 ) {
 
-  if (block.type === 'npm') {
-    downloadBLock(block, state, block.defaultPath, intl, path);
-    return;
+
+  // 是否有代码片段
+  if (block.snippets) {
+    const snippet = await getSnippets({
+      path: block.snippets
+    });
+
+    if (snippet) {
+      // 遍历工作区所有文件夹添加代码片段
+      // 后期优化 根据组件安装目录添加代码片段
+      workspace.workspaceFolders?.map(item => {
+        const rootPath = `${item.uri.path}/.vscode/${block?.parentCode}.code-snippets`;
+
+        let currentSnippet: { [key: string]: any } = {};
+        if (fs.existsSync(rootPath)) {
+          const _currentSnippet = fs.readFileSync(rootPath, 'utf-8');
+
+          if (_currentSnippet) {
+            currentSnippet = JSON.parse(_currentSnippet);
+          }
+        }
+
+        // 合并现有的代码片段
+        Object.keys(snippet).forEach(key => {
+          currentSnippet[key] = snippet[key];
+        });
+
+        // 更新文件
+        fs.writeFile(rootPath, JSON.stringify(currentSnippet, undefined, '\t'), function (err: any) {
+          if (err) {
+              throw err;
+          }
+        });
+      });
+    }
+
   }
 
-  const pathName = await window.showInputBox({
-    ignoreFocusOut: true,
-    prompt: prompt || intl.get('setFolderName'),
-    value: block.defaultPath,
-  });
+  // 本期仅支持 npm 安装
+  // downloadBLock(block, state, block.defaultPath, intl, path);
+
+  // if (block.type === 'npm') {
+  //   downloadBLock(block, state, block.defaultPath, intl, path);
+  //   return;
+  // }
+
+  // const pathName = await window.showInputBox({
+  //   ignoreFocusOut: true,
+  //   prompt: prompt || intl.get('setFolderName'),
+  //   value: block.defaultPath,
+  // });
 
 
-  if (!pathName) {
-    return;
-  }
+  // if (!pathName) {
+  //   return;
+  // }
 
-  downloadBLock(block, state, pathName, intl, path);
+  // downloadBLock(block, state, pathName, intl, path);
 }
 
 
@@ -259,72 +338,98 @@ async function downloadBLock(
     title: intl.get('loadingInstall'),
   }, (progress, token) => {
 
-    if (!fs.existsSync(blockPath) || fs.existsSync(blockPath) && fs.readdirSync(blockPath).length === 0) {
-      return downloadByNpm(importPath, blockPath, block, progress, intl).then((res: any) => {
-        window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
 
-        statistics({
-          type: 'add',
-          message: '',
-          block
-        });
+    return downloadByNpm(importPath, blockPath, block, progress, intl).then((res: any) => {
+      window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
 
-        // insert snippet
-        if (res.snippet) {
-          insertSnippet(activeEditor[0], res.snippet, block, intl);
-        }
-
-        // insert block
-        if (res.blockName) {
-          insertBlock(activeEditor[0], block, blockPath, intl);
-        }
-
-        if (res.packageJson) {
-          updatePackage(filePath, res.packageJson, block, intl);
-        }
-
+      statistics({
+        type: 'add',
+        message: '',
+        block
       });
-    } else {
-      return vscode.window.showInformationMessage(intl.get('updateComfirm'), intl.get('yes'), intl.get('cancel'))
-        .then(async (answer) => {
-          if (answer === intl.get('yes')) {
-            const gitUser: any = await getGitConfig(importPath, intl);
 
-            if (gitUser && gitUser.name) {
-              // block already exist, update block
-              return upDateBlock(importPath, pathName, intl, () => downloadByNpm(importPath, blockPath, block, progress, intl)).then((res: any) => {
-                window.setStatusBarMessage(chalk.green(intl.get('successUpdate')), 1000);
+      // insert snippet
+      // if (res.snippet) {
+      //   insertSnippet(activeEditor[0], res.snippet, block, intl);
+      // }
 
-                statistics({
-                  type: 'update',
-                  message: '',
-                  block
-                });
+      // insert block
+      // if (res.blockName) {
+      //   insertBlock(activeEditor[0], block, blockPath, intl);
+      // }
 
-                // insert snippet
-                if (res.snippet) {
-                  insertSnippet(activeEditor[0], res.snippet, block, intl);
-                }
+      if (res.packageJson) {
+        updatePackage(filePath, res.packageJson, block, intl);
+      }
 
-                // insert block
-                if (res.blockName) {
-                  insertBlock(activeEditor[0], block, blockPath, intl);
-                }
+    });
 
-                // update package
-                if (res.packageJson) {
-                  updatePackage(filePath, res.packageJson, block, intl);
-                }
+    // if (!fs.existsSync(blockPath) || fs.existsSync(blockPath) && fs.readdirSync(blockPath).length === 0) {
+    //   return downloadByNpm(importPath, blockPath, block, progress, intl).then((res: any) => {
+    //     window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
 
-              }, (err: any) => {
-                window.showErrorMessage(chalk.red(`🚧 ${err}`));
-              });
-            } else {
-              window.showErrorMessage(chalk.red(intl.get('noGit')));
-            }
-          }
-        });
-    }
+    //     statistics({
+    //       type: 'add',
+    //       message: '',
+    //       block
+    //     });
+
+    //     // insert snippet
+    //     if (res.snippet) {
+    //       insertSnippet(activeEditor[0], res.snippet, block, intl);
+    //     }
+
+    //     // insert block
+    //     if (res.blockName) {
+    //       insertBlock(activeEditor[0], block, blockPath, intl);
+    //     }
+
+    //     if (res.packageJson) {
+    //       updatePackage(filePath, res.packageJson, block, intl);
+    //     }
+
+    //   });
+    // } else {
+    //   return vscode.window.showInformationMessage(intl.get('updateComfirm'), intl.get('yes'), intl.get('cancel'))
+    //     .then(async (answer) => {
+    //       if (answer === intl.get('yes')) {
+    //         const gitUser: any = await getGitConfig(importPath, intl);
+
+    //         if (gitUser && gitUser.name) {
+    //           // block already exist, update block
+    //           return upDateBlock(importPath, pathName, intl, () => downloadByNpm(importPath, blockPath, block, progress, intl)).then((res: any) => {
+    //             window.setStatusBarMessage(chalk.green(intl.get('successUpdate')), 1000);
+
+    //             statistics({
+    //               type: 'update',
+    //               message: '',
+    //               block
+    //             });
+
+    //             // insert snippet
+    //             if (res.snippet) {
+    //               insertSnippet(activeEditor[0], res.snippet, block, intl);
+    //             }
+
+    //             // insert block
+    //             if (res.blockName) {
+    //               insertBlock(activeEditor[0], block, blockPath, intl);
+    //             }
+
+    //             // update package
+    //             if (res.packageJson) {
+    //               updatePackage(filePath, res.packageJson, block, intl);
+    //             }
+
+    //           }, (err: any) => {
+    //             window.showErrorMessage(chalk.red(`🚧 ${err}`));
+    //           });
+    //         } else {
+    //           window.showErrorMessage(chalk.red(intl.get('noGit')));
+    //         }
+    //       }
+    //     });
+    // }
 
   });
 
