@@ -4,7 +4,7 @@
  */
 import * as vscode from 'vscode';
 import { getWebViewContent, getNpmRootPath, actuator, getGitRootPath } from './utils/utils';
-import { MaterialConfig, BlockConfig } from './types';
+import { BlockConfig, LibrarysConfig, LibraryConfig } from './types';
 import getGitConfig from './utils/getGitConfig';
 import statistics from './statistics';
 import { getLibrary, getSnippets } from './service';
@@ -24,10 +24,10 @@ export default async function importBlock(
   intl: { get: (key: string) => string, getAll: () => any }
 ) {
 
-  const materialConfig: MaterialConfig[] | undefined = workspace.getConfiguration().get('dendrobium.materialWarehouse');;
+  const libraryConfig: LibrarysConfig | undefined = workspace.getConfiguration().get('dendrobium.librarysConfig');
 
   // do not set material config
-  if (!materialConfig || materialConfig.length === 0) {
+  if (!libraryConfig?.configPath || !libraryConfig?.rootPath) {
     window.showErrorMessage(chalk.red(intl.get('noMaterialConfig')));
     return;
   }
@@ -55,7 +55,7 @@ export default async function importBlock(
 
     const library = await getLibrary();
 
-    initLibraryPanel(context, state, materialConfig,
+    initLibraryPanel(context, state, libraryConfig,
       library.library,
       // resolve, 
       progress,
@@ -69,7 +69,7 @@ export default async function importBlock(
  * @param config 
  */
 async function changeLibrary(
-  config: MaterialConfig,
+  config: LibraryConfig,
   intl: { get: (key: string) => string }
 ) {
 
@@ -96,7 +96,7 @@ async function changeLibrary(
 function initLibraryPanel(
   context: ExtensionContext,
   state: Memento,
-  config: MaterialConfig[] | undefined,
+  config: LibrarysConfig,
   blockList: any,
   // resolve: () => void,
   progress: Progress<{ increment: number, message: string }>,
@@ -126,6 +126,7 @@ function initLibraryPanel(
         library: blockList,
       });
 
+      console.log('blockList', blockList);
       changeLibrary(blockList[0], intl);
 
       progress.report({ increment: 100, message: intl.get('materialViewReady') });
@@ -324,14 +325,13 @@ async function installComponent(
       cwd: npmRootPath,
     }, (error) => { });
 
-    const packageManagementTool: { tool: string } | undefined = workspace.getConfiguration().get('dendrobium.packageManagementTool');
-    const packageTool = packageManagementTool?.tool || 'npm';
+    const packageToolCommand: { [key: string]: string } | undefined = workspace.getConfiguration().get('dendrobium.packageManagementTool');
 
     vscode.window.withProgress({
       location: vscode.ProgressLocation.Notification,
       title: intl.get('loadingInstall'),
     }, (progress, token) => {
-      const res = cmdActuator.run(`${packageTool} install --save ${component.name}`).then(() => {
+      const res = cmdActuator.run(`${packageToolCommand?.install || 'npm install --save'} ${component.name}`).then(() => {
         window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
         window.showInformationMessage(intl.get('successImport'));
       });

@@ -44,7 +44,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	}));
 
 
-	console.log(121212);
 	// 实现树视图的初始化
 	TreeViewProvider.initTreeViewItem();
 }

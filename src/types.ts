@@ -64,3 +64,15 @@ export interface ReportApi {
 export interface StatisticsConfig {
     reportApi?: ReportApi
 }
+
+export interface LibrarysConfig {
+    rootPath: string;
+    configPath: string;
+}
+
+
+export interface LibraryConfig {
+    code: string;
+    name: string;
+    path: string;
+}

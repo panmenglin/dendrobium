@@ -7,7 +7,7 @@
   "engines": {
     "vscode": "^1.48.0"
   },
-  "icon": "dendrobium.png",
+  "icon": "./resource/dendrobium.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/panmenglin/dendrobium.git"
@@ -55,8 +55,12 @@
           "default": "zh-cn",
           "description": "Plugin language. example: 'en', 'zh-cn'"
         },
+        "dendrobium.librarysConfig": {
+          "rootPath": "",
+          "configPath": ""
+        },
         "dendrobium.packageManagementTool": {
-          "tool": "npm"
+          "install": "npm install --save"
         },
         "dendrobium.statistics": {
           "type": "object",

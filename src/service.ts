@@ -1,7 +1,6 @@
 import requestSingleton from './utils/request';
 import { workspace } from 'vscode';
-import { StatisticsConfig } from './types';
-import { libraryBaseUrl, libraryUrl } from './config';
+import { StatisticsConfig, LibrarysConfig } from './types';
 
 const request = requestSingleton();
 
@@ -45,8 +44,13 @@ export function report(reportVariable: any) {
  * @returns 
  */
 export function getLibrary(params?: { path: string }) {
-    const url = params?.path ? `${libraryBaseUrl}${params?.path}` : libraryUrl;
+    const libraryConfig: LibrarysConfig | undefined = workspace.getConfiguration().get('dendrobium.librarysConfig');
 
+    if (!libraryConfig) {
+        return;
+    }
+
+    const url = params?.path ? `${libraryConfig.rootPath}${params?.path}` : libraryConfig.configPath;
     return request(url, {
         method: 'GET',
     });

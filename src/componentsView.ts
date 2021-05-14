@@ -164,7 +164,6 @@ export class TreeViewProvider implements TreeDataProvider<TreeItemNode>{
         // 实例化 TreeViewProvider
         const treeViewProvider = new TreeViewProvider();
 
-        console.log('12121212');
         // registerTreeDataProvider：注册树视图
         // 你可以类比 registerCommand(上面注册 Hello World)
         window.registerTreeDataProvider('components-view', treeViewProvider);
