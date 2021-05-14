@@ -42,6 +42,7 @@ export interface BlockConfig {
     parentCode?: string;
     doc?: string;
     code: string;
+    version: string;
 }
   
 

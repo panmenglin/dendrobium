@@ -1,7 +1,17 @@
+.dendrobium {
+  height: 100%;
+  width: 100%;
+  min-width: 360px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
 .tabs {
   display: flex;
-  padding: 20px 20px;
-  position: fixed;
+  margin: 20px;
+  position: absolute;
+  min-width: 320px;
   top: 0;
   left: 0;
   right: 0;
@@ -11,37 +21,78 @@
   user-select: none;
 }
 
-.tabs-item {
+.tabs-item,
+.selected-library {
   flex: 1;
   height: 30px;
   font-size: 14px;
-  text-align: center;
-  border-bottom: 3px solid none;
+  border-bottom: 3px solid rgba(0, 0, 0, 0);
+  min-width: 80px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 8px;
+  line-height: 30px;
+}
+
+.tabs-item {
   cursor: pointer;
 }
 
-.tabs-item.active {
+.selected-library {
   border-bottom: 3px solid var(--vscode-button-background);
+  margin-right: 8px;
+}
+
+.drop-down {
+  position: relative;
+  cursor: pointer;
+}
+
+.drop-down:hover .select {
+  display: block;
+}
+
+.select {
+  display: none;
+  position: absolute;
+  top: 33px;
+  right: 0;
+  max-height: 160px;
+  width: 120px;
+  overflow-y: auto;
+  z-index: 9;
+  background: var(--vscode-dropdown-background);
+  border: 1px solid var(--vscode-editorRuler-foreground);
+}
+
+.select .tabs-item {
+  border-bottom: 1px solid var(--vscode-editorRuler-foreground);
+}
+
+.tabs-item.active,
+.select .tabs-item:hover {
+  background: var(--vscode-editorRuler-foreground);
 }
 
 .search {
-    position: absolute;
-    height: 40px;
-    top: 70px;
-    left: 20px;
-    right: 20px;
-    padding-bottom: 10;
-    display: flex;
+  position: absolute;
+  height: 40px;
+  top: 70px;
+  left: 20px;
+  right: 20px;
+  padding-bottom: 10px;
+  display: flex;
 }
 
 .search input {
-    display: none;
-    flex: 1;
-    height: 30px;
-    background: none;
-    padding: 0 10px;
-    color: var(--vscode-input-foreground);
-    border: 1px solid var(--vscode-editorRuler-foreground);
+  display: none;
+  flex: 1;
+  height: 30px;
+  background: none;
+  padding: 0 10px;
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-editorRuler-foreground);
 }
 
 .container {
@@ -60,6 +111,19 @@
 
 .block-title {
   font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.block-star {
+  font-size: 14px;
+  line-height: 16px;
+}
+
+.block-star svg {
+  vertical-align: text-top;
+  cursor: pointer;
 }
 
 .block-desc {
@@ -130,29 +194,28 @@
   color: #fff;
 }
 
-
 .loading {
-    display: inline-block;
-    border: 4px solid hsl(222, 100%, 95%);;
-    border-left-color: var(--vscode-button-background);
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    animation: donut-spin 1.2s linear infinite;
-    position: fixed;
-    top: 30%;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9;
+  display: inline-block;
+  border: 4px solid hsl(222, 100%, 95%);
+  border-left-color: var(--vscode-button-background);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: donut-spin 1.2s linear infinite;
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9;
 }
 
 @keyframes donut-spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* 对话框 */
@@ -176,7 +239,6 @@
   background: var(--vscode-editor-background);
   padding: 20px 20px 60px;
 }
-
 
 .dialog-header {
   text-align: right;
@@ -203,7 +265,6 @@
   right: 0;
 }
 
-
 .button-container div {
   margin: 8px 5px 8px 10px;
   color: #fff;
@@ -214,4 +275,3 @@
   background: var(--vscode-button-background);
   cursor: pointer;
 }
-

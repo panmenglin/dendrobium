@@ -1,37 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dendrobium</title>
-    <link rel="stylesheet" href="./material.css">
-</head>
-<body>
-    <div class="loading"></div>
-    <div class="tabs">
-    </div>
-    <div class="search">
-        <input type="text" placeholder="" id="keyword">
-    </div>
-    <div class="container">
+    <link rel="stylesheet" href="./material.css" />
+  </head>
+  <body>
+    <div class="dendrobium">
+      <div class="loading"></div>
+      <div class="tabs">
+        <div id="selectedLibrary" class="selected-library"></div>
+        <div class="drop-down">
+          <svg
+            t="1620975899184"
+            class="icon"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="2820"
+            width="30"
+            height="30"
+          >
+            <path
+              d="M512 330.24m-49.92 0a49.92 49.92 0 1 0 99.84 0 49.92 49.92 0 1 0-99.84 0Z"
+              p-id="2821"
+              fill="#d4d4d4"
+            ></path>
+            <path
+              d="M512 512m-49.92 0a49.92 49.92 0 1 0 99.84 0 49.92 49.92 0 1 0-99.84 0Z"
+              p-id="2822"
+              fill="#d4d4d4"
+            ></path>
+            <path
+              d="M512 693.76m-49.92 0a49.92 49.92 0 1 0 99.84 0 49.92 49.92 0 1 0-99.84 0Z"
+              p-id="2823"
+              fill="#d4d4d4"
+            ></path>
+          </svg>
+          <div id="select" class="select"></div>
+        </div>
+      </div>
+      <div class="search">
+        <input type="text" placeholder="" id="keyword" />
+      </div>
+      <div class="container">
         <div id="blockContainer"></div>
-        <div class="pagination">
-        </div>
-    </div>
-    <!-- dialog -->
-    <div class="shadow">
+        <div class="pagination"></div>
+      </div>
+      <!-- dialog -->
+      <div class="shadow">
         <div class="dialog">
-            <div class="dialog-header">
-                <div id="close">✕</div>
-            </div>
-            <div id="dialogMessage">请选择安装方式</div>
-            <div class="button-container">
-                <div id="leftButton" type="left">直接插入项目中</div>
-                <div id="rightButton" type="right">作为 npm 依赖安装</div>
-            </div>
+          <div class="dialog-header">
+            <div id="close">✕</div>
+          </div>
+          <div id="dialogMessage">请选择安装方式</div>
+          <div class="button-container">
+            <div id="leftButton" type="left">直接插入项目中</div>
+            <div id="rightButton" type="right">作为 npm 依赖安装</div>
+          </div>
         </div>
+      </div>
     </div>
-</body>
-<script src="./jquery-3.5.1.slim.min.js"></script>
-<script src="./material.js"></script>
+  </body>
+  <script src="./jquery-3.5.1.slim.min.js"></script>
+  <script src="./material.js"></script>
 </html>

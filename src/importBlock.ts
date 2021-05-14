@@ -1,23 +1,17 @@
 /**
- * import block
+ * 使用组件
+ * use components
  */
 import * as vscode from 'vscode';
-import { getWebViewContent } from './utils/utils';
-import downloadGitSparse from './utils/downloadGitSparse';
-import downloadByNpm from './utils/downloadNpm';
-import upDateBlock from './updateBlock';
+import { getWebViewContent, getNpmRootPath, actuator, getGitRootPath } from './utils/utils';
 import { MaterialConfig, BlockConfig } from './types';
 import getGitConfig from './utils/getGitConfig';
 import statistics from './statistics';
-import insertBlock from './insertBlock';
-import insertSnippet from './insertSnippet';
-import updatePackage from './updatePackage';
 import { getLibrary, getSnippets } from './service';
 
 const fs = require('fs');
 const chalk = require('chalk');
 const path = require('path');
-const { sep } = path;
 
 import { window, Memento, workspace, ViewColumn, ExtensionContext, Progress } from 'vscode';
 
@@ -52,7 +46,6 @@ export default async function importBlock(
     return;
   }
 
-
   vscode.window.withProgress({
     location: vscode.ProgressLocation.Notification,
     title: intl.get('loadingMaterial'),
@@ -62,43 +55,11 @@ export default async function importBlock(
 
     const library = await getLibrary();
 
-    // const blockList = JSON.parse(fs.readFileSync(path, 'utf-8'));
-    // progress.report({ increment: 60, message: intl.get('initMaterialView') });
-
-    // const libraryMay: { [key: string]: string } = {};
-
-    // library..map((item: any) => {
-    //   libraryMay[item.code] = item;
-    // });
-
-
     initLibraryPanel(context, state, materialConfig,
       library.library,
       // resolve, 
       progress,
       intl);
-
-    // const progressPromise = new Promise<void>((resolve, reject) => {
-    //   downloadGitSparse(materialConfig[0].path, {
-    //     ...materialConfig[0],
-    //     message: `🚚 ${intl.get('loadingMaterial')}`
-    //   })
-    //     .then(
-    //       (path) => {
-    //         const blockList = JSON.parse(fs.readFileSync(path, 'utf-8'));
-
-    //         progress.report({ increment: 60, message: intl.get('initMaterialView') });
-
-    //         initMaterialPanel(context, state, materialConfig, blockList, resolve, progress, intl);
-    //       },
-    //       err => {
-    //         window.showErrorMessage(chalk.red(`${err}`));
-    //         reject();
-    //       }
-    //     );
-    // });
-
-    // return progressPromise;
   });
 }
 
@@ -107,7 +68,7 @@ export default async function importBlock(
  * change warehouse
  * @param config 
  */
-async function changeWarehouse(
+async function changeLibrary(
   config: MaterialConfig,
   intl: { get: (key: string) => string }
 ) {
@@ -116,33 +77,15 @@ async function changeWarehouse(
     path: config.path
   });
 
-
   panel.webview.postMessage({
     components: components.components
   });
-
-  // getLibrary()
-  // downloadGitSparse(config.path, {
-  //   ...config,
-  //   message: `🚚 ${intl.get('loadingMaterial')}`
-  // })
-  //   .then(
-  //     (path) => {
-  //       const blockList = JSON.parse(fs.readFileSync(path, 'utf-8'));
-
-  //       panel.webview.postMessage({
-  //         blocks: blockList,
-  //       });
-  //     },
-  //     err => {
-  //       window.showErrorMessage(chalk.red(`${err}`));
-  //     }
-  //   );
 }
 
 
 /**
- * init material panel
+ * 初始化 Dendrobium 面板
+ * init dendrobium panel
  * @param context 
  * @param state 
  * @param config 
@@ -169,7 +112,6 @@ function initLibraryPanel(
     }
   );
 
-
   panel.webview.onDidReceiveMessage(async (message: any) => {
     // setTimeout(() => {
     //   resolve();
@@ -184,36 +126,21 @@ function initLibraryPanel(
         library: blockList,
       });
 
-      changeWarehouse(blockList[0], intl);
+      changeLibrary(blockList[0], intl);
 
       progress.report({ increment: 100, message: intl.get('materialViewReady') });
     }
 
-    // selected block
+    // 安装组件
+    // selected and install component
     if (message.blockSelected) {
-      // let uri;
-      // if (message.blockSelected.type !== 'npm') {
-      //   uri = await window.showOpenDialog({
-      //     canSelectFolders: true,
-      //     canSelectFiles: false,
-      //     canSelectMany: false
-      //   });
-
-      //   if (uri && uri[0].path.indexOf(' ') >= 0) {
-      //     window.showErrorMessage(chalk.red(intl.get('blankInName')));
-      //     return;
-      //   }
-      // }
-
-
-      selectBlock(message.blockSelected, state, intl,
-        // uri ? uri[0].path : uri
-      );
+      selectBlock(message.blockSelected, state, intl);
     }
 
-    // change warehouse
+    // 切换组件库
+    // change library
     if (message.warehouseSelected) {
-      changeWarehouse(message.warehouseSelected, intl);
+      changeLibrary(message.warehouseSelected, intl);
     }
 
   }, undefined, context.subscriptions);
@@ -246,7 +173,15 @@ async function selectBlock(
   prompt?: string
 ) {
 
+  const answer = await vscode.window.showInformationMessage('该组件会通过 npm 方式安装，同时将为工作区添加组件的代码片段，确定安装吗？', intl.get('yes'), intl.get('cancel'));
+
+  if (answer !== intl.get('yes')) {
+    return;
+  }
+
   // 是否有文档
+  // 工作区添加文档
+  // create doc
   if (block.doc) {
     // 遍历工作区所有文件夹添加代码片段
     // 后期优化 根据组件安装目录添加代码片段
@@ -278,8 +213,9 @@ async function selectBlock(
     });
   }
 
-
-  // 是否有代码片段
+  // 是否有代码片段 
+  // 工作区添加代码片段
+  // create snippets
   if (block.snippets) {
     const snippet = await getSnippets({
       path: block.snippets
@@ -313,156 +249,98 @@ async function selectBlock(
         });
       });
     }
-
   }
 
   // 本期仅支持 npm 安装
-  // downloadBLock(block, state, block.defaultPath, intl, path);
-
-  // if (block.type === 'npm') {
-  //   downloadBLock(block, state, block.defaultPath, intl, path);
-  //   return;
-  // }
-
-  // const pathName = await window.showInputBox({
-  //   ignoreFocusOut: true,
-  //   prompt: prompt || intl.get('setFolderName'),
-  //   value: block.defaultPath,
-  // });
-
-
-  // if (!pathName) {
-  //   return;
-  // }
-
-  // downloadBLock(block, state, pathName, intl, path);
+  installComponent(block, state, block.defaultPath, intl, path);
 }
 
 
 /**
- * download block
- * @param block 
+ * 安装组件
+ * install component
+ * @param component 
  * @param state 
  * @param pathName 
  */
-async function downloadBLock(
-  block: BlockConfig,
+async function installComponent(
+  component: BlockConfig,
   state: Memento,
   pathName: string,
   intl: { get: (key: string) => string },
   folderPath?: string
 ) {
+
+  // 获取当前正在编辑的文件
+  // get active editor
   let editor: any | undefined = state.get('activeTextEditor');
   let activeEditor: vscode.TextEditor[] = window.visibleTextEditors.filter((item: any) => {
     return item.id === editor.id;
   });
 
-  if (!activeEditor[0]) {
+  editor = activeEditor.find(item => {
+    return item.document.uri.scheme === 'file';
+  });
+
+  if (!editor) {
     return;
   }
 
-  const filePath = activeEditor[0].document.uri.path;
-  const importPath = folderPath ? folderPath : filePath.replace(/\/(\w|\.)+$/, '');
-  const blockPath = `${importPath}${sep}${pathName}`;
+  const filePath = editor.document.uri.path;
 
-  vscode.window.withProgress({
-    location: vscode.ProgressLocation.Notification,
-    title: intl.get('loadingInstall'),
-  }, (progress, token) => {
+  // 统计埋点
+  // send statistics information
+  const gitRootPath = getGitRootPath(filePath);
+  const gitUser: any = await getGitConfig(gitRootPath, intl);
+  if (gitUser && gitUser.name) {
+    statistics({
+      type: 'install',
+      message: '',
+      block: component
+    });
+  }
 
+  // 组件安装
+  // install
+  const npmRootPath = getNpmRootPath(filePath);
+  if (npmRootPath) {
+    // const packagePath = path.resolve(npmRootPath, 'package.json');
 
-    return downloadByNpm(importPath, blockPath, block, progress, intl).then((res: any) => {
-      window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
+    // const packageFile = fs.readFileSync(packagePath, 'utf8');
+    // const jsonData = packageFile ? JSON.parse(packageFile) : {};
 
-      statistics({
-        type: 'add',
-        message: '',
-        block
+    // jsonData.dependencies[block.name] = block.version;
+
+    // const packageTpl = JSON.stringify(jsonData, undefined, '\t');
+
+    // fs.writeFile(packagePath, packageTpl, function (err: any) {
+    //   if (err) {
+    //     throw err;
+    //   }
+    // });
+
+    // if (packageFile !== packageTpl) {
+    const cmdActuator = new actuator({
+      cwd: npmRootPath,
+    }, (error) => { });
+
+    const packageManagementTool: { tool: string } | undefined = workspace.getConfiguration().get('dendrobium.packageManagementTool');
+    const packageTool = packageManagementTool?.tool || 'npm';
+
+    vscode.window.withProgress({
+      location: vscode.ProgressLocation.Notification,
+      title: intl.get('loadingInstall'),
+    }, (progress, token) => {
+      const res = cmdActuator.run(`${packageTool} install --save ${component.name}`).then(() => {
+        window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
+        window.showInformationMessage(intl.get('successImport'));
       });
 
-      // insert snippet
-      // if (res.snippet) {
-      //   insertSnippet(activeEditor[0], res.snippet, block, intl);
-      // }
-
-      // insert block
-      // if (res.blockName) {
-      //   insertBlock(activeEditor[0], block, blockPath, intl);
-      // }
-
-      if (res.packageJson) {
-        updatePackage(filePath, res.packageJson, block, intl);
-      }
-
+      return res;
     });
-
-    // if (!fs.existsSync(blockPath) || fs.existsSync(blockPath) && fs.readdirSync(blockPath).length === 0) {
-    //   return downloadByNpm(importPath, blockPath, block, progress, intl).then((res: any) => {
-    //     window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
-
-    //     statistics({
-    //       type: 'add',
-    //       message: '',
-    //       block
-    //     });
-
-    //     // insert snippet
-    //     if (res.snippet) {
-    //       insertSnippet(activeEditor[0], res.snippet, block, intl);
-    //     }
-
-    //     // insert block
-    //     if (res.blockName) {
-    //       insertBlock(activeEditor[0], block, blockPath, intl);
-    //     }
-
-    //     if (res.packageJson) {
-    //       updatePackage(filePath, res.packageJson, block, intl);
-    //     }
-
-    //   });
-    // } else {
-    //   return vscode.window.showInformationMessage(intl.get('updateComfirm'), intl.get('yes'), intl.get('cancel'))
-    //     .then(async (answer) => {
-    //       if (answer === intl.get('yes')) {
-    //         const gitUser: any = await getGitConfig(importPath, intl);
-
-    //         if (gitUser && gitUser.name) {
-    //           // block already exist, update block
-    //           return upDateBlock(importPath, pathName, intl, () => downloadByNpm(importPath, blockPath, block, progress, intl)).then((res: any) => {
-    //             window.setStatusBarMessage(chalk.green(intl.get('successUpdate')), 1000);
-
-    //             statistics({
-    //               type: 'update',
-    //               message: '',
-    //               block
-    //             });
-
-    //             // insert snippet
-    //             if (res.snippet) {
-    //               insertSnippet(activeEditor[0], res.snippet, block, intl);
-    //             }
-
-    //             // insert block
-    //             if (res.blockName) {
-    //               insertBlock(activeEditor[0], block, blockPath, intl);
-    //             }
-
-    //             // update package
-    //             if (res.packageJson) {
-    //               updatePackage(filePath, res.packageJson, block, intl);
-    //             }
-
-    //           }, (err: any) => {
-    //             window.showErrorMessage(chalk.red(`🚧 ${err}`));
-    //           });
-    //         } else {
-    //           window.showErrorMessage(chalk.red(intl.get('noGit')));
-    //         }
-    //       }
-    //     });
     // }
-
-  });
-
+  } else {
+    window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
+    window.showInformationMessage(intl.get('successImport'));
+  }
 }

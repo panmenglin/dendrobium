@@ -2,7 +2,7 @@
   "name": "dendrobium",
   "displayName": "Dendrobium",
   "description": "an armory system for front-end developers",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "publisher": "panmenglin",
   "engines": {
     "vscode": "^1.48.0"
@@ -16,11 +16,12 @@
     "Other"
   ],
   "keywords": [
-    "block",
-    "material",
+    "blocks",
+    "components",
+    "library",
     "snippets",
-    "ice",
-    "umi"
+    "frontend",
+    "ice"
   ],
   "activationEvents": [
     "*"
@@ -32,7 +33,7 @@
         {
           "id": "demdrobium",
           "title": "Demdrobium",
-          "icon": "./dendrobium.png"
+          "icon": "./resource/dendrobium.svg"
         }
       ]
     },
@@ -54,6 +55,9 @@
           "default": "zh-cn",
           "description": "Plugin language. example: 'en', 'zh-cn'"
         },
+        "dendrobium.packageManagementTool": {
+          "tool": "npm"
+        },
         "dendrobium.statistics": {
           "type": "object",
           "default": {
@@ -71,19 +75,6 @@
             }
           },
           "description": "statistics report api"
-        },
-        "dendrobium.materialWarehouse": {
-          "type": "array",
-          "default": [
-            {
-              "name": "scf-blocks",
-              "downloadUrl": "",
-              "type": "gitlab",
-              "branch": "master",
-              "path": "scf-block.json"
-            }
-          ],
-          "description": "Your material warehouse configuration."
         }
       }
     },
@@ -91,10 +82,6 @@
       {
         "command": "dendrobium.importBlock",
         "title": "安装组件"
-      },
-      {
-        "command": "dendrobium.createBlock",
-        "title": "创建组件"
       },
       {
         "command": "dendrobium.treeViewRefresh",
@@ -114,12 +101,6 @@
         {
           "command": "dendrobium.importBlock",
           "group": "7_modification"
-        }
-      ],
-      "explorer/context": [
-        {
-          "command": "dendrobium.createBlock",
-          "group": "z_commands"
         }
       ],
       "view/title": [

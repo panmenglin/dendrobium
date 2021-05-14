@@ -2,9 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import importBlock from './importBlock';
-import createBlock from './createBlock';
 import { TreeViewProvider } from './componentsView';
-import treeViewRefresh from './command/treeViewRefresh';
 import docPreview from './command/docPreview';
 import snippetInsert from './command/snippetInsert';
 import localize from './locales';
@@ -37,10 +35,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		importBlock(context, globalState, intl);
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('dendrobium.createBlock', (uri) => {
-		createBlock(context, globalState, uri, intl);
-	}));
-
 	context.subscriptions.push(vscode.commands.registerCommand('dendrobium.docPreview', (docItem) => {
 		docPreview(context, globalState, docItem, intl);
 	}));
@@ -50,6 +44,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	}));
 
 
+	console.log(121212);
 	// 实现树视图的初始化
 	TreeViewProvider.initTreeViewItem();
 }

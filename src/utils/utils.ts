@@ -183,3 +183,37 @@ function circularPathGetPackageJson(filePath: string): any {
     return getRootPath(path.join(filePath, '../'));
   }
 }
+
+/**
+ * get npm root path
+ */
+export function getNpmRootPath(filePath: string): string {
+  const parentPath = path.resolve(filePath, '..');
+
+  if (filePath === '/') {
+    return '';
+  }
+
+  if (fs.existsSync(path.resolve(parentPath, 'package.json'))) {
+    return parentPath;
+  } else {
+    return getNpmRootPath(parentPath);
+  }
+}
+
+/**
+ * get git root path
+ */
+ export function getGitRootPath(filePath: string): string {
+  const parentPath = path.resolve(filePath, '..');
+
+  if (filePath === '/') {
+    return '';
+  }
+
+  if (fs.existsSync(path.resolve(parentPath, '.git'))) {
+    return parentPath;
+  } else {
+    return getGitRootPath(parentPath);
+  }
+}
