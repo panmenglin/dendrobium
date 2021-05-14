@@ -1,5 +1,5 @@
 <p align="center">
-    <img width="160" src="https://github.com/panmenglin/dendrobium/raw/master/dendrobium.png">
+    <img width="160" src="https://user-images.githubusercontent.com/12044749/118221230-cad27a00-b4af-11eb-9d74-9120041180a6.png">
 </p>
 
 <h1 align="center">Dendrobium</h1>
@@ -113,7 +113,7 @@ Material list JSON needs to follow a specific format:
 ## The Origin Of Name
 The plugin is named after Dendrobium Gundam which one of the earliest weapon depot systems in Gundam.
 
-![avatar](https://github.com/panmenglin/dendrobium/raw/master/docs/image/GP03-DENDROBIUM-GUNDAM.jpg)
+![avatar](https://user-images.githubusercontent.com/12044749/118221259-d7ef6900-b4af-11eb-8393-8020d6cde9cd.jpg)
 
 
 ## Other
