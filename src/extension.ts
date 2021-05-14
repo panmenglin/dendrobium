@@ -4,6 +4,9 @@ import * as vscode from 'vscode';
 import importBlock from './importBlock';
 import createBlock from './createBlock';
 import { TreeViewProvider } from './componentsView';
+import treeViewRefresh from './command/treeViewRefresh';
+import docPreview from './command/docPreview';
+import snippetInsert from './command/snippetInsert';
 import localize from './locales';
 
 // this method is called when your extension is activated
@@ -38,16 +41,17 @@ export async function activate(context: vscode.ExtensionContext) {
 		createBlock(context, globalState, uri, intl);
 	}));
 
+	context.subscriptions.push(vscode.commands.registerCommand('dendrobium.docPreview', (docItem) => {
+		docPreview(context, globalState, docItem, intl);
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('dendrobium.snippetInsert', (snippetItem) => {
+		snippetInsert(context, globalState, snippetItem, intl);
+	}));
+
 
 	// 实现树视图的初始化
 	TreeViewProvider.initTreeViewItem();
-    
-    // 还记得我们在 TreeViewProvider.ts 文件下 TreeItemNode 下创建的 command 吗？
-    // 创建了 command 就需要注册才能使用
-    // label 就是 TreeItemNode->command 里 arguments 传递过来的
-    context.subscriptions.push(vscode.commands.registerCommand('itemClick', (label) => {
-		vscode.window.showInformationMessage(label);
-	}));
 }
 
 // this method is called when your extension is deactivated

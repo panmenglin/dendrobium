@@ -30,16 +30,16 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "treeView",
-          "title": "Demdrobium Sinppets",
+          "id": "demdrobium",
+          "title": "Demdrobium",
           "icon": "./dendrobium.png"
         }
       ]
     },
     "views": {
-      "treeView": [
+      "demdrobium": [
         {
-          "id": "treeView-item",
+          "id": "components-view",
           "name": "item",
           "when": ""
         }
@@ -95,6 +95,18 @@
       {
         "command": "dendrobium.createBlock",
         "title": "创建组件"
+      },
+      {
+        "command": "dendrobium.treeViewRefresh",
+        "title": "刷新"
+      },
+      {
+        "command": "dendrobium.docPreview",
+        "title": "查看"
+      },
+      {
+        "command": "dendrobium.snippetInsert",
+        "title": "插入"
       }
     ],
     "menus": {
@@ -108,6 +120,25 @@
         {
           "command": "dendrobium.createBlock",
           "group": "z_commands"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "dendrobium.treeViewRefresh",
+          "group": "navigation",
+          "when": "view == components-view"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "dendrobium.docPreview",
+          "group": "inline",
+          "when": "view == components-view && viewItem == docs"
+        },
+        {
+          "command": "dendrobium.snippetInsert",
+          "group": "inline",
+          "when": "view == components-view && viewItem == snippets"
         }
       ]
     }

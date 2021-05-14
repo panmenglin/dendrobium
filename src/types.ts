@@ -40,6 +40,8 @@ export interface BlockConfig {
     wareHouse?: MaterialConfig;
     snippets?: string;
     parentCode?: string;
+    doc?: string;
+    code: string;
 }
   
 

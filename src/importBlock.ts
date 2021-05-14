@@ -246,6 +246,38 @@ async function selectBlock(
   prompt?: string
 ) {
 
+  // 是否有文档
+  if (block.doc) {
+    // 遍历工作区所有文件夹添加代码片段
+    // 后期优化 根据组件安装目录添加代码片段
+    workspace.workspaceFolders?.map(item => {
+      const rootPath = `${item.uri.path}/.vscode/${block?.parentCode}.component-docs`;
+
+      let currentDocs: { [key: string]: any } = {};
+      if (fs.existsSync(rootPath)) {
+        const _currentDocs = fs.readFileSync(rootPath, 'utf-8');
+
+        if (_currentDocs) {
+          currentDocs = JSON.parse(_currentDocs);
+        }
+      }
+
+      // 合并现有的代码片段
+      currentDocs[block.code] = {
+        name: block.title,
+        url: block.doc,
+        code: block.code,
+      };
+
+      // 更新文件
+      fs.writeFile(rootPath, JSON.stringify(currentDocs, undefined, '\t'), function (err: any) {
+        if (err) {
+          throw err;
+        }
+      });
+    });
+  }
+
 
   // 是否有代码片段
   if (block.snippets) {
@@ -259,24 +291,24 @@ async function selectBlock(
       workspace.workspaceFolders?.map(item => {
         const rootPath = `${item.uri.path}/.vscode/${block?.parentCode}.code-snippets`;
 
-        let currentSnippet: { [key: string]: any } = {};
+        let currentSnippets: { [key: string]: any } = {};
         if (fs.existsSync(rootPath)) {
-          const _currentSnippet = fs.readFileSync(rootPath, 'utf-8');
+          const _currentSnippets = fs.readFileSync(rootPath, 'utf-8');
 
-          if (_currentSnippet) {
-            currentSnippet = JSON.parse(_currentSnippet);
+          if (_currentSnippets) {
+            currentSnippets = JSON.parse(_currentSnippets);
           }
         }
 
         // 合并现有的代码片段
         Object.keys(snippet).forEach(key => {
-          currentSnippet[key] = snippet[key];
+          currentSnippets[key] = snippet[key];
         });
 
         // 更新文件
-        fs.writeFile(rootPath, JSON.stringify(currentSnippet, undefined, '\t'), function (err: any) {
+        fs.writeFile(rootPath, JSON.stringify(currentSnippets, undefined, '\t'), function (err: any) {
           if (err) {
-              throw err;
+            throw err;
           }
         });
       });
