@@ -4,7 +4,7 @@
  */
 import * as vscode from 'vscode';
 import { getWebViewContent, getNpmRootPath, actuator, getGitRootPath } from './utils/utils';
-import { BlockConfig, LibrarysConfig, LibraryConfig } from './types';
+import { ComponentConfig, LibrarysConfig, LibraryConfig } from './types';
 import getGitConfig from './utils/getGitConfig';
 import statistics from './statistics';
 import { getLibrary, getSnippets } from './service';
@@ -65,7 +65,8 @@ export default async function importBlock(
 
 
 /**
- * change warehouse
+ * 切换组件库
+ * change library
  * @param config 
  */
 async function changeLibrary(
@@ -103,8 +104,8 @@ function initLibraryPanel(
   intl: { get: (key: string) => string, getAll: () => any }
 ) {
   panel = window.createWebviewPanel(
-    'materialView', // webview id
-    intl.get('materialView'), // panel title
+    'libraryView', // webview id
+    intl.get('libraryView'), // panel title
     ViewColumn.Beside, // view column
     {
       enableScripts: true,
@@ -113,10 +114,8 @@ function initLibraryPanel(
   );
 
   panel.webview.onDidReceiveMessage(async (message: any) => {
-    // setTimeout(() => {
-    //   resolve();
-    // }, 300);
 
+    // 准备 webview
     // webview ready
     if (message.ready) {
       panel.webview.postMessage({
@@ -126,10 +125,9 @@ function initLibraryPanel(
         library: blockList,
       });
 
-      console.log('blockList', blockList);
       changeLibrary(blockList[0], intl);
 
-      progress.report({ increment: 100, message: intl.get('materialViewReady') });
+      progress.report({ increment: 100, message: intl.get('libraryViewReady') });
     }
 
     // 安装组件
@@ -144,6 +142,11 @@ function initLibraryPanel(
       changeLibrary(message.warehouseSelected, intl);
     }
 
+    // 组件点赞
+    // like some component
+    if (message.componentLike) {
+      console.log('like', message);
+    }
   }, undefined, context.subscriptions);
 
   materialFlag = true;
@@ -167,7 +170,7 @@ function initLibraryPanel(
  * @param prompt 
  */
 async function selectBlock(
-  block: BlockConfig,
+  block: ComponentConfig,
   state: Memento,
   intl: { get: (key: string) => string },
   // path?: string,
@@ -265,7 +268,7 @@ async function selectBlock(
  * @param pathName 
  */
 async function installComponent(
-  component: BlockConfig,
+  component: ComponentConfig,
   state: Memento,
   pathName: string,
   intl: { get: (key: string) => string },

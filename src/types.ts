@@ -1,56 +1,32 @@
 /**
  * types
  */
-
-export interface Author {
-    id: number;
-    name: string;
-    username: string;
-    state: string;
-    avatarUrl: string;
-    webUrl: string;
+export interface LibraryConfig {
+    name: string,
+    code: string,
+    path: string
 }
 
-export interface MaterialConfig {
-    name: string;
-    downloadUrl: string;
-    type: string;
-    branch: string;
-    path: string;
-}
-
-export interface BlockConfig {
+export interface ComponentConfig {
     title: string;
-    value: string;
-    key: string;
     description: string;
-    url: string;
-    downloadUrl: string;
-    type: string;
-    path: string;
-    isPage: boolean;
-    defaultPath: string;
-    img: string;
-    tags: [string];
-    name: string;
-    previewUrl: string;
-    features?: [string];
-    branch: string;
-    framework: string;
-    wareHouse?: MaterialConfig;
-    snippets?: string;
-    parentCode?: string;
-    doc?: string;
+    tags: string[];
+    previewImg?: string;
     code: string;
-    version: string;
+    name: string;
+    groupName?: string,
+    doc: string,
+    snippets?: string,
+    parentCode: string,
+    author: string,
 }
-  
+
 
 export interface StatisticsMessage {
     type: string;
     message: string;
-    user?: {name?: string, email?: string};
-    block: BlockConfig
+    user?: { name?: string, email?: string };
+    block: ComponentConfig
 }
 
 export interface ReportApi {
@@ -68,11 +44,4 @@ export interface StatisticsConfig {
 export interface LibrarysConfig {
     rootPath: string;
     configPath: string;
-}
-
-
-export interface LibraryConfig {
-    code: string;
-    name: string;
-    path: string;
 }

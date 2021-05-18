@@ -18,17 +18,6 @@ export class TreeItemNode extends TreeItem {
 
     description = this.item.description;
 
-    // command: 为每项添加点击事件的命令
-    // command = {
-    //     title: this.item.name,          // 标题
-    //     code: this.item.code,
-    //     command: 'itemClick',       // 命令 ID
-    //     tooltip: this.item.name,        // 鼠标覆盖时的小小提示框
-    //     arguments: [                // 向 registerCommand 传递的参数。
-    //         this.item.name,             // 目前这里我们只传递一个 label
-    //     ]
-    // };
-
     iconPath = this.item.icon;
 
     contextValue = this.item.type;
@@ -37,29 +26,29 @@ export class TreeItemNode extends TreeItem {
 }
 
 export class TreeViewProvider implements TreeDataProvider<TreeItemNode>{
-    // 自动弹出的可以暂不理会
+
     readonly onDidChangeTreeData?: Event<TreeItemNode | null | undefined> | undefined;
     private _onDidChangeTreeData: EventEmitter<TreeItemNode | undefined | void> = new EventEmitter<TreeItemNode | undefined | void>();
 
+    // 刷新 tree-vidw
+    // tree-view refresh
     refresh(): void {
-        console.log('refresh');
         this._onDidChangeTreeData.fire();
     }
 
-    // 自动弹出
     // 获取树视图中的每一项 item,所以要返回 element
     getTreeItem(element: TreeItemNode): TreeItem | Thenable<TreeItem> {
         return element;
     }
 
-    // 自动弹出，但是我们要对内容做修改
-    // 给每一项都创建一个 TreeItemNode
+    // 获取 chidren 返回 TreeItemNode
     getChildren(element?: TreeItemNode | undefined): import("vscode").ProviderResult<TreeItemNode[]> {
         return Promise.resolve(this.getComponents(element));
     }
 
     /**
      * 查询组件列表
+     * fetch components list
      */
     async getComponents(element: TreeItemNode | undefined, path?: string) {
         const library = await getLibrary();
