@@ -48,7 +48,7 @@ VSCode 前端组件库管理插件
 }
 ```
 
-- `dendrobium.librarysConfig` : 获取组件库配置接口接口。
+- `dendrobium.librarysConfig` : 获取组件库配置接口。
 组件库配置信息也通过 `npm` 项目维护，这里配置 `unpkg` 文件地址即可。
 
 | | |

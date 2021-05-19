@@ -4,11 +4,11 @@
 
 <h1 align="center">Dendrobium</h1>
 
-English | [简体中文](../README.md)
+English | [简体中文](./README.zh-CN.md)
 
 **Improving**
 
-Depending on private material warehouse, it‘s a VSCode plugin which used to install and update your business components.
+VSCode front-end component library management plugin
 
 ## Inspiration Source
 
@@ -16,98 +16,174 @@ Depending on private material warehouse, it‘s a VSCode plugin which used to in
 
 ## Features
 
+Components Library Management:
+manage any front-end component library or component through setting configuration, and install components by `npm`.
 
-Private Warehouse:
-It supports the access of any private warehouse that conforms to the rules, and provides the function of selecting components in vscode, downloading dependencies and inserting component codes in the workspace.
+Code Snippets:
 
-Version Manage:
-When updating a component, a merge record will be generated automatically. If there is a conflict between the old and new component files, you will be prompted to merge manually to ensure the accuracy of the code
+Automatically generate code snippets according to your configuration in the workspace  when the component is installed, it provides automatic completion during editing;
+At the same time, it supports to insert the code snippets of the component by clicking in the VSCode view container.
 
-Dependency:
-Projects and components are automatically merged when components are installed or updated package.json After merging, you will be prompted to confirm and decide whether to perform the installation
+Documentation:
+Through configuration, you can view the component document in the VSCode view container.
 
-Statistical Interface：
-Through the configuration of statistical interface information, the user can report data when adding or updating components, so as to facilitate the statistics of private warehouse usage
-
-Create A New Component：
-Help you initialize the component template
+Statistics:
+By configuring the statistics interface information, the data is reported when users add and like components, which facilitates the statistics of the use of private warehouses.
 
 
 ## Dependence
 
-The association and update of component library depends on git environment
+The installation of components needs to rely on package management tools, such as: `npm`, `yarn` or others;
+The burial function may obtain the git information in the current workspace, such as user name, email, and the burial function needs to rely on the git environment.
 
 
 ## Setting
-* `dendrobium.language` : The language used to configure plug-in reminders and some operations. "zh-cn" or "en" can be set. The default is Chinese
 
-* `dendrobium.materialWarehouse`: It is associated with your private material warehouse and supports the maintenance of multiple warehouses
+- `dendrobium.language` : language of plugin reminders and some operations, you can set zh-cn or en, the default is Chinese.
 
-```
-[{
-    "name": "scf-blocks",           — name
-    "downloadUrl": "",              — git path
-    "type": "gitlab",               — warehouse type, example: gitlab or github
-    "branch": "master",             — git branch
-    "path": "scf-block.json"        — ths json file path of materirl list
-}]
-```
-
-* `dendrobium.statistics`: Used to configure the statistical interfaces required for private warehouses
-
-When reporting data, the corresponding template variable will be replaced with the actual value
-
-$TYPE         operation type
-$MESSAGE      log information
-$WAREHOUSE    warehouse git address
-$BLOCKNAME    block name
-$BLOCKKEY     block key
-
-```
+```json
 {
-    "reportApi": {
-        "url": "",
-        "method": "POST",
-        "format": {
-            "type": "$TYPE",
-            "message": "$MESSAGE",
-            "wareHouse": "$WAREHOUSE",
-            "blockName": "$BLOCKNAME",
-            "blockKey": "$BLOCKKEY",
-            "other": ""
-        }
+  ...
+
+  "dendrobium.language": "zh-cn"
+
+  ...
+}
+```
+
+- `dendrobium.librarysConfig` : Get the component library configuration interface interface.
+
+The component library configuration information is also maintained through the `npm` project, here you can configure the `unpkg` file address.
+
+| | |
+| --| -- |
+| rootPath | the root path of configuration interface |
+| configPath | the path of configuration file| 
+
+
+```json
+{
+  ...
+
+  "dendrobium.librarysConfig": {
+    "rootPath": "",
+    "configPath": ""
+  }
+
+  ...
+}
+```
+
+- `dendrobium.packageManagementTool`: Configure package management tools and required commands.
+
+```json
+{
+  ...
+
+  "dendrobium.packageManagementTool": {
+      "install": "npm install --save"
+  }
+
+  ...
+}
+```
+
+- `dendrobium.statistics`: Configure the statistical interface required to submit buried point information in the plugin.
+
+When data is reported, the corresponding template variables will be replaced with actual values.
+
+| | |
+|---|---|
+| $TYPE | operation type |
+| $MESSAGE | log information |
+| $WAREHOUSE | components library Address |
+| $BLOCKNAME | component name |
+| $BLOCKKEY | component code |
+
+
+```json
+{
+  ...
+
+    "dendrobium.statistics": {
+      "reportApi": {
+          "url": "",
+          "method": "POST",
+          "format": {
+              "type": "$TYPE",
+              "message": "$MESSAGE",
+              "wareHouse": "$WAREHOUSE",
+              "blockName": "$BLOCKNAME",
+              "blockKey": "$BLOCKKEY",
+              "other": ""
+          }
+      }
     }
+
+    ...
 }
 ```
 
-## Warehouse
+## Components library configuration
 
-Materials should be able to be directly applied through 'import'
+#### The return format and segmentation requirements of the component library configuration interface are as follows:
 
-Material list JSON needs to follow a specific format:
-
-```
+```json
 {
-    "blocks": [
-        {
-            "title": "button",                  - display title
-            "value": "button-basic",
-            "key": "button-basic",          
-            "description": "",                  - block description
-            "url": "",
-            "downloadUrl": "",                  - npm download url
-            "type": "component",                - component or snippet or npm
-            "path": "button-basic",
-            "isPage": false,
-            "defaultPath": "ButtonBasic",       - default install block folder name
-            "img": "",                          - preview image url
-            "tags": ["normal"],
-            "name": "button",
-            "previewUrl": "",                   - preview url
-        }
-    ]
+    "library": [{
+        "name": "LibraryA",
+        "code": "libraryA",
+        "path": "" // the path of component library A component list interface
+    }, {
+        "name": "LibraryB",
+        "code": "libraryB",
+        "path": "" // the path of component library B component list interface
+    }]
+}
+```
+#### The return format and field requirements of the interface to get a component library component list are as follows:
+
+```json
+{
+  "components": [
+    {
+      "title": "ComponentA", // component name
+      "description": "", // component description
+      "tags": ["Base Component", "React", "Vue"], // component tags
+      "previewImg": "", // the preview image url of component
+      "code": "xxx", // component code，unique value
+      "name": "@xx/xxx", // component name, which will be used when performing the installation operation
+      "groupName": "xxx", // the name of the component library, if this option is configured, the component library will be installed during the installation process
+      "doc": "xxx", // the doc url of componentA
+      "snippets": "", // get the component code snippet interface
+      "parentCode": "", // library code，unique value
+      "author": "", // developer
+    }
+  ]
 }
 
+```
+
+#### The return format and field requirements of the interface to obtain the code snippet of this component are as follows:
+
+Compliant with VSCode code snippet format.
+
+```json
+{
+  ...
+
+  "key": {
+    "scope": "javascript,typescript", // language
+    "prefix": "log", // snippet prefix
+    "body": [
+      "console.log('$1');",
+      "$2"
+    ], // content
+    "description": "零智通信组件初始化方法" // description
+  },
+
+  ...
+}
 ```
 
 ## The Origin Of Name

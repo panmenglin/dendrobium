@@ -16,14 +16,14 @@ export default async function statistics(params: StatisticsMessage) {
     }
 
     const { type, message, block } = params;
-    const { wareHouse, title, key } = block;
+    const { parentCode, title, code } = block;
 
     const reportVariable = {
         $TYPE: type,
         $MESSAGE: message,
-        $WAREHOUSE: wareHouse ? wareHouse.downloadUrl : '',
+        $WAREHOUSE: parentCode || '',
         $BLOCKNAME: title,
-        $BLOCKKEY: key
+        $BLOCKKEY: code
     };
 
 

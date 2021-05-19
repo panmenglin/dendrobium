@@ -11,7 +11,7 @@ import { getLibrary, getSnippets } from './service';
 
 const fs = require('fs');
 const chalk = require('chalk');
-const path = require('path');
+// const path = require('path');
 
 import { window, Memento, workspace, ViewColumn, ExtensionContext, Progress } from 'vscode';
 
@@ -256,7 +256,13 @@ async function selectBlock(
   }
 
   // 本期仅支持 npm 安装
-  installComponent(block, state, block.defaultPath, intl, path);
+  installComponent(
+    block, 
+    state, 
+    // block.defaultPath, 
+    intl, 
+    // path
+  );
 }
 
 
@@ -270,9 +276,9 @@ async function selectBlock(
 async function installComponent(
   component: ComponentConfig,
   state: Memento,
-  pathName: string,
+  // pathName: string,
   intl: { get: (key: string) => string },
-  folderPath?: string
+  // folderPath?: string
 ) {
 
   // 获取当前正在编辑的文件
