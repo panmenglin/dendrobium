@@ -75,7 +75,7 @@ export class TreeViewProvider implements TreeDataProvider<TreeItemNode>{
         if (element.item.level === 0) {
             return library.library.map((item: any) => {
 
-                // 后期优化根据本地目录是否有该组件判断是否显示
+                // TODO 根据本地目录是否有该组件判断是否显示
                 // const snippetsRootPath = `${item.uri.path}/.vscode/${element.command.code}.code-snippets`;
                 // const docsRootPath = `${item.uri.path}/.vscode/${element.command.code}.component-docs`;
                 // if (fs.existsSync(snippetsRootPath) || fs.existsSync(docsRootPath)) {
@@ -148,16 +148,16 @@ export class TreeViewProvider implements TreeDataProvider<TreeItemNode>{
     }
 
     // 这个静态方法时自己写的，你要写到 extension.ts 也可以
-    public static async initTreeViewItem() {
+    // public static async initTreeViewItem() {
 
-        // 实例化 TreeViewProvider
-        const treeViewProvider = new TreeViewProvider();
+    //     // 实例化 TreeViewProvider
+    //     const treeViewProvider = new TreeViewProvider();
 
-        // registerTreeDataProvider：注册树视图
-        // 你可以类比 registerCommand(上面注册 Hello World)
-        window.registerTreeDataProvider('components-view', treeViewProvider);
-        commands.registerCommand('dendrobium.treeViewRefresh', () => {
-            treeViewProvider.refresh();
-        });
-    }
+    //     // registerTreeDataProvider：注册树视图
+    //     // 你可以类比 registerCommand(上面注册 Hello World)
+    //     window.registerTreeDataProvider('components-view', treeViewProvider);
+    //     commands.registerCommand('dendrobium.treeViewRefresh', () => {
+    //         treeViewProvider.refresh();
+    //     });
+    // }
 }

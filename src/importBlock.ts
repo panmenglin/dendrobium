@@ -87,12 +87,12 @@ async function changeLibrary(
 /**
  * 初始化 Dendrobium 面板
  * init dendrobium panel
- * @param context 
- * @param state 
- * @param config 
- * @param blockList 
- * @param resolve 
- * @param progress 
+ * @param context
+ * @param state
+ * @param config
+ * @param blockList
+ * @param resolve
+ * @param progress
  */
 function initLibraryPanel(
   context: ExtensionContext,
@@ -164,10 +164,10 @@ function initLibraryPanel(
 /**
  * select component
  * 安装组件和代码片段
- * @param block 
- * @param state 
- * @param path 
- * @param prompt 
+ * @param block
+ * @param state
+ * @param path
+ * @param prompt
  */
 async function selectBlock(
   block: ComponentConfig,
@@ -188,7 +188,7 @@ async function selectBlock(
   // create doc
   if (block.doc) {
     // 遍历工作区所有文件夹添加代码片段
-    // 后期优化 根据组件安装目录添加代码片段
+    // TODO 根据组件安装目录添加代码片段
     workspace.workspaceFolders?.map(item => {
       const rootPath = `${item.uri.path}/.vscode/${block?.parentCode}.component-docs`;
 
@@ -217,17 +217,18 @@ async function selectBlock(
     });
   }
 
-  // 是否有代码片段 
+  // 是否有代码片段
   // 工作区添加代码片段
   // create snippets
   if (block.snippets) {
+
     const snippet = await getSnippets({
       path: block.snippets
     });
 
     if (snippet) {
       // 遍历工作区所有文件夹添加代码片段
-      // 后期优化 根据组件安装目录添加代码片段
+      // TODO 根据组件安装目录添加代码片段
       workspace.workspaceFolders?.map(item => {
         const rootPath = `${item.uri.path}/.vscode/${block?.parentCode}.code-snippets`;
 
@@ -257,10 +258,10 @@ async function selectBlock(
 
   // 本期仅支持 npm 安装
   installComponent(
-    block, 
-    state, 
-    // block.defaultPath, 
-    intl, 
+    block,
+    state,
+    // block.defaultPath,
+    intl,
     // path
   );
 }
@@ -269,9 +270,9 @@ async function selectBlock(
 /**
  * 安装组件
  * install component
- * @param component 
- * @param state 
- * @param pathName 
+ * @param component
+ * @param state
+ * @param pathName
  */
 async function installComponent(
   component: ComponentConfig,
@@ -314,22 +315,7 @@ async function installComponent(
   // install
   const npmRootPath = getNpmRootPath(filePath);
   if (npmRootPath) {
-    // const packagePath = path.resolve(npmRootPath, 'package.json');
 
-    // const packageFile = fs.readFileSync(packagePath, 'utf8');
-    // const jsonData = packageFile ? JSON.parse(packageFile) : {};
-
-    // jsonData.dependencies[block.name] = block.version;
-
-    // const packageTpl = JSON.stringify(jsonData, undefined, '\t');
-
-    // fs.writeFile(packagePath, packageTpl, function (err: any) {
-    //   if (err) {
-    //     throw err;
-    //   }
-    // });
-
-    // if (packageFile !== packageTpl) {
     const cmdActuator = new actuator({
       cwd: npmRootPath,
     }, (error) => { });
@@ -340,7 +326,7 @@ async function installComponent(
       location: vscode.ProgressLocation.Notification,
       title: intl.get('loadingInstall'),
     }, (progress, token) => {
-      const res = cmdActuator.run(`${packageToolCommand?.install || 'npm install --save'} ${component.name}`).then(() => {
+      const res = cmdActuator.run(`${packageToolCommand?.install || 'npm install --save'} ${component.groupName || component.name}`).then(() => {
         window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
         window.showInformationMessage(intl.get('successImport'));
       });

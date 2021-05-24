@@ -10,9 +10,9 @@ export default async function docPreview(
     intl: { get: (key: string) => string }
 ) {
 
-    
+
     // 通过浏览器打开文档
-    // 后期优化 可考虑针对 markdown 文件通过本地打开
+    // TODO 可考虑针对 markdown 文件通过本地打开
     const url = Uri.parse(docItem.item.doc);
     env.openExternal(url);
 

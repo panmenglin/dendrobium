@@ -44,8 +44,13 @@ export async function activate(context: vscode.ExtensionContext) {
 	}));
 
 
-	// 实现树视图的初始化
-	TreeViewProvider.initTreeViewItem();
+	const treeViewProvider = new TreeViewProvider();
+
+	vscode.window.registerTreeDataProvider('components-view', treeViewProvider);
+
+	vscode.commands.registerCommand('dendrobium.treeViewRefresh', () => {
+		treeViewProvider.refresh();
+	});
 }
 
 // this method is called when your extension is deactivated
