@@ -137,27 +137,11 @@ export class TreeViewProvider implements TreeDataProvider<TreeItemNode>{
 
                 return docs.map((item: any) => new TreeItemNode({
                     ...item,
+                    name: item.title,
                     type: 'docs',
                     icon: new ThemeIcon('book')
                 }));
             }
         }
-
-
-
     }
-
-    // 这个静态方法时自己写的，你要写到 extension.ts 也可以
-    // public static async initTreeViewItem() {
-
-    //     // 实例化 TreeViewProvider
-    //     const treeViewProvider = new TreeViewProvider();
-
-    //     // registerTreeDataProvider：注册树视图
-    //     // 你可以类比 registerCommand(上面注册 Hello World)
-    //     window.registerTreeDataProvider('components-view', treeViewProvider);
-    //     commands.registerCommand('dendrobium.treeViewRefresh', () => {
-    //         treeViewProvider.refresh();
-    //     });
-    // }
 }

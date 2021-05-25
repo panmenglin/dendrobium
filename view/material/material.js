@@ -39,8 +39,6 @@ window.addEventListener('message', (event) => {
 
       selectedLibrary = message.library[$(this).attr('key')];
 
-      console.log(selectedLibrary);
-
       vscode.postMessage({ warehouseSelected: selectedLibrary });
     });
   }

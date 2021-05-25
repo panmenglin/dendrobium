@@ -204,7 +204,7 @@ export function getNpmRootPath(filePath: string): string {
 /**
  * get git root path
  */
- export function getGitRootPath(filePath: string): string {
+export function getGitRootPath(filePath: string): string {
   const parentPath = path.resolve(filePath, '..');
 
   if (filePath === '/') {
@@ -215,5 +215,22 @@ export function getNpmRootPath(filePath: string): string {
     return parentPath;
   } else {
     return getGitRootPath(parentPath);
+  }
+}
+
+/**
+ * get vscode root path
+ */
+ export function getVSCodeRootPath(filePath: string): string {
+  const parentPath = path.resolve(filePath, '..');
+
+  if (filePath === '/') {
+    return '';
+  }
+
+  if (fs.existsSync(path.resolve(parentPath, '.vscode'))) {
+    return parentPath;
+  } else {
+    return getVSCodeRootPath(parentPath);
   }
 }

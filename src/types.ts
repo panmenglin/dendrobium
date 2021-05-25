@@ -19,6 +19,7 @@ export interface ComponentConfig {
     snippets?: string,
     parentCode: string,
     author: string,
+    docKeys?: string,
 }
 
 

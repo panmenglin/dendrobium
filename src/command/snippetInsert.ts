@@ -22,7 +22,6 @@ export default async function snippetInsert(
 
     const selection = editor ? editor.selection : undefined;
 
-
     if (!selection) {
         return;
     }

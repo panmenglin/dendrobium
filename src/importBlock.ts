@@ -203,9 +203,10 @@ async function selectBlock(
 
       // 合并现有的代码片段
       currentDocs[block.code] = {
-        name: block.title,
+        title: block.title,
         url: block.doc,
         code: block.code,
+        name: block.name,
       };
 
       // 更新文件

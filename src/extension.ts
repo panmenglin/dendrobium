@@ -5,6 +5,7 @@ import importBlock from './importBlock';
 import { TreeViewProvider } from './componentsView';
 import docPreview from './command/docPreview';
 import snippetInsert from './command/snippetInsert';
+import snippetHover from './snippetHover';
 import localize from './locales';
 
 // this method is called when your extension is activated
@@ -41,6 +42,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(vscode.commands.registerCommand('dendrobium.snippetInsert', (snippetItem) => {
 		snippetInsert(context, globalState, snippetItem, intl);
+	}));
+
+	context.subscriptions.push(vscode.languages.registerHoverProvider(['javascript', 'typescript', 'javascriptreact', 'typescriptreact'], {
+		provideHover: snippetHover
 	}));
 
 
