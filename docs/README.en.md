@@ -90,15 +90,17 @@ The component library configuration information is also maintained through the `
 
 - `dendrobium.statistics`: Configure the statistical interface required to submit buried point information in the plugin.
 
-When data is reported, the corresponding template variables will be replaced with actual values.
+The main fields reported in data statistics include:
 
-| | |
-|---|---|
-| $TYPE | operation type |
-| $MESSAGE | log information |
-| $WAREHOUSE | components library Address |
-| $BLOCKNAME | component name |
-| $BLOCKKEY | component code |
+| key | name | value |
+| -- | -- | -- |
+| userName | git user name | It may be null if git information cannot be obtained |
+| email | git email | It may be null if git information cannot be obtained |
+| libraryName | library name | |
+| libraryCode | library code | |
+| componentName | component name | |
+| componentCode | component code | |
+| type | 操作类型 | 0（view library）、1（install component）、2（view document）、3（insert snippet） |
 
 
 ```json
@@ -109,14 +111,6 @@ When data is reported, the corresponding template variables will be replaced wit
       "reportApi": {
           "url": "",
           "method": "POST",
-          "format": {
-              "type": "$TYPE",
-              "message": "$MESSAGE",
-              "wareHouse": "$WAREHOUSE",
-              "blockName": "$BLOCKNAME",
-              "blockKey": "$BLOCKKEY",
-              "other": ""
-          }
       }
     }
 
@@ -179,7 +173,7 @@ Compliant with VSCode code snippet format.
       "console.log('$1');",
       "$2"
     ], // content
-    "description": "零智通信组件初始化方法" // description
+    "description": "" // description
   },
 
   ...

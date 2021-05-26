@@ -86,15 +86,17 @@ VSCode 前端组件库管理插件
 
 - `dendrobium.statistics`: 用于配置插件中提交埋点信息所需的统计接口
 
-在数据上报时，其中对应模版变量会被替换为实际值
+在数据统计上报的主要字段包括：
 
-| | |
-|---|---|
-| $TYPE | 操作类型 |
-| $MESSAGE | 日志信息 |
-| $WAREHOUSE | 仓库地址 |
-| $BLOCKNAME | 区块名称 |
-| $BLOCKKEY | 区块值 |
+| 字段 | 名称 | 值 |
+| -- | -- | -- |
+| userName | git 用户名 | 如果无法获取 git 信息则可能为空 |
+| email | git Email | 如果无法获取 git 信息则可能为空 |
+| libraryName | 组件库名称 | |
+| libraryCode | 组件库编码 | |
+| componentName | 组件名称 | |
+| componentCode | 组件编码 | |
+| type | 操作类型 | 0（访问组件库）、1（安装组件）、2（查看文档）、3（插入代码片段）等 |
 
 
 ```javascript
@@ -104,15 +106,7 @@ VSCode 前端组件库管理插件
     "dendrobium.statistics": {
       "reportApi": {
           "url": "",
-          "method": "POST",
-          "format": {
-              "type": "$TYPE",
-              "message": "$MESSAGE",
-              "wareHouse": "$WAREHOUSE",
-              "blockName": "$BLOCKNAME",
-              "blockKey": "$BLOCKKEY",
-              "other": ""
-          }
+          "method": "POST"
       }
     }
 
@@ -175,7 +169,7 @@ VSCode 前端组件库管理插件
       "console.log('$1');",
       "$2"
     ], // 代码片段内容
-    "description": "零智通信组件初始化方法" // 描述
+    "description": "" // 描述
   },
 
   ...

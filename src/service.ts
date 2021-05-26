@@ -22,7 +22,9 @@ export function report(reportVariable: any) {
         "blockKey": "$BLOCKKEY",
     };
 
-    const body = reportApi.format || defaultFormat;
+    const body =
+        // reportApi.format ||
+        defaultFormat;
 
     Object.keys(body).forEach(key => {
         const value = reportVariable[body[key]];
@@ -41,7 +43,7 @@ export function report(reportVariable: any) {
 
 /**
  * fetch library config
- * @returns 
+ * @returns
  */
 export function getLibrary(params?: { path: string }) {
     const libraryConfig: LibrarysConfig | undefined = workspace.getConfiguration().get('dendrobium.librarysConfig');

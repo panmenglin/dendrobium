@@ -67,15 +67,7 @@
           "default": {
             "reportApi": {
               "url": "",
-              "method": "POST",
-              "format": {
-                "type": "$TYPE",
-                "message": "$MESSAGE",
-                "wareHouse": "$WAREHOUSE",
-                "blockName": "$BLOCKNAME",
-                "blockKey": "$BLOCKKEY",
-                "other": ""
-              }
+              "method": "POST"
             }
           },
           "description": "statistics report api"
