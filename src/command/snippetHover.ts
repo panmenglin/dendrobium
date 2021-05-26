@@ -1,5 +1,5 @@
 import { workspace, Hover } from 'vscode';
-import { getVSCodeRootPath } from './utils/utils';
+import { getVSCodeRootPath } from '../utils/utils';
 
 const fs = require('fs');
 

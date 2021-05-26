@@ -34,7 +34,7 @@ export default function getGitConfig (cwd?: string, intl?: { get: (key: string) 
             if (intl) {
                 window.showErrorMessage(chalk.red(intl.get('gitConfigFailed')));
             } else {
-                
+
             }
 
             reject(error);

@@ -10,10 +10,6 @@
 
 VSCode 前端组件库管理插件
 
-## 灵感来源
-
-[umi-ui](https://github.com/umijs/umi-ui)
-
 ## 特性
 
 组件库管理：
@@ -38,7 +34,7 @@ VSCode 前端组件库管理插件
 
 - `dendrobium.language` : 用于配置插件提醒及部分操作的语言，可设置 zh-cn 或 en，默认为中文
 
-```json
+```javascript
 {
   ...
 
@@ -57,7 +53,7 @@ VSCode 前端组件库管理插件
 | configPath | 组件库配置文件地址 | 
 
 
-```json
+```javascript
 {
   ...
 
@@ -72,7 +68,7 @@ VSCode 前端组件库管理插件
 
 - `dendrobium.packageManagementTool`: 用于配置包管理工具和所需命令
 
-```json
+```javascript
 {
   ...
 
@@ -100,7 +96,7 @@ VSCode 前端组件库管理插件
 | type | 操作类型 | 0（访问组件库）、1（安装组件）、2（查看文档）、3（插入代码片段）等 |
 
 
-```json
+```javascript
 {
   ...
 
@@ -119,7 +115,7 @@ VSCode 前端组件库管理插件
 
 #### 获取组件库配置接口返回格式和字段需求如下：
 
-```json
+```javascript
 {
     "library": [{
         "name": "组件库A",
@@ -134,7 +130,7 @@ VSCode 前端组件库管理插件
 ```
 #### 获取某个组件库组件列表接口返回格式和字段需求如下：
 
-```json
+```javascript
 {
   "components": [
     {
@@ -159,7 +155,7 @@ VSCode 前端组件库管理插件
 
 符合 VSCode 代码片段格式
 
-```json
+```javascript
 {
   ...
 

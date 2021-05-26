@@ -18,7 +18,7 @@ import { window, Memento, workspace, ViewColumn, ExtensionContext, Progress } fr
 let materialFlag = false;
 let panel: any = undefined;
 
-export default async function importBlock(
+export default async function componentImport(
   context: ExtensionContext,
   state: Memento,
   intl: { get: (key: string) => string, getAll: () => any }

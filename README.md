@@ -10,10 +10,6 @@
 
 VSCode 前端组件库管理插件
 
-## 灵感来源
-
-[umi-ui](https://github.com/umijs/umi-ui)
-
 ## 特性
 
 组件库管理：

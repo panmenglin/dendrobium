@@ -76,7 +76,7 @@
     },
     "commands": [
       {
-        "command": "dendrobium.importBlock",
+        "command": "dendrobium.componentImport",
         "title": "安装组件"
       },
       {
@@ -95,7 +95,7 @@
     "menus": {
       "editor/context": [
         {
-          "command": "dendrobium.importBlock",
+          "command": "dendrobium.componentImport",
           "group": "7_modification"
         }
       ],

@@ -1,11 +1,11 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import importBlock from './importBlock';
+import componentImport from './componentImport';
 import { TreeViewProvider } from './componentsView';
 import docPreview from './command/docPreview';
 import snippetInsert from './command/snippetInsert';
-import snippetHover from './snippetHover';
+import snippetHover from './command/snippetHover';
 import localize from './locales';
 
 // this method is called when your extension is activated
@@ -32,8 +32,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	const language: 'zh-cn' | 'en' = vscode.workspace.getConfiguration().get('dendrobium.language') || 'zh-cn';
 	const intl = localize(language);
 
-	context.subscriptions.push(vscode.commands.registerCommand('dendrobium.importBlock', () => {
-		importBlock(context, globalState, intl);
+	context.subscriptions.push(vscode.commands.registerCommand('dendrobium.componentImport', () => {
+		componentImport(context, globalState, intl);
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('dendrobium.docPreview', (docItem) => {
@@ -51,11 +51,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	const treeViewProvider = new TreeViewProvider();
 
-	vscode.window.registerTreeDataProvider('components-view', treeViewProvider);
+	context.subscriptions.push(vscode.window.registerTreeDataProvider('components-view', treeViewProvider));
 
-	vscode.commands.registerCommand('dendrobium.treeViewRefresh', () => {
+	context.subscriptions.push(vscode.commands.registerCommand('dendrobium.treeViewRefresh', () => {
 		treeViewProvider.refresh();
-	});
+	}));
 }
 
 // this method is called when your extension is deactivated

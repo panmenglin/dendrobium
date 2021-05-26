@@ -10,10 +10,6 @@ English | [简体中文](./README.zh-CN.md)
 
 VSCode front-end component library management plugin
 
-## Inspiration Source
-
-[umi-ui](https://github.com/umijs/umi-ui)
-
 ## Features
 
 Components Library Management:
@@ -41,7 +37,7 @@ The burial function may obtain the git information in the current workspace, suc
 
 - `dendrobium.language` : language of plugin reminders and some operations, you can set zh-cn or en, the default is Chinese.
 
-```json
+```javascript
 {
   ...
 
@@ -61,7 +57,7 @@ The component library configuration information is also maintained through the `
 | configPath | the path of configuration file| 
 
 
-```json
+```javascript
 {
   ...
 
@@ -76,7 +72,7 @@ The component library configuration information is also maintained through the `
 
 - `dendrobium.packageManagementTool`: Configure package management tools and required commands.
 
-```json
+```javascript
 {
   ...
 
@@ -103,7 +99,7 @@ The main fields reported in data statistics include:
 | type | 操作类型 | 0（view library）、1（install component）、2（view document）、3（insert snippet） |
 
 
-```json
+```javascript
 {
   ...
 
@@ -122,7 +118,7 @@ The main fields reported in data statistics include:
 
 #### The return format and segmentation requirements of the component library configuration interface are as follows:
 
-```json
+```javascript
 {
     "library": [{
         "name": "LibraryA",
@@ -137,7 +133,7 @@ The main fields reported in data statistics include:
 ```
 #### The return format and field requirements of the interface to get a component library component list are as follows:
 
-```json
+```javascript
 {
   "components": [
     {
@@ -162,7 +158,7 @@ The main fields reported in data statistics include:
 
 Compliant with VSCode code snippet format.
 
-```json
+```javascript
 {
   ...
 

@@ -27,8 +27,8 @@ export class TreeItemNode extends TreeItem {
 
 export class TreeViewProvider implements TreeDataProvider<TreeItemNode>{
 
-    readonly onDidChangeTreeData?: Event<TreeItemNode | null | undefined> | undefined;
     private _onDidChangeTreeData: EventEmitter<TreeItemNode | undefined | void> = new EventEmitter<TreeItemNode | undefined | void>();
+    readonly onDidChangeTreeData: Event<TreeItemNode | undefined | void> = this._onDidChangeTreeData.event;
 
     // 刷新 tree-vidw
     // tree-view refresh
