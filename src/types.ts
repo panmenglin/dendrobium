@@ -2,32 +2,44 @@
  * types
  */
 export interface LibraryConfig {
-    name: string,
+    name?: string,
     code: string,
-    path: string
+    path?: string
 }
 
 export interface ComponentConfig {
-    title: string;
-    description: string;
-    tags: string[];
+    title?: string;
+    description?: string;
+    tags?: string[];
     previewImg?: string;
     code: string;
-    name: string;
-    groupName?: string,
-    doc: string,
-    snippets?: string,
-    parentCode: string,
-    author: string,
-    docKeys?: string,
+    name?: string;
+    groupName?: string;
+    doc?: string;
+    snippets?: string;
+    parentCode?: string;
+    author?: string;
+    docKeys?: string;
+    library?: LibraryConfig;
 }
 
 
 export interface StatisticsMessage {
-    type: string;
-    message: string;
-    user?: { name?: string, email?: string };
-    block: ComponentConfig
+    component: ComponentConfig;
+    library?: LibraryConfig;
+    type: 'view' | 'install' | 'docView' | 'snippetInsert';
+}
+
+export interface ReportVariable {
+    userName: string;
+    email: string;
+    libraryName?: string;
+    libraryCode?: string;
+    componentName?: string;
+    componentCode: string;
+    component?: ComponentConfig;
+    library?: LibraryConfig;
+    type: number;
 }
 
 export interface ReportApi {

@@ -92,9 +92,9 @@ The main fields reported in data statistics include:
 | -- | -- | -- |
 | userName | git user name | It may be null if git information cannot be obtained |
 | email | git email | It may be null if git information cannot be obtained |
-| libraryName | library name | |
+| libraryName | library name | Only the installation type is determined by this value |
 | libraryCode | library code | |
-| componentName | component name | |
+| componentName | component name | Only the installation type is determined by this value |
 | componentCode | component code | |
 | type | 操作类型 | 0（view library）、1（install component）、2（view document）、3（insert snippet） |
 

@@ -89,9 +89,9 @@ VSCode 前端组件库管理插件
 | -- | -- | -- |
 | userName | git 用户名 | 如果无法获取 git 信息则可能为空 |
 | email | git Email | 如果无法获取 git 信息则可能为空 |
-| libraryName | 组件库名称 | |
+| libraryName | 组件库名称 | 只有安装埋点由该值 |
 | libraryCode | 组件库编码 | |
-| componentName | 组件名称 | |
+| componentName | 组件名称 | 只有安装埋点由该值 |
 | componentCode | 组件编码 | |
 | type | 操作类型 | 0（访问组件库）、1（安装组件）、2（查看文档）、3（插入代码片段）等 |
 

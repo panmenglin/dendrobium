@@ -197,7 +197,7 @@ function blockListRender(blocks) {
     $('.op-like').click(function () {
       const itemIndex = $(this).attr('itemIndex');
       const selected = blocks[itemIndex];
-      selected.warehouse = selectedLibrary;
+      selected.library = selectedLibrary;
 
       vscode.postMessage({ componentLike: selected });
     });
@@ -206,7 +206,7 @@ function blockListRender(blocks) {
     $('.op-add').click(function () {
       const itemIndex = $(this).attr('itemIndex');
       const selected = blocks[itemIndex];
-      selected.warehouse = selectedLibrary;
+      selected.library = selectedLibrary;
 
       vscode.postMessage({ blockSelected: selected });
     });

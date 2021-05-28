@@ -11,24 +11,27 @@ const intl = localize('zh-cn');
 export default async function statistics(params: StatisticsMessage) {
     const gitUser: any = await getGitConfig(undefined, intl);
 
-    if (!params.user) {
-        params.user = gitUser;
-    }
-
-    const { type, message, block } = params;
-    const { parentCode, title, code } = block;
-
-    const reportVariable = {
-        $TYPE: type,
-        $MESSAGE: message,
-        $WAREHOUSE: parentCode || '',
-        $BLOCKNAME: title,
-        $BLOCKKEY: code
+    const typeCode = {
+        'view': 0,
+        'install': 1,
+        'docView': 2,
+        'snippetInsert': 3
     };
 
+    const reportParams = {
+        userName: gitUser?.name || '',
+        email: gitUser?.email || '',
+        libraryName: params.library?.name,
+        libraryCode: params.library?.code,
+        componentName: params.component.name,
+        componentCode: params.component.code,
+        component: params.component,
+        library: params.library,
+        type: typeCode[params.type],
+    };
 
     // report
-    report(reportVariable)?.then(() => {
+    report(reportParams)?.then(() => {
 
     }, (err) => {
         window.showErrorMessage(chalk.red(`🚧 ${err}`));

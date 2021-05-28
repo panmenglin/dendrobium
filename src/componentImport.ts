@@ -98,7 +98,7 @@ function initLibraryPanel(
   context: ExtensionContext,
   state: Memento,
   config: LibrarysConfig,
-  blockList: any,
+  blockList: LibraryConfig[],
   // resolve: () => void,
   progress: Progress<{ increment: number, message: string }>,
   intl: { get: (key: string) => string, getAll: () => any }
@@ -167,14 +167,14 @@ function initLibraryPanel(
  * @param block
  * @param state
  * @param path
- * @param prompt
+//  * @param prompt
  */
 async function selectBlock(
   block: ComponentConfig,
   state: Memento,
   intl: { get: (key: string) => string },
   // path?: string,
-  prompt?: string
+  // prompt?: string
 ) {
 
   const answer = await vscode.window.showInformationMessage('该组件会通过 npm 方式安装，同时将为工作区添加组件的代码片段，确定安装吗？', intl.get('yes'), intl.get('cancel'));
@@ -206,6 +206,7 @@ async function selectBlock(
         title: block.title,
         url: block.doc,
         code: block.code,
+        libraryCode: block.parentCode,
         name: block.name,
       };
 
@@ -307,8 +308,8 @@ async function installComponent(
   if (gitUser && gitUser.name) {
     statistics({
       type: 'install',
-      message: '',
-      block: component
+      component,
+      library: component.library
     });
   }
 

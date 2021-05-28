@@ -2,6 +2,7 @@
  * 插入代码片段
  */
 import { Memento, ExtensionContext, window, Position, SnippetString, TextEditor } from 'vscode';
+import statistics from '../statistics';
 const chalk = require('chalk');
 
 export default async function snippetInsert(
@@ -32,4 +33,16 @@ export default async function snippetInsert(
     await editor.insertSnippet(new SnippetString(content), insertPosition);
 
     window.setStatusBarMessage(chalk.green(intl.get('successInsert')), 1000);
+
+
+    // 代码片段插入埋点
+    statistics({
+        type: 'snippetInsert',
+        component: {
+            code: snippetItem.item.componentCode,
+        },
+        library: {
+            code: snippetItem.item.libraryCode,
+        }
+    });
 }
