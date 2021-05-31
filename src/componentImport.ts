@@ -3,15 +3,15 @@
  * use components
  */
 import * as vscode from 'vscode';
-import { getWebViewContent, getNpmRootPath, actuator, getGitRootPath } from './utils/utils';
+import { getWebViewContent, getNpmRootPath, actuator, getGitRootPath, pluginConfiguration } from './utils/utils';
 import { ComponentConfig, LibrarysConfig, LibraryConfig } from './types';
 import getGitConfig from './utils/getGitConfig';
 import statistics from './statistics';
-import { getLibrary, getSnippets } from './service';
+import { getLibrary, getSnippets, getConfig } from './service';
+import configChange from './command/configChange';
 
 const fs = require('fs');
 const chalk = require('chalk');
-// const path = require('path');
 
 import { window, Memento, workspace, ViewColumn, ExtensionContext, Progress } from 'vscode';
 
@@ -23,11 +23,47 @@ export default async function componentImport(
   state: Memento,
   intl: { get: (key: string) => string, getAll: () => any }
 ) {
+  const configPath: string | undefined = state.get('configPath');
 
-  const libraryConfig: LibrarysConfig | undefined = workspace.getConfiguration().get('dendrobium.librarysConfig');
+  // 设置获取配置的地址并查询配置
+  if (configPath) {
+    const config = await getConfig({
+      path: configPath
+    });
+
+    if (config) {
+      console.log(config);
+      state.update('config', config);
+    } else {
+      window.showErrorMessage(chalk.red('未能查询到正确的配置'));
+    }
+  } else {
+    const hasConfig = await configChange(context, state, intl);
+
+    if (hasConfig) {
+      console.log(state.get('configPath'));
+      const configPath: string | undefined = state.get('configPath');
+
+      if (configPath) {
+
+        const config = await getConfig({
+          path: configPath
+        });
+
+        if (config) {
+          console.log(config);
+          state.update('config', config);
+        } else {
+          window.showErrorMessage(chalk.red('未能查询到正确的配置'));
+        }
+      }
+    }
+  }
+
+  const librarysConfig: LibrarysConfig | undefined = pluginConfiguration(state).get('dendrobium.librarysConfig');
 
   // do not set material config
-  if (!libraryConfig?.configPath || !libraryConfig?.rootPath) {
+  if (!librarysConfig?.configPath || !librarysConfig?.rootPath) {
     window.showErrorMessage(chalk.red(intl.get('noMaterialConfig')));
     return;
   }
@@ -53,11 +89,12 @@ export default async function componentImport(
 
     progress.report({ increment: 0, message: intl.get('fetchingConfig') });
 
-    const library = await getLibrary();
+    const library = await getLibrary({
+      librarysConfig
+    });
 
-    initLibraryPanel(context, state, libraryConfig,
+    initLibraryPanel(context, state, librarysConfig,
       library.library,
-      // resolve, 
       progress,
       intl);
   });
@@ -71,11 +108,19 @@ export default async function componentImport(
  */
 async function changeLibrary(
   config: LibraryConfig,
+  state: Memento,
   intl: { get: (key: string) => string }
 ) {
 
+  const librarysConfig: LibrarysConfig | undefined = pluginConfiguration(state).get('dendrobium.librarysConfig');
+
+  if (!librarysConfig) {
+    return;
+  }
+
   const components = await getLibrary({
-    path: config.path
+    path: config.path,
+    librarysConfig,
   });
 
   panel.webview.postMessage({
@@ -99,7 +144,6 @@ function initLibraryPanel(
   state: Memento,
   config: LibrarysConfig,
   blockList: LibraryConfig[],
-  // resolve: () => void,
   progress: Progress<{ increment: number, message: string }>,
   intl: { get: (key: string) => string, getAll: () => any }
 ) {
@@ -121,11 +165,10 @@ function initLibraryPanel(
       panel.webview.postMessage({
         warehouse: config,
         intl: intl.getAll(),
-        // blocks: blockList,
         library: blockList,
       });
 
-      changeLibrary(blockList[0], intl);
+      changeLibrary(blockList[0], state, intl);
 
       progress.report({ increment: 100, message: intl.get('libraryViewReady') });
     }
@@ -139,13 +182,13 @@ function initLibraryPanel(
     // 切换组件库
     // change library
     if (message.warehouseSelected) {
-      changeLibrary(message.warehouseSelected, intl);
+      changeLibrary(message.warehouseSelected, state, intl);
     }
 
     // 组件点赞
     // like some component
     if (message.componentLike) {
-      console.log('like', message);
+      window.showInformationMessage('点赞功能开发中，敬请期待...');
     }
   }, undefined, context.subscriptions);
 
@@ -173,8 +216,6 @@ async function selectBlock(
   block: ComponentConfig,
   state: Memento,
   intl: { get: (key: string) => string },
-  // path?: string,
-  // prompt?: string
 ) {
 
   const answer = await vscode.window.showInformationMessage('该组件会通过 npm 方式安装，同时将为工作区添加组件的代码片段，确定安装吗？', intl.get('yes'), intl.get('cancel'));
@@ -279,9 +320,7 @@ async function selectBlock(
 async function installComponent(
   component: ComponentConfig,
   state: Memento,
-  // pathName: string,
   intl: { get: (key: string) => string },
-  // folderPath?: string
 ) {
 
   // 获取当前正在编辑的文件
@@ -305,6 +344,7 @@ async function installComponent(
   // send statistics information
   const gitRootPath = getGitRootPath(filePath);
   const gitUser: any = await getGitConfig(gitRootPath, intl);
+
   if (gitUser && gitUser.name) {
     statistics({
       type: 'install',
@@ -320,9 +360,12 @@ async function installComponent(
 
     const cmdActuator = new actuator({
       cwd: npmRootPath,
-    }, (error) => { });
+    }, (error) => {
+      window.showErrorMessage(`${chalk.red('🚧 安装失败')}： ${error}`);
+    });
 
-    const packageToolCommand: { [key: string]: string } | undefined = workspace.getConfiguration().get('dendrobium.packageManagementTool');
+    const packageToolCommand: { [key: string]: string } | undefined = pluginConfiguration(state).get('dendrobium.packageManagementTool');
+
 
     vscode.window.withProgress({
       location: vscode.ProgressLocation.Notification,

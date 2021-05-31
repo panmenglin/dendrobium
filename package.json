@@ -90,6 +90,10 @@
       {
         "command": "dendrobium.snippetInsert",
         "title": "插入"
+      },
+      {
+        "command": "dendrobium.configChange",
+        "title": "Dendrobium:configChange"
       }
     ],
     "menus": {

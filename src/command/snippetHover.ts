@@ -1,3 +1,7 @@
+/**
+ * 编辑器悬浮显示文档地址
+ * hover provider display doc info
+ */
 import { workspace, Hover } from 'vscode';
 import { getVSCodeRootPath } from '../utils/utils';
 

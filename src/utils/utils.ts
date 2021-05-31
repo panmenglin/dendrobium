@@ -9,8 +9,8 @@ const fetch = require('isomorphic-fetch');
 
 /**
  * get webview content
- * @param context 
- * @param templatePath 
+ * @param context
+ * @param templatePath
  */
 export function getWebViewContent(context: any, templatePath: string) {
   const resourcePath = path.join(context.extensionPath, templatePath);
@@ -25,8 +25,8 @@ export function getWebViewContent(context: any, templatePath: string) {
 
 /**
  * mv unzip folder
- * @param currentPath 
- * @param targetPath 
+ * @param currentPath
+ * @param targetPath
  */
 export function mvUnzipFolder(currentPath: string, targetPath: string) {
   return new Promise<void>((resolve, reject) => {
@@ -47,8 +47,8 @@ interface Actuator {
 
 /**
  * commond actuator
- * @param {*} options 
- * @param {*} errorCallback 
+ * @param {*} options
+ * @param {*} errorCallback
  */
 export const actuator = function (this: Actuator, options = {}, errorCallback: (err: any) => void) {
   return {
@@ -69,8 +69,8 @@ export const actuator = function (this: Actuator, options = {}, errorCallback: (
 /**
  * mvUnzipFolder
  * @description 移动文件
- * @param {*} currentPath 
- * @param {*} targetPath 
+ * @param {*} currentPath
+ * @param {*} targetPath
  */
 export function mvFolder(currentPath: string, targetPath: string) {
   return new Promise<void>((resolve, reject) => {
@@ -87,8 +87,8 @@ export function mvFolder(currentPath: string, targetPath: string) {
 
 /**
  * tansform position path to relation path
- * @param pathA 
- * @param pathB 
+ * @param pathA
+ * @param pathB
  */
 export function pathTansform(pathA: string, pathB: string) {
   const pathArrA = pathA.split('/');
@@ -122,7 +122,7 @@ export function pathTansform(pathA: string, pathB: string) {
 
 /**
  * get tar ball
- * @param url 
+ * @param url
  */
 export function getLatestTarball(url: string) {
   return fetch(url).then(async (res: any) => {
@@ -134,8 +134,8 @@ export function getLatestTarball(url: string) {
 
 /**
  * download template
- * @param url 
- * @param downloadPath 
+ * @param url
+ * @param downloadPath
  */
 export function downloadTemplate(url: string, downloadPath: string) {
   return fetch(url).then(async (res: any) => {
@@ -168,7 +168,7 @@ export function getRootPath(filePath: string): any {
 
 /**
  * get package.json
- * @param filePath 
+ * @param filePath
  */
 function circularPathGetPackageJson(filePath: string): any {
   if (!filePath || filePath === '/') {
@@ -221,7 +221,7 @@ export function getGitRootPath(filePath: string): string {
 /**
  * get vscode root path
  */
- export function getVSCodeRootPath(filePath: string): string {
+export function getVSCodeRootPath(filePath: string): string {
   const parentPath = path.resolve(filePath, '..');
 
   if (filePath === '/') {
@@ -233,4 +233,18 @@ export function getGitRootPath(filePath: string): string {
   } else {
     return getVSCodeRootPath(parentPath);
   }
+}
+
+/**
+ * get configuration
+ * @param state
+ * @returns
+ */
+export function pluginConfiguration(state: vscode.Memento) {
+  return {
+    get: (key:string) => {
+      const stateConfig: any = state.get('config');
+      return vscode.workspace.getConfiguration().get(key) || (stateConfig ? stateConfig[key] : '');
+    }
+  };
 }

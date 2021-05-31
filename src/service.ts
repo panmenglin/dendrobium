@@ -23,21 +23,28 @@ export function report(reportVariable: ReportVariable) {
  * fetch library config
  * @returns
  */
-export function getLibrary(params?: { path?: string }) {
-    const libraryConfig: LibrarysConfig | undefined = workspace.getConfiguration().get('dendrobium.librarysConfig');
+export function getLibrary(params?: {
+    path?: string,
+    librarysConfig: LibrarysConfig
+}) {
 
-    if (!libraryConfig) {
+    if (!params?.librarysConfig) {
         return;
     }
 
-    const url = params?.path ? `${libraryConfig.rootPath}${params?.path}` : libraryConfig.configPath;
+    const url = params?.path ? `${params.librarysConfig.rootPath}${params?.path}` : params.librarysConfig.configPath;
     return request(url, {
         method: 'GET',
     });
 }
 
 export function getSnippets(params: { path: string }) {
+    return request(params.path, {
+        method: 'GET',
+    });
+}
 
+export function getConfig(params: { path: string }) {
     return request(params.path, {
         method: 'GET',
     });
