@@ -54,7 +54,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	}));
 
 
-	const treeViewProvider = new TreeViewProvider();
+	const treeViewProvider = new TreeViewProvider(globalState);
 
 	context.subscriptions.push(vscode.window.registerTreeDataProvider('components-view', treeViewProvider));
 

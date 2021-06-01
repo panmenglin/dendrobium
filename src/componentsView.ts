@@ -1,5 +1,7 @@
-import { TreeItem, TreeItemCollapsibleState, TreeDataProvider, Uri, window, workspace, ThemeIcon, Event, EventEmitter, commands } from 'vscode';
+import { TreeItem, TreeDataProvider, workspace, ThemeIcon, Event, EventEmitter, Memento } from 'vscode';
+import { LibrarysConfig } from './types';
 import { getLibrary } from './service';
+import { pluginConfiguration } from './utils/utils';
 
 const fs = require('fs');
 export class TreeItemNode extends TreeItem {
@@ -27,6 +29,11 @@ export class TreeItemNode extends TreeItem {
 
 export class TreeViewProvider implements TreeDataProvider<TreeItemNode>{
 
+    constructor(
+        public readonly state: Memento,
+    ) {
+    }
+
     private _onDidChangeTreeData: EventEmitter<TreeItemNode | undefined | void> = new EventEmitter<TreeItemNode | undefined | void>();
     readonly onDidChangeTreeData: Event<TreeItemNode | undefined | void> = this._onDidChangeTreeData.event;
 
@@ -51,7 +58,16 @@ export class TreeViewProvider implements TreeDataProvider<TreeItemNode>{
      * fetch components list
      */
     async getComponents(element: TreeItemNode | undefined, path?: string) {
-        const library = await getLibrary();
+
+        const librarysConfig: LibrarysConfig | undefined = pluginConfiguration(this.state).get('dendrobium.librarysConfig');
+
+        if (!librarysConfig) {
+            return;
+        }
+
+        const library = await getLibrary({
+            librarysConfig
+        });
 
         if (!element) {
             const root = [{

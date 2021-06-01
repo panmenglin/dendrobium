@@ -40,13 +40,17 @@
 }
 
 .selected-library {
-  border-bottom: 3px solid var(--vscode-button-background);
+  border-bottom: 3px solid var(--vscode-tab-border);
   margin-right: 8px;
 }
 
 .drop-down {
   position: relative;
   cursor: pointer;
+}
+
+.drop-down path {
+  fill: var(--vscode-tab-activeForeground);
 }
 
 .drop-down:hover .select {
@@ -63,16 +67,20 @@
   overflow-y: auto;
   z-index: 9;
   background: var(--vscode-dropdown-background);
-  border: 1px solid var(--vscode-editorRuler-foreground);
+  border: 1px solid var(--vscode-dropdown-border);
 }
 
 .select .tabs-item {
-  border-bottom: 1px solid var(--vscode-editorRuler-foreground);
+  border-bottom: 1px solid var(--vscode-dropdown-border);
+}
+
+.select .tabs-item:last-child {
+  border: 0;
 }
 
 .tabs-item.active,
 .select .tabs-item:hover {
-  background: var(--vscode-editorRuler-foreground);
+  background: var(--vscode-list-hoverBackground);
 }
 
 .search {
@@ -92,7 +100,8 @@
   background: none;
   padding: 0 10px;
   color: var(--vscode-input-foreground);
-  border: 1px solid var(--vscode-editorRuler-foreground);
+  background: var(--vscode-input-background);
+  border: 0;
 }
 
 .container {
@@ -105,7 +114,7 @@
 }
 
 .block-item {
-  border-bottom: 1px solid var(--vscode-editorRuler-foreground);
+  border-bottom: 1px solid var(--vscode-tab-border);
   padding-bottom: 20px;
 }
 
@@ -127,6 +136,10 @@
   cursor: pointer;
 }
 
+.block-star path {
+  fill: var(--vscode-tab-activeForeground);
+}
+
 .block-desc {
   font-size: 12px;
 }
@@ -137,10 +150,11 @@
 
 .tag-item {
   display: inline-block;
-  border-radius: 3px;
+  border-radius: 1px;
   margin: 5px 8px 5px 0;
   padding: 3px 8px;
-  border: 1px solid var(--vscode-editorRuler-foreground);
+  border: 1px solid var(--vscode-tab-border);
+  background: var(--vscode-input-background);
 }
 
 .block-snapshot {
@@ -166,6 +180,7 @@
   color: #fff;
   text-decoration: none;
   margin: 0 2px;
+  border-radius: 1px;
 }
 
 .pagination {
@@ -182,7 +197,7 @@
   height: 32px;
   min-width: 32px;
   line-height: 32px;
-  border-radius: 2px;
+  border-radius: 1px;
   font-size: 12px;
   text-align: center;
   display: inline-block;
