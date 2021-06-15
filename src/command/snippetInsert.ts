@@ -40,6 +40,8 @@ export default async function snippetInsert(
         type: 'snippetInsert',
         component: {
             code: snippetItem.item.componentCode,
+            name: '',
+            importName: ''
         },
         library: {
             code: snippetItem.item.libraryCode,

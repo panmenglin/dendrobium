@@ -142,8 +142,8 @@ The main fields reported in data statistics include:
       "tags": ["Base Component", "React", "Vue"], // component tags
       "previewImg": "", // the preview image url of component
       "code": "xxx", // component code，unique value
+      "importName": "xxx", // The variable name when importing, the value will be used when importing, the type is string ｜ string[], when the importName value is an array, it will be imported using destructuring
       "name": "@xx/xxx", // component name, which will be used when performing the installation operation
-      "groupName": "xxx", // the name of the component library, if this option is configured, the component library will be installed during the installation process
       "doc": "xxx", // the doc url of componentA
       "snippets": "", // get the component code snippet interface
       "parentCode": "", // library code，unique value

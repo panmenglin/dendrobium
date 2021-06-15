@@ -7,6 +7,7 @@ import docPreview from './command/docPreview';
 import snippetInsert from './command/snippetInsert';
 import snippetHover from './command/snippetHover';
 import configChange from './command/configChange';
+import componentInstall from './command/componentInstall';
 import localize from './locales';
 
 // this method is called when your extension is activated

@@ -36,6 +36,8 @@ export default async function docPreview(
         type: 'docView',
         component: {
             code: docItem.item.code,
+            name: '',
+            importName: ''
         },
         library: {
             code: docItem.item.libraryCode,

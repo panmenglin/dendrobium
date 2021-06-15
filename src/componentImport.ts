@@ -3,12 +3,11 @@
  * use components
  */
 import * as vscode from 'vscode';
-import { getWebViewContent, getNpmRootPath, actuator, getGitRootPath, pluginConfiguration } from './utils/utils';
+import { getWebViewContent, pluginConfiguration } from './utils/utils';
 import { ComponentConfig, LibrarysConfig, LibraryConfig } from './types';
-import getGitConfig from './utils/getGitConfig';
-import statistics from './statistics';
 import { getLibrary, getSnippets, getConfig } from './service';
 import configChange from './command/configChange';
+import componentInstall from './command/componentInstall';
 
 const fs = require('fs');
 const chalk = require('chalk');
@@ -32,7 +31,6 @@ export default async function componentImport(
     });
 
     if (config) {
-      console.log(config);
       state.update('config', config);
     } else {
       window.showErrorMessage(chalk.red('未能查询到正确的配置'));
@@ -41,7 +39,6 @@ export default async function componentImport(
     const hasConfig = await configChange(context, state, intl);
 
     if (hasConfig) {
-      console.log(state.get('configPath'));
       const configPath: string | undefined = state.get('configPath');
 
       if (configPath) {
@@ -51,7 +48,6 @@ export default async function componentImport(
         });
 
         if (config) {
-          console.log(config);
           state.update('config', config);
         } else {
           window.showErrorMessage(chalk.red('未能查询到正确的配置'));
@@ -104,7 +100,7 @@ export default async function componentImport(
 /**
  * 切换组件库
  * change library
- * @param config 
+ * @param config
  */
 async function changeLibrary(
   config: LibraryConfig,
@@ -300,87 +296,9 @@ async function selectBlock(
   }
 
   // 本期仅支持 npm 安装
-  installComponent(
+  componentInstall(
     block,
     state,
-    // block.defaultPath,
     intl,
-    // path
   );
-}
-
-
-/**
- * 安装组件
- * install component
- * @param component
- * @param state
- * @param pathName
- */
-async function installComponent(
-  component: ComponentConfig,
-  state: Memento,
-  intl: { get: (key: string) => string },
-) {
-
-  // 获取当前正在编辑的文件
-  // get active editor
-  let editor: any | undefined = state.get('activeTextEditor');
-  let activeEditor: vscode.TextEditor[] = window.visibleTextEditors.filter((item: any) => {
-    return item.id === editor.id;
-  });
-
-  editor = activeEditor.find(item => {
-    return item.document.uri.scheme === 'file';
-  });
-
-  if (!editor) {
-    return;
-  }
-
-  const filePath = editor.document.uri.path;
-
-  // 统计埋点
-  // send statistics information
-  const gitRootPath = getGitRootPath(filePath);
-  const gitUser: any = await getGitConfig(gitRootPath, intl);
-
-  if (gitUser && gitUser.name) {
-    statistics({
-      type: 'install',
-      component,
-      library: component.library
-    });
-  }
-
-  // 组件安装
-  // install
-  const npmRootPath = getNpmRootPath(filePath);
-  if (npmRootPath) {
-
-    const cmdActuator = new actuator({
-      cwd: npmRootPath,
-    }, (error) => {
-      window.showErrorMessage(`${chalk.red('🚧 安装失败')}： ${error}`);
-    });
-
-    const packageToolCommand: { [key: string]: string } | undefined = pluginConfiguration(state).get('dendrobium.packageManagementTool');
-
-
-    vscode.window.withProgress({
-      location: vscode.ProgressLocation.Notification,
-      title: intl.get('loadingInstall'),
-    }, (progress, token) => {
-      const res = cmdActuator.run(`${packageToolCommand?.install || 'npm install --save'} ${component.groupName || component.name}`).then(() => {
-        window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
-        window.showInformationMessage(intl.get('successImport'));
-      });
-
-      return res;
-    });
-    // }
-  } else {
-    window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
-    window.showInformationMessage(intl.get('successImport'));
-  }
 }

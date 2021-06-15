@@ -1,0 +1,165 @@
+
+
+import * as vscode from 'vscode';
+import { window, Memento } from 'vscode';
+import { getNpmRootPath, actuator, getGitRootPath, pluginConfiguration } from '../utils/utils';
+import getGitConfig from '../utils/getGitConfig';
+import statistics from '../statistics';
+import { ComponentConfig } from '../types';
+
+const { default: traverse } = require('@babel/traverse');
+import { parse } from '@babel/parser';
+
+const fs = require('fs');
+const chalk = require('chalk');
+
+/**
+ * 安装组件
+ * install component
+ * @param component
+ * @param state
+ * @param pathName
+ */
+export default async function componentInstall(
+    component: ComponentConfig,
+    // component: any,
+    state: Memento,
+    intl: { get: (key: string) => string },
+) {
+
+    // 获取当前正在编辑的文件
+    // get active editor
+    let editor: any | undefined = state.get('activeTextEditor');
+    let activeEditor: vscode.TextEditor[] = window.visibleTextEditors.filter((item: any) => {
+        return item.id === editor.id;
+    });
+
+    editor = activeEditor.find(item => {
+        return item.document.uri.scheme === 'file';
+    });
+
+    if (!editor) {
+        return;
+    }
+
+    const filePath = editor.document.uri.path;
+
+    // 统计埋点
+    // send statistics information
+    const gitRootPath = getGitRootPath(filePath);
+    const gitUser: any = await getGitConfig(gitRootPath, intl);
+
+    if (gitUser && gitUser.name) {
+        statistics({
+            type: 'install',
+            component,
+            library: component.library
+        });
+    }
+
+    // 组件安装
+    // install
+    const npmRootPath = getNpmRootPath(filePath);
+    if (npmRootPath) {
+
+        const cmdActuator = new actuator({
+            cwd: npmRootPath,
+        }, (error: any) => {
+            window.showErrorMessage(`${chalk.red('🚧 安装失败')}： ${error}`);
+        });
+
+        const packageToolCommand: { [key: string]: string } | undefined = pluginConfiguration(state).get('dendrobium.packageManagementTool');
+
+
+        vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: intl.get('loadingInstall'),
+        }, (progress, token) => {
+            const res = cmdActuator.run(`${packageToolCommand?.install || 'npm install --save'} ${component.name}`).then(() => {
+                window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
+                window.showInformationMessage(intl.get('successImport'));
+            });
+
+            // 更新依赖
+            console.log(component);
+            insertImportDeclaration(editor, component.importName, component.name);
+            // insertImportDeclaration(editor, ["Row", "Col"], 'antd');
+
+            return res;
+        });
+        // }
+    } else {
+        window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
+        window.showInformationMessage(intl.get('successImport'));
+    }
+}
+
+/**
+ * 代码中插入依赖
+ * @param editor
+ * @param specifiers
+ * @param source
+ */
+function insertImportDeclaration(editor: any, specifiers: string | string[], source: string) {
+
+    const codes = fs.readFileSync(editor.document.uri.fsPath, 'utf8');
+
+    const ast = parse(codes, {
+        sourceType: "module"
+    });
+
+    // let lastImportPath: any;
+    let lastImportNode: any;
+    traverse(ast, {
+        /**
+         * 查询当时 editor 中是否已引入
+         * @param path
+         */
+        ImportDeclaration(path: any) {
+            // lastImportPath = path;
+            const curNode = path.node;
+
+            if (path.node.source.value === source) {
+
+                if (specifiers instanceof Array) {
+                    const _specifiers = [...specifiers];
+
+                    curNode.specifiers.map((item: any) => {
+                        const importedName = item.imported?.name;
+
+                        if (!_specifiers.includes(importedName)) {
+                            _specifiers.push(importedName);
+                        }
+                    });
+
+                    const start = new vscode.Position(curNode.loc.start.line - 1, curNode.loc.start.column);
+                    const end = new vscode.Position(curNode.loc.end.line - 1, curNode.loc.end.column);
+
+                    const selection = new vscode.Range(start, end);
+
+                    const code = `import { ${_specifiers.sort().join(', ')} } from '${source}';`;
+
+                    editor.edit((builder: any) => {
+                        builder.replace(selection, code);
+                    });
+                }
+
+
+                path.stop;
+            } else {
+                lastImportNode = path.node;
+            }
+        }
+    });
+
+    if (lastImportNode) {
+        const { line } = lastImportNode.loc.end;
+        const position = new vscode.Position(line, 0);
+
+        const code = specifiers instanceof Array ? `import { ${specifiers.join(', ')} } from '${source}';\n` : `import ${specifiers} from '${source}';\n`;
+
+        editor.edit((builder: any) => {
+            builder.insert(position, code);
+        });
+    }
+}

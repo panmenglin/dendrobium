@@ -1,10 +1,10 @@
 import * as path from 'path';
-const { sep } = path;
+// const { sep } = path;
 import * as fs from 'fs';
 import * as vscode from 'vscode';
-const mv = require('mv');
+// const mv = require('mv');
 const childProcess = require('child_process');
-const fetch = require('isomorphic-fetch');
+// const fetch = require('isomorphic-fetch');
 
 
 /**
@@ -28,17 +28,17 @@ export function getWebViewContent(context: any, templatePath: string) {
  * @param currentPath
  * @param targetPath
  */
-export function mvUnzipFolder(currentPath: string, targetPath: string) {
-  return new Promise<void>((resolve, reject) => {
-    mv(currentPath, targetPath, { mkdirp: true }, (err: any) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
-}
+// export function mvUnzipFolder(currentPath: string, targetPath: string) {
+//   return new Promise<void>((resolve, reject) => {
+//     mv(currentPath, targetPath, { mkdirp: true }, (err: any) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         resolve();
+//       }
+//     });
+//   });
+// }
 
 
 interface Actuator {
@@ -72,17 +72,17 @@ export const actuator = function (this: Actuator, options = {}, errorCallback: (
  * @param {*} currentPath
  * @param {*} targetPath
  */
-export function mvFolder(currentPath: string, targetPath: string) {
-  return new Promise<void>((resolve, reject) => {
-    mv(currentPath, targetPath, { mkdirp: true, clobber: false }, (err: any) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
-  });
-}
+// export function mvFolder(currentPath: string, targetPath: string) {
+//   return new Promise<void>((resolve, reject) => {
+//     mv(currentPath, targetPath, { mkdirp: true, clobber: false }, (err: any) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         resolve();
+//       }
+//     });
+//   });
+// }
 
 
 /**
@@ -90,99 +90,99 @@ export function mvFolder(currentPath: string, targetPath: string) {
  * @param pathA
  * @param pathB
  */
-export function pathTansform(pathA: string, pathB: string) {
-  const pathArrA = pathA.split('/');
-  const pathArrB = pathB.split('/');
+// export function pathTansform(pathA: string, pathB: string) {
+//   const pathArrA = pathA.split('/');
+//   const pathArrB = pathB.split('/');
 
-  let prevIndex = 0, index = 0;
+//   let prevIndex = 0, index = 0;
 
-  while (pathArrA[index] !== undefined || pathArrB[index] !== undefined) {
-    if (pathArrA[index] !== pathArrB[index] && prevIndex === 0) {
-      prevIndex = index;
-    }
+//   while (pathArrA[index] !== undefined || pathArrB[index] !== undefined) {
+//     if (pathArrA[index] !== pathArrB[index] && prevIndex === 0) {
+//       prevIndex = index;
+//     }
 
-    index++;
-  }
+//     index++;
+//   }
 
-  let relationPath = '';
-  if (pathArrA.length === prevIndex) {
-    relationPath = './' + pathArrB.slice(prevIndex).join('/');
-  } else {
-    const prev = [];
-    for (let index = 0; index < pathArrA.length - prevIndex; index++) {
-      prev.push('..');
-    }
+//   let relationPath = '';
+//   if (pathArrA.length === prevIndex) {
+//     relationPath = './' + pathArrB.slice(prevIndex).join('/');
+//   } else {
+//     const prev = [];
+//     for (let index = 0; index < pathArrA.length - prevIndex; index++) {
+//       prev.push('..');
+//     }
 
-    relationPath = prev.join('/') + '/' + pathArrB.slice(prevIndex).join('/');
-  }
+//     relationPath = prev.join('/') + '/' + pathArrB.slice(prevIndex).join('/');
+//   }
 
-  return relationPath;
-}
+//   return relationPath;
+// }
 
 
 /**
  * get tar ball
  * @param url
  */
-export function getLatestTarball(url: string) {
-  return fetch(url).then(async (res: any) => {
-    const text = await res.text();
-    const tarball = text.match(/"(.+\.tgz)"/g);
-    return tarball[0].replace(/"/g, '');
-  });
-}
+// export function getLatestTarball(url: string) {
+//   return fetch(url).then(async (res: any) => {
+//     const text = await res.text();
+//     const tarball = text.match(/"(.+\.tgz)"/g);
+//     return tarball[0].replace(/"/g, '');
+//   });
+// }
 
 /**
  * download template
  * @param url
  * @param downloadPath
  */
-export function downloadTemplate(url: string, downloadPath: string) {
-  return fetch(url).then(async (res: any) => {
-    const { body } = res;
-    const file = fs.createWriteStream(downloadPath);
-    body.pipe(file);
-    return new Promise(resolve => {
-      body.on('end', resolve);
-    });
-  });
-}
+// export function downloadTemplate(url: string, downloadPath: string) {
+//   return fetch(url).then(async (res: any) => {
+//     const { body } = res;
+//     const file = fs.createWriteStream(downloadPath);
+//     body.pipe(file);
+//     return new Promise(resolve => {
+//       body.on('end', resolve);
+//     });
+//   });
+// }
 
 
 /**
  * get project root path
  */
-const rootPathMap: any = {};
-export function getRootPath(filePath: string): any {
+// const rootPathMap: any = {};
+// export function getRootPath(filePath: string): any {
 
-  if (rootPathMap[filePath]) {
-    return rootPathMap[filePath];
-  }
+//   if (rootPathMap[filePath]) {
+//     return rootPathMap[filePath];
+//   }
 
-  const rootPath = circularPathGetPackageJson(filePath);
-  rootPathMap[filePath] = rootPath;
+//   const rootPath = circularPathGetPackageJson(filePath);
+//   rootPathMap[filePath] = rootPath;
 
-  return rootPath;
-}
+//   return rootPath;
+// }
 
 
 /**
  * get package.json
  * @param filePath
  */
-function circularPathGetPackageJson(filePath: string): any {
-  if (!filePath || filePath === '/') {
-    return false;
-  }
+// function circularPathGetPackageJson(filePath: string): any {
+//   if (!filePath || filePath === '/') {
+//     return false;
+//   }
 
-  const packageJsonPath = `${filePath}${sep}package.json`;
+//   const packageJsonPath = `${filePath}${sep}package.json`;
 
-  if (fs.existsSync(packageJsonPath)) {
-    return filePath;
-  } else {
-    return getRootPath(path.join(filePath, '../'));
-  }
-}
+//   if (fs.existsSync(packageJsonPath)) {
+//     return filePath;
+//   } else {
+//     return getRootPath(path.join(filePath, '../'));
+//   }
+// }
 
 /**
  * get npm root path
@@ -242,7 +242,7 @@ export function getVSCodeRootPath(filePath: string): string {
  */
 export function pluginConfiguration(state: vscode.Memento) {
   return {
-    get: (key:string) => {
+    get: (key: string) => {
       const stateConfig: any = state.get('config');
       return vscode.workspace.getConfiguration().get(key) || (stateConfig ? stateConfig[key] : '');
     }

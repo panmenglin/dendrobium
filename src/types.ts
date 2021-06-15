@@ -13,14 +13,14 @@ export interface ComponentConfig {
     tags?: string[];
     previewImg?: string;
     code: string;
-    name?: string;
-    groupName?: string;
+    name: string;
     doc?: string;
     snippets?: string;
     parentCode?: string;
     author?: string;
     docKeys?: string;
     library?: LibraryConfig;
+    importName: string | string[];
 }
 
 

@@ -139,8 +139,8 @@ VSCode 前端组件库管理插件
       "tags": ["基础组件", "React", "Vue"], // 组件关联标签，可自定义
       "previewImg": "", // 组件预览图
       "code": "xxx", // 组件code，唯一值
+      "importName": "xxx", // 引入时变量名称，import 时会使用该值，类型是 string ｜ string[]，当 importName 值是数组时，会使用解构引入
       "name": "@xx/xxx", // 组件名称，执行安装操作时会使用该名称
-      "groupName": "xxx", // 组件库名称，如果配置该项，安装时会之间安装组件库
       "doc": "xxx", // 文档地址
       "snippets": "", // 获取该组件代码片段接口
       "parentCode": "", // 组件库code，唯一值
