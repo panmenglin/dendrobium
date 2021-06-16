@@ -8,6 +8,7 @@ import { ComponentConfig, LibrarysConfig, LibraryConfig } from './types';
 import { getLibrary, getSnippets, getConfig } from './service';
 import configChange from './command/configChange';
 import componentInstall from './command/componentInstall';
+import componentDownload from './command/componentDownload';
 
 const fs = require('fs');
 const chalk = require('chalk');
@@ -203,31 +204,49 @@ function initLibraryPanel(
 /**
  * select component
  * 安装组件和代码片段
- * @param block
+ * @param component
  * @param state
  * @param path
 //  * @param prompt
  */
 async function selectBlock(
-  block: ComponentConfig,
+  component: ComponentConfig,
   state: Memento,
   intl: { get: (key: string) => string },
 ) {
 
-  const answer = await vscode.window.showInformationMessage('该组件会通过 npm 方式安装，同时将为工作区添加组件的代码片段，确定安装吗？', intl.get('yes'), intl.get('cancel'));
+  const installMethod = {
+    package: '该组件会通过包管理工具安装，同时将为工作区添加组件的代码片段，确定安装吗？',
+    download: '该组件将下载安装，同时将为工作区添加组件的代码片段，请选择安装地址。',
+    script: '该组件将在当前位置添加 script 标签，同时将为工作区添加组件的代码片段，确定安装吗？',
+  };
 
-  if (answer !== intl.get('yes')) {
-    return;
+  let downloadPath = '';
+  if (component.installBy === 'download') {
+    const folders: any = await vscode.window.showOpenDialog({
+      canSelectFiles: false,
+      canSelectFolders: true,
+      canSelectMany: false
+    });
+
+    downloadPath = folders[0].path;
+  } else {
+    const answer = await vscode.window.showInformationMessage(component.installBy ? installMethod[component.installBy] : installMethod.package, intl.get('yes'), intl.get('cancel'));
+
+    if (answer !== intl.get('yes')) {
+      return;
+    }
+
   }
 
   // 是否有文档
   // 工作区添加文档
   // create doc
-  if (block.doc) {
+  if (component.doc) {
     // 遍历工作区所有文件夹添加代码片段
     // TODO 根据组件安装目录添加代码片段
     workspace.workspaceFolders?.map(item => {
-      const rootPath = `${item.uri.path}/.vscode/${block?.parentCode}.component-docs`;
+      const rootPath = `${item.uri.path}/.vscode/${component?.parentCode}.component-docs`;
 
       let currentDocs: { [key: string]: any } = {};
       if (fs.existsSync(rootPath)) {
@@ -239,12 +258,12 @@ async function selectBlock(
       }
 
       // 合并现有的代码片段
-      currentDocs[block.code] = {
-        title: block.title,
-        url: block.doc,
-        code: block.code,
-        libraryCode: block.parentCode,
-        name: block.name,
+      currentDocs[component.code] = {
+        title: component.title,
+        url: component.doc,
+        code: component.code,
+        libraryCode: component.parentCode,
+        name: component.name,
       };
 
       // 更新文件
@@ -259,17 +278,17 @@ async function selectBlock(
   // 是否有代码片段
   // 工作区添加代码片段
   // create snippets
-  if (block.snippets) {
+  if (component.snippets) {
 
     const snippet = await getSnippets({
-      path: block.snippets
+      path: component.snippets
     });
 
     if (snippet) {
       // 遍历工作区所有文件夹添加代码片段
       // TODO 根据组件安装目录添加代码片段
       workspace.workspaceFolders?.map(item => {
-        const rootPath = `${item.uri.path}/.vscode/${block?.parentCode}.code-snippets`;
+        const rootPath = `${item.uri.path}/.vscode/${component?.parentCode}.code-snippets`;
 
         let currentSnippets: { [key: string]: any } = {};
         if (fs.existsSync(rootPath)) {
@@ -295,10 +314,44 @@ async function selectBlock(
     }
   }
 
-  // 本期仅支持 npm 安装
-  componentInstall(
-    block,
-    state,
-    intl,
-  );
+  switch (component.installBy) {
+    case 'package':
+      // 通过配置的包管理工具安装
+      componentInstall(
+        component,
+        state,
+        intl,
+      );
+      break;
+    case 'download':
+      // 下载到用户选择的目录
+      componentDownload(component, downloadPath, intl);
+      break;
+    case 'script':
+      // 编辑器中插入 script 标签
+      let editor: any | undefined = state.get('activeTextEditor');
+      let activeEditor: vscode.TextEditor[] = window.visibleTextEditors.filter((item: any) => {
+        return item.id === editor.id;
+      });
+
+      editor = activeEditor.find(item => {
+        return item.document.uri.scheme === 'file';
+      });
+
+      const selection = editor ? editor.selection : undefined;
+
+      if (!selection) {
+        return;
+      }
+
+      const insertPosition = new vscode.Position(selection.active.line, selection.active.character);
+
+      editor.edit((builder: any) => {
+        builder.insert(insertPosition, `<script src="${component.installMethod.script}"></script>\n`);
+      });
+
+      break;
+    default:
+      break;
+  }
 }

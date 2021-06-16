@@ -2,9 +2,9 @@ import * as path from 'path';
 // const { sep } = path;
 import * as fs from 'fs';
 import * as vscode from 'vscode';
-// const mv = require('mv');
+const mv = require('mv');
 const childProcess = require('child_process');
-// const fetch = require('isomorphic-fetch');
+const fetch = require('isomorphic-fetch');
 
 
 /**
@@ -28,17 +28,17 @@ export function getWebViewContent(context: any, templatePath: string) {
  * @param currentPath
  * @param targetPath
  */
-// export function mvUnzipFolder(currentPath: string, targetPath: string) {
-//   return new Promise<void>((resolve, reject) => {
-//     mv(currentPath, targetPath, { mkdirp: true }, (err: any) => {
-//       if (err) {
-//         reject(err);
-//       } else {
-//         resolve();
-//       }
-//     });
-//   });
-// }
+export function mvUnzipFolder(currentPath: string, targetPath: string) {
+  return new Promise<void>((resolve, reject) => {
+    mv(currentPath, targetPath, { mkdirp: true }, (err: any) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
 
 
 interface Actuator {
@@ -124,29 +124,29 @@ export const actuator = function (this: Actuator, options = {}, errorCallback: (
  * get tar ball
  * @param url
  */
-// export function getLatestTarball(url: string) {
-//   return fetch(url).then(async (res: any) => {
-//     const text = await res.text();
-//     const tarball = text.match(/"(.+\.tgz)"/g);
-//     return tarball[0].replace(/"/g, '');
-//   });
-// }
+export function getLatestTarball(url: string) {
+  return fetch(url).then(async (res: any) => {
+    const text = await res.text();
+    const tarball = text.match(/"(.+\.tgz)"/g);
+    return tarball[0].replace(/"/g, '');
+  });
+}
 
 /**
  * download template
  * @param url
  * @param downloadPath
  */
-// export function downloadTemplate(url: string, downloadPath: string) {
-//   return fetch(url).then(async (res: any) => {
-//     const { body } = res;
-//     const file = fs.createWriteStream(downloadPath);
-//     body.pipe(file);
-//     return new Promise(resolve => {
-//       body.on('end', resolve);
-//     });
-//   });
-// }
+export function downloadTemplate(url: string, downloadPath: string) {
+  return fetch(url).then(async (res: any) => {
+    const { body } = res;
+    const file = fs.createWriteStream(downloadPath);
+    body.pipe(file);
+    return new Promise(resolve => {
+      body.on('end', resolve);
+    });
+  });
+}
 
 
 /**
