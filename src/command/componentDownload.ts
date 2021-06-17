@@ -57,13 +57,9 @@ export default async function componentDownload(
     const download = (progress: any) => {
         return new Promise(async (resolve) => {
 
-            console.log('downloadUrl', component);
-
             progress.report({ increment: 30, message: intl.get('downloading') });
 
             const downloadUrl: string = component.installMethod?.download.match(/(.+\.(tgz|zip))/g) ? component.installMethod?.download : await getLatestTarball(component.installMethod?.download);
-
-            console.log('downloadUrl', downloadUrl);
 
             await downloadTemplate(downloadUrl, `${downloadPath}${sep}${componentName}.tgz`);
 
@@ -82,7 +78,6 @@ export default async function componentDownload(
                     }
                 },
                 async function (err: any) {
-                    console.log('downloadUrl', err);
 
                     const packageJsonPath = `${componentPath}${sep}package.json`;
                     let packageJson = '';

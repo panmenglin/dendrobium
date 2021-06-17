@@ -181,9 +181,13 @@ function blockListRender(blocks) {
                           <a href="javascript:;" class="op-add" itemIndex="${
                             beginIndex + index
                           }">${intl['add'] || '添加'}</a>
-                          <a href="${item.doc}" target="_blank">${
-        intl['preview'] || '文档'
-      }</a>
+                          ${
+                            item.doc
+                              ? `<a href="${item.doc}" target="_blank">${
+                                  intl['preview'] || '文档'
+                                }</a>`
+                              : ''
+                          }
                       </div>
                   </div>`;
     });
@@ -217,6 +221,10 @@ function blockListRender(blocks) {
         });
 
         $('.shadow').show();
+      } else {
+        selected.installBy = 'package';
+        vscode.postMessage({ blockSelected: selected });
+        $('.shadow').hide();
       }
     });
 

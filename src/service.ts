@@ -7,7 +7,7 @@ const request = requestSingleton();
 export function report(reportVariable: ReportVariable) {
     const statisticsConfig: StatisticsConfig | undefined = workspace.getConfiguration().get('dendrobium.statistics');
 
-    if (!statisticsConfig || !statisticsConfig.reportApi || !statisticsConfig.reportApi.url) {
+    if (!statisticsConfig || !statisticsConfig.reportApi || !statisticsConfig.reportApi?.url) {
         return;
     }
 

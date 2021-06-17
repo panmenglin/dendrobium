@@ -12,6 +12,8 @@ import { parse } from '@babel/parser';
 
 const fs = require('fs');
 const chalk = require('chalk');
+const path = require('path');
+const { sep } = path;
 
 /**
  * 安装组件
@@ -42,6 +44,8 @@ export default async function componentInstall(
         return;
     }
 
+    insertImportDeclaration(editor, component.importName, component.name);
+
     const filePath = editor.document.uri.path;
 
     // 统计埋点
@@ -60,6 +64,29 @@ export default async function componentInstall(
     // 组件安装
     // install
     const npmRootPath = getNpmRootPath(filePath);
+
+    const packageJsonPath = `${npmRootPath}${sep}package.json`;
+    let packageJson: any;
+
+    if (fs.existsSync(packageJsonPath)) {
+        packageJson = fs.readFileSync(packageJsonPath, 'utf-8');
+
+        if (packageJson) {
+            packageJson = JSON.parse(packageJson);
+
+            if (packageJson.dependencies[component.name]) {
+
+                const answer = await vscode.window.showInformationMessage('组件已存在，是否重新安装？', '重新安装', '取消');
+
+                if (answer === '重新安装') {
+
+                } else {
+                    return;
+                }
+            }
+        }
+    }
+
     if (npmRootPath) {
 
         const cmdActuator = new actuator({
@@ -70,18 +97,19 @@ export default async function componentInstall(
 
         const packageToolCommand: { [key: string]: string } | undefined = pluginConfiguration(state).get('dendrobium.packageManagementTool');
 
-
         vscode.window.withProgress({
             location: vscode.ProgressLocation.Notification,
             title: intl.get('loadingInstall'),
         }, (progress, token) => {
-            const res = cmdActuator.run(`${packageToolCommand?.install || 'npm install --save'} ${component.name}`).then(() => {
+
+            const installCommand = component.installMethod?.package || (packageToolCommand?.default || 'npm install --save');
+
+            const res = cmdActuator.run(`${installCommand} ${component.name}`).then(() => {
                 window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
                 window.showInformationMessage(intl.get('successImport'));
             });
 
             // 更新依赖
-            console.log(component);
             insertImportDeclaration(editor, component.importName, component.name);
             // insertImportDeclaration(editor, ["Row", "Col"], 'antd');
 
@@ -105,14 +133,18 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
     const codes = fs.readFileSync(editor.document.uri.fsPath, 'utf8');
 
     const ast = parse(codes, {
-        sourceType: "module"
+        sourceType: "module",
+        plugins: [
+            "jsx",
+        ],
     });
+
 
     // let lastImportPath: any;
     let lastImportNode: any;
     traverse(ast, {
         /**
-         * 查询当时 editor 中是否已引入
+         * 更新 import
          * @param path
          */
         ImportDeclaration(path: any) {
@@ -124,7 +156,7 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
                 if (specifiers instanceof Array) {
                     const _specifiers = [...specifiers];
 
-                    curNode.specifiers.map((item: any) => {
+                    curNode.specifiers?.map((item: any) => {
                         const importedName = item.imported?.name;
 
                         if (!_specifiers.includes(importedName)) {
@@ -144,7 +176,7 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
                     });
                 }
 
-
+                lastImportNode = 0;
                 path.stop;
             } else {
                 lastImportNode = path.node;
@@ -153,8 +185,18 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
     });
 
     if (lastImportNode) {
+        // 在最后一个 import 后插入
         const { line } = lastImportNode.loc.end;
         const position = new vscode.Position(line, 0);
+
+        const code = specifiers instanceof Array ? `import { ${specifiers.join(', ')} } from '${source}';\n` : `import ${specifiers} from '${source}';\n`;
+
+        editor.edit((builder: any) => {
+            builder.insert(position, code);
+        });
+    } else if (lastImportNode !== 0) {
+        // 在第一行插入
+        const position = new vscode.Position(0, 0);
 
         const code = specifiers instanceof Array ? `import { ${specifiers.join(', ')} } from '${source}';\n` : `import ${specifiers} from '${source}';\n`;
 
