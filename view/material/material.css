@@ -213,6 +213,10 @@
   color: #fff;
 }
 
+.pagination .hidden {
+  display: none;
+}
+
 .loading {
   display: inline-block;
   border: 4px solid hsl(222, 100%, 95%);

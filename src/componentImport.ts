@@ -132,7 +132,7 @@ async function changeLibrary(
  * @param context
  * @param state
  * @param config
- * @param blockList
+ * @param library
  * @param resolve
  * @param progress
  */
@@ -140,7 +140,7 @@ function initLibraryPanel(
   context: ExtensionContext,
   state: Memento,
   config: LibrarysConfig,
-  blockList: LibraryConfig[],
+  library: LibraryConfig[],
   progress: Progress<{ increment: number, message: string }>,
   intl: { get: (key: string) => string, getAll: () => any }
 ) {
@@ -162,18 +162,18 @@ function initLibraryPanel(
       panel.webview.postMessage({
         warehouse: config,
         intl: intl.getAll(),
-        library: blockList,
+        library: library,
       });
 
-      changeLibrary(blockList[0], state, intl);
+      changeLibrary(library[0], state, intl);
 
       progress.report({ increment: 100, message: intl.get('libraryViewReady') });
     }
 
     // 安装组件
     // selected and install component
-    if (message.blockSelected) {
-      selectBlock(message.blockSelected, state, intl);
+    if (message.componentSelected) {
+      selectComponent(message.componentSelected, state, intl);
     }
 
     // 切换组件库
@@ -209,7 +209,7 @@ function initLibraryPanel(
  * @param path
 //  * @param prompt
  */
-async function selectBlock(
+async function selectComponent(
   component: ComponentConfig,
   state: Memento,
   intl: { get: (key: string) => string },
@@ -261,6 +261,8 @@ async function selectBlock(
       currentDocs[component.code] = {
         title: component.title,
         url: component.doc,
+        docFile: component.docFile,
+        importName: component.importName,
         code: component.code,
         libraryCode: component.parentCode,
         name: component.name,

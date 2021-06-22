@@ -2,12 +2,14 @@
  * 编辑器悬浮显示文档地址
  * hover provider display doc info
  */
+import fetch from 'node-fetch';
 import { workspace, Hover } from 'vscode';
 import { getVSCodeRootPath } from '../utils/utils';
+import { getDoc } from '../service';
 
 const fs = require('fs');
 
-export default function provideHover(document: any, position: any, token: any) {
+export default async function provideHover(document: any, position: any, token: any) {
     const fileName = document.fileName;
     const word = document.getText(document.getWordRangeAtPosition(position));
 
@@ -19,7 +21,7 @@ export default function provideHover(document: any, position: any, token: any) {
 
     let docs: { [key: string]: any } = {};
 
-    modules.map(item => {
+    modules?.map(item => {
         const res: string[] | null = item.match(/import\s(.+?)\sfrom\s('|")(.+?)('|")(;|\n|\r|\r\n)/);
 
         if (res?.length) {
@@ -39,19 +41,29 @@ export default function provideHover(document: any, position: any, token: any) {
             }
 
             Object.keys(currentDocs).forEach(key => {
-
-                if (currentDocs[key].name instanceof Array) {
-                    currentDocs[key].name.map((name: string) => {
+                if (currentDocs[key].importName instanceof Array) {
+                    currentDocs[key].importName.map((name: string) => {
                         docs[name] = currentDocs[key];
                     });
                 } else {
-                    docs[currentDocs[key].name] = currentDocs[key];
+                    docs[currentDocs[key].importName] = currentDocs[key];
                 }
             });
         }
     });
 
     if (docs[word]) {
-        return new Hover(`${docs[word].title} 文档：${docs[word].url}`);
+        let mdDoc;
+        if (docs[word].docFile) {
+            mdDoc = await getDoc({
+                path: docs[word].docFile
+            });
+            // 识别 markdown 文档中 API 部分，暂时固定格式
+            mdDoc = mdDoc.match(/## API([\s\S]*?)(\n\#{2}\s)/) || mdDoc.match(/## API([\s\S]*)/);
+        }
+
+        return new Hover(`
+        ${mdDoc ? mdDoc[1] : ''}
+        ${docs[word].title} 文档：${docs[word].url}`);
     }
 }

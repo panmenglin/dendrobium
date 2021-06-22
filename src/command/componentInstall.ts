@@ -44,8 +44,6 @@ export default async function componentInstall(
         return;
     }
 
-    insertImportDeclaration(editor, component.importName, component.name);
-
     const filePath = editor.document.uri.path;
 
     // 统计埋点
@@ -81,6 +79,7 @@ export default async function componentInstall(
                 if (answer === '重新安装') {
 
                 } else {
+                    insertImportDeclaration(editor, component.importName, component.name);
                     return;
                 }
             }
@@ -105,13 +104,12 @@ export default async function componentInstall(
             const installCommand = component.installMethod?.package || (packageToolCommand?.default || 'npm install --save');
 
             const res = cmdActuator.run(`${installCommand} ${component.name}`).then(() => {
+                // 更新依赖
+                insertImportDeclaration(editor, component.importName, component.name);
+
                 window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
                 window.showInformationMessage(intl.get('successImport'));
             });
-
-            // 更新依赖
-            insertImportDeclaration(editor, component.importName, component.name);
-            // insertImportDeclaration(editor, ["Row", "Col"], 'antd');
 
             return res;
         });

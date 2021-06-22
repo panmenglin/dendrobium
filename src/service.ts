@@ -49,3 +49,10 @@ export function getConfig(params: { path: string }) {
         method: 'GET',
     });
 }
+
+export function getDoc(params: { path: string }) {
+    return request(params.path, {
+        method: 'GET',
+        dataType: 'text'
+    });
+}

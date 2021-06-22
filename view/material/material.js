@@ -88,10 +88,26 @@ function blockListRender(blocks) {
       ? `<div class="op-prev">${intl['previousPage'] || '上一页'}</div>`
       : '';
 
-  for (let index = 0; index < maxPageNo; index++) {
-    pagination += `<div class="op-pager" pageNo="${index + 1}">${
-      index + 1
-    }</div>`;
+  if (maxPageNo > 3) {
+    pagination += `<div class="op-pager" pageNo="${1}">${1}</div>`;
+
+    pagination += `<div style="min-width: 10px; margin: 0;">...</div>`;
+
+    for (let index = 1; index < maxPageNo - 1; index++) {
+      pagination += `<div class="op-pager omit-pager ${
+        index === 1 ? '' : 'hidden'
+      }" pageNo="${index + 1}">${index + 1}</div>`;
+    }
+
+    pagination += `<div style="min-width: 10px; margin: 0;">...</div>`;
+
+    pagination += `<div class="op-pager" pageNo="${maxPageNo}">${maxPageNo}</div>`;
+  } else {
+    for (let index = 0; index < maxPageNo; index++) {
+      pagination += `<div class="op-pager" pageNo="${index + 1}">${
+        index + 1
+      }</div>`;
+    }
   }
 
   pagination +=
@@ -118,6 +134,7 @@ function blockListRender(blocks) {
 
   $('.op-pager').click(function () {
     pageNo = $(this).attr('pageNo');
+    pageNo = parseInt(pageNo);
     pageNoChange(pageNo);
   });
 
@@ -127,10 +144,18 @@ function blockListRender(blocks) {
       .addClass('cur')
       .siblings()
       .removeClass('cur');
+
+    $('.omit-pager')
+      .eq(pageNo === 1 ? 0 : pageNo === maxPageNo ? maxPageNo - 3 : pageNo - 2)
+      .removeClass('hidden')
+      .siblings('.omit-pager')
+      .addClass('hidden');
+
     renderPageList();
   }
 
   renderPageList();
+
   function renderPageList() {
     let list = '';
     const beginIndex = (pageNo - 1) * pageSize;
@@ -223,7 +248,7 @@ function blockListRender(blocks) {
         $('.shadow').show();
       } else {
         selected.installBy = 'package';
-        vscode.postMessage({ blockSelected: selected });
+        vscode.postMessage({ componentSelected: selected });
         $('.shadow').hide();
       }
     });
@@ -231,7 +256,7 @@ function blockListRender(blocks) {
     $('#package').click(function () {
       if (selected.name) {
         selected.installBy = 'package';
-        vscode.postMessage({ blockSelected: selected });
+        vscode.postMessage({ componentSelected: selected });
         $('.shadow').hide();
       }
     });
@@ -239,7 +264,7 @@ function blockListRender(blocks) {
     $('#download').click(function () {
       if (selected.name) {
         selected.installBy = 'download';
-        vscode.postMessage({ blockSelected: selected });
+        vscode.postMessage({ componentSelected: selected });
         $('.shadow').hide();
       }
     });
@@ -247,7 +272,7 @@ function blockListRender(blocks) {
     $('#script').click(function () {
       if (selected.name) {
         selected.installBy = 'script';
-        vscode.postMessage({ blockSelected: selected });
+        vscode.postMessage({ componentSelected: selected });
         $('.shadow').hide();
       }
     });

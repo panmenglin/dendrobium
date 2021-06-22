@@ -23,6 +23,7 @@ export interface ComponentConfig {
     importName: string | string[];
     installBy?: 'package' | 'download' | 'script';
     installMethod?: any;
+    docFile?: string;
 }
 
 
