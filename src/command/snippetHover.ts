@@ -11,7 +11,7 @@ const fs = require('fs');
 export default async function provideHover(document: any, position: any, token: any) {
     const fileName = document.fileName;
 
-    const word = document.getText(document.getWordRangeAtPosition(position, /[^\>\<\/]+/));
+    const word = document.getText(document.getWordRangeAtPosition(position, /[^\>\<\/\s]+/));
 
     const fileContent = document.getText();
 
