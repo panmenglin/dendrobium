@@ -246,6 +246,11 @@ async function selectComponent(
     // 遍历工作区所有文件夹添加代码片段
     // TODO 根据组件安装目录添加代码片段
     workspace.workspaceFolders?.map(item => {
+
+      if (!fs.existsSync(`${item.uri.path}/.vscode`)) {
+        fs.mkdirSync(`${item.uri.path}/.vscode`);
+      }
+
       const rootPath = `${item.uri.path}/.vscode/${component?.parentCode}.component-docs`;
 
       let currentDocs: { [key: string]: any } = {};
@@ -325,6 +330,11 @@ async function selectComponent(
       // 遍历工作区所有文件夹添加代码片段
       // TODO 根据组件安装目录添加代码片段
       workspace.workspaceFolders?.map(item => {
+
+        if (!fs.existsSync(`${item.uri.path}/.vscode`)) {
+          fs.mkdirSync(`${item.uri.path}/.vscode`);
+        }
+
         const rootPath = `${item.uri.path}/.vscode/${component?.parentCode}.code-snippets`;
 
         let currentSnippets: { [key: string]: any } = {};

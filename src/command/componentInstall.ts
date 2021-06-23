@@ -72,7 +72,7 @@ export default async function componentInstall(
         if (packageJson) {
             packageJson = JSON.parse(packageJson);
 
-            if (packageJson.dependencies[component.name]) {
+            if (packageJson.dependencies && packageJson.dependencies[component.name]) {
 
                 const answer = await vscode.window.showInformationMessage('组件已存在，是否重新安装？', '重新安装', '取消');
 
