@@ -9,6 +9,7 @@ import { ComponentConfig } from '../types';
 
 const { default: traverse } = require('@babel/traverse');
 import { parse } from '@babel/parser';
+const compiler = require('vue-template-compiler')
 
 const fs = require('fs');
 const chalk = require('chalk');
@@ -74,7 +75,7 @@ export default async function componentInstall(
 
             if (packageJson.dependencies && packageJson.dependencies[component.name]) {
 
-                const answer = await vscode.window.showInformationMessage('组件已存在，是否重新安装？', '重新安装', '取消');
+                const answer = await vscode.window.showInformationMessage('组件已存在，是否重新安装？', '重新安装', '跳过');
 
                 if (answer === '重新安装') {
 
@@ -128,8 +129,20 @@ export default async function componentInstall(
  */
 function insertImportDeclaration(editor: any, specifiers: string | string[], source: string) {
 
-    const codes = fs.readFileSync(editor.document.uri.fsPath, 'utf8');
+    let codes = fs.readFileSync(editor.document.uri.fsPath, 'utf8');
+    let preLine = 0;
 
+    // 处理 vue 中 import 的插入位置
+    if (editor.document.uri.fsPath.match(/(.+\.vue)/g)) {
+        const vueContent = codes.split('<script');
+        preLine = vueContent[0].split('\n').length;
+
+        const result = compiler.parseComponent(codes);
+        codes = result.script.content;
+    }
+
+
+    // 解析 js ts jsx tsx
     const ast = parse(codes, {
         sourceType: "module",
         plugins: [
@@ -140,6 +153,8 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
             "decorators-legacy"
         ],
     });
+
+    console.log(ast);
 
     // let lastImportPath: any;
     let lastImportNode: any;
@@ -165,8 +180,8 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
                         }
                     });
 
-                    const start = new vscode.Position(curNode.loc.start.line - 1, curNode.loc.start.column);
-                    const end = new vscode.Position(curNode.loc.end.line - 1, curNode.loc.end.column);
+                    const start = new vscode.Position(preLine + curNode.loc.start.line - 1, curNode.loc.start.column);
+                    const end = new vscode.Position(preLine + curNode.loc.end.line - 1, curNode.loc.end.column);
 
                     const selection = new vscode.Range(start, end);
 
@@ -188,7 +203,7 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
     if (lastImportNode) {
         // 在最后一个 import 后插入
         const { line } = lastImportNode.loc.end;
-        const position = new vscode.Position(line, 0);
+        const position = new vscode.Position((preLine - 1) + line, 0);
 
         const code = specifiers ?
             specifiers instanceof Array ? `import { ${specifiers.join(', ')} } from '${source}';\n` : `import ${specifiers} from '${source}';\n`
@@ -199,7 +214,7 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
         });
     } else if (lastImportNode !== 0) {
         // 在第一行插入
-        const position = new vscode.Position(0, 0);
+        const position = new vscode.Position(preLine + 0, 0);
 
         const code = specifiers ?
             specifiers instanceof Array ? `import { ${specifiers.join(', ')} } from '${source}';\n` : `import ${specifiers} from '${source}';\n`
