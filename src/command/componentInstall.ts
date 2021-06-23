@@ -104,11 +104,11 @@ export default async function componentInstall(
             const installCommand = component.installMethod?.package || (packageToolCommand?.default || 'npm install --save');
 
             const res = cmdActuator.run(`${installCommand} ${component.name}`).then(() => {
-                // 更新依赖
-                insertImportDeclaration(editor, component.importName, component.name);
-
                 window.setStatusBarMessage(chalk.green(intl.get('successImport')), 1000);
                 window.showInformationMessage(intl.get('successImport'));
+
+                // 更新依赖
+                insertImportDeclaration(editor, component.importName, component.name);
             });
 
             return res;
@@ -133,10 +133,13 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
     const ast = parse(codes, {
         sourceType: "module",
         plugins: [
+            "typescript",
+            "classProperties",
+            "objectRestSpread",
             "jsx",
+            "decorators-legacy"
         ],
     });
-
 
     // let lastImportPath: any;
     let lastImportNode: any;

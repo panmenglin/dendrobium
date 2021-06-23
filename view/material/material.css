@@ -118,12 +118,39 @@
   padding-bottom: 20px;
 }
 
+@media (min-width: 576px) {
+  .block-item {
+    display: inline-block;
+    width: 50%;
+    padding: 20px;
+    box-sizing: border-box;
+    vertical-align: top;
+  }
+}
+
+@media (min-width: 1200px) {
+  .block-item {
+    display: inline-block;
+    width: 25%;
+    padding: 20px;
+    box-sizing: border-box;
+    vertical-align: top;
+  }
+}
+
 .block-title {
   font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-top: 10px;
+}
+
+.block-title span {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .block-star {
@@ -142,6 +169,12 @@
 
 .block-desc {
   font-size: 12px;
+  height: 51px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 
 .tags {
@@ -165,7 +198,9 @@
 .block-snapshot img {
   /* height: 100%; */
   width: 100%;
-  object-fit: cover;
+  /* object-fit: cover; */
+  object-fit: contain;
+  height: 180px;
 }
 
 .block-operation {

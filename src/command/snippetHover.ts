@@ -82,8 +82,7 @@ export default async function provideHover(document: any, position: any, token: 
             mdDoc = mdDoc.match(/## API([\s\S]*?)(\n\#{2}\s)/) || mdDoc.match(/## API([\s\S]*)/);
         }
 
-        return new Hover(`
-        ${mdDoc ? mdDoc[1] : ''}
-        ${docs[word].title} 文档：${docs[word].url}`);
+        return new Hover(`${docs[word].title} 文档：${docs[word].url}
+        ${mdDoc ? mdDoc[1] : ''}`);
     }
 }

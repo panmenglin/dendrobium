@@ -80,7 +80,7 @@ function bindSearch(blocks) {
 function blockListRender(blocks) {
   // pagination
   let pageNo = 1;
-  const pageSize = 5;
+  const pageSize = 8;
   let maxPageNo = Math.ceil(blocks.length / pageSize);
 
   let pagination =
@@ -171,7 +171,8 @@ function blockListRender(blocks) {
       // item.like = true;
 
       list += `<div class="block-item">
-                      <div class="block-title">${item.title}
+                      <div class="block-title">
+                      <span>${item.title}</span>
                       <div class="block-star">
                         <span>
                           <svg t="1621212855667" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3504" width="16" height="16">
@@ -194,14 +195,14 @@ function blockListRender(blocks) {
                         <span>99+</span>
                       </div>
                       </div>
-                      <p class="block-desc">${item.description}</p>
+                      <p class="block-desc" title="${item.description}">${
+        item.description
+      }</p>
                       <p class="block-author">开发者：${item.author}</p>
                       <div class="tags"> ${tags} </div>
-                      ${
+                      <div class="block-snapshot"> <img src="${
                         item.previewImg
-                          ? `<div class="block-snapshot"> <img src="${item.previewImg}"/> </div>`
-                          : ''
-                      }
+                      }" onerror="this.src= 'https://user-images.githubusercontent.com/12044749/123062605-4294ac80-d43f-11eb-958b-d5f069c76b4f.png'; this.onerror = null"/> </div>
                       <div class="block-operation">
                           <a href="javascript:;" class="op-add" itemIndex="${
                             beginIndex + index
