@@ -263,6 +263,7 @@ async function selectComponent(
         url: component.doc,
         docFile: component.docFile,
         importName: component.importName,
+        elementTag: component.elementTag,
         code: component.code,
         libraryCode: component.parentCode,
         name: component.name,
@@ -274,6 +275,40 @@ async function selectComponent(
           throw err;
         }
       });
+
+      // 如果没有引用 写入 other.component-docs
+      if (!component.importName && component.docFile) {
+        const otherDocPath = `${item.uri.path}/.vscode/other.component-docs`;
+
+        let otherDocs: { [key: string]: any } = {};
+
+        if (fs.existsSync(otherDocPath)) {
+          const _otherDocs = fs.readFileSync(rootPath, 'utf-8');
+
+          if (_otherDocs) {
+            otherDocs = JSON.parse(_otherDocs);
+          }
+        }
+
+        // 合并现有的代码片段
+        otherDocs[component.code] = {
+          title: component.title,
+          url: component.doc,
+          docFile: component.docFile,
+          importName: component.importName,
+          elementTag: component.elementTag,
+          code: component.code,
+          libraryCode: component.parentCode,
+          name: component.name,
+        };
+
+        // 更新文件
+        fs.writeFile(otherDocPath, JSON.stringify(otherDocs, undefined, '\t'), function (err: any) {
+          if (err) {
+            throw err;
+          }
+        });
+      }
     });
   }
 

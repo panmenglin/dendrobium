@@ -187,7 +187,9 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
         const { line } = lastImportNode.loc.end;
         const position = new vscode.Position(line, 0);
 
-        const code = specifiers instanceof Array ? `import { ${specifiers.join(', ')} } from '${source}';\n` : `import ${specifiers} from '${source}';\n`;
+        const code = specifiers ?
+            specifiers instanceof Array ? `import { ${specifiers.join(', ')} } from '${source}';\n` : `import ${specifiers} from '${source}';\n`
+            : `import '${source}';\n`;
 
         editor.edit((builder: any) => {
             builder.insert(position, code);
@@ -196,7 +198,9 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
         // 在第一行插入
         const position = new vscode.Position(0, 0);
 
-        const code = specifiers instanceof Array ? `import { ${specifiers.join(', ')} } from '${source}';\n` : `import ${specifiers} from '${source}';\n`;
+        const code = specifiers ?
+            specifiers instanceof Array ? `import { ${specifiers.join(', ')} } from '${source}';\n` : `import ${specifiers} from '${source}';\n`
+            : `import '${source}';\n`;
 
         editor.edit((builder: any) => {
             builder.insert(position, code);

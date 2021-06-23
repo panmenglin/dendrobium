@@ -21,6 +21,7 @@ export interface ComponentConfig {
     docKeys?: string;
     library?: LibraryConfig;
     importName: string | string[];
+    elementTag?: string;
     installBy?: 'package' | 'download' | 'script';
     installMethod?: any;
     docFile?: string;

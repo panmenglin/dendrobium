@@ -2,7 +2,6 @@
  * 编辑器悬浮显示文档地址
  * hover provider display doc info
  */
-import fetch from 'node-fetch';
 import { workspace, Hover } from 'vscode';
 import { getVSCodeRootPath } from '../utils/utils';
 import { getDoc } from '../service';
@@ -11,7 +10,8 @@ const fs = require('fs');
 
 export default async function provideHover(document: any, position: any, token: any) {
     const fileName = document.fileName;
-    const word = document.getText(document.getWordRangeAtPosition(position));
+
+    const word = document.getText(document.getWordRangeAtPosition(position, /[^\>\<\/]+/));
 
     const fileContent = document.getText();
 
@@ -21,6 +21,7 @@ export default async function provideHover(document: any, position: any, token: 
 
     let docs: { [key: string]: any } = {};
 
+    // 有引入的形式
     modules?.map(item => {
         const res: string[] | null = item.match(/import\s(.+?)\sfrom\s('|")(.+?)('|")(;|\n|\r|\r\n)/);
 
@@ -51,6 +52,25 @@ export default async function provideHover(document: any, position: any, token: 
             });
         }
     });
+
+    // 无引入的形式
+    if (!docs[word]) {
+        const curWorkSpacePath = workspace.workspaceFolders?.length === 1 ? workspace.workspaceFolders[0].uri.path : getVSCodeRootPath(fileName);
+        const rootPath = `${curWorkSpacePath}/.vscode/other.component-docs`;
+
+        let currentDocs: { [key: string]: any } = {};
+        if (fs.existsSync(rootPath)) {
+            const _currentDocs = fs.readFileSync(rootPath, 'utf-8');
+
+            if (_currentDocs) {
+                currentDocs = JSON.parse(_currentDocs);
+            }
+        }
+
+        Object.keys(currentDocs).forEach(key => {
+            docs[currentDocs[key].elementTag] = currentDocs[key];
+        });
+    }
 
     if (docs[word]) {
         let mdDoc;
