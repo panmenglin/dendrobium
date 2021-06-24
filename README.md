@@ -13,24 +13,41 @@ VSCode 前端组件库管理插件
 ## 特性
 
 组件库管理：
-支持通过设置配置关联任何前端组件库或组件，并提供基于 `npm` 的组件安装。
+关联并展示任何前端组件库或组件，并提供基于 npm 或其他包管理工具、下载本地、script 引入等方式的组件安装。
+
+
+<img src="https://user-images.githubusercontent.com/12044749/123193425-5db2fb00-d4d7-11eb-85fd-8e21ccb6306e.png" width="360px">
 
 代码片段：
-通过配置在组件安装时自动在工作区下生成代码片段，提供编辑时的自动补全，方便用户对组件的快速使用；
+组件安装时自动在工作区下生成代码片段，提供编辑时的自动补全，方便用户对组件的快速使用；
 同时支持通过 VSCode 视图容器中点击插入组件的代码片段。
 
+<img src="https://user-images.githubusercontent.com/12044749/123193424-5d1a6480-d4d7-11eb-82d3-5c1398922306.png" width="360px">
+
 文档：
-通过配置可以在 VSCode 视图容器中查看组件文档。
+组件标签悬浮提示组件 API 文档 或 在 VSCode 视图容器中查看组件文档。
+
+<img src="https://user-images.githubusercontent.com/12044749/123193421-5b50a100-d4d7-11eb-906f-2164c51f3251.png" width="360px">
 
 预留统计接口：
-通过配置统计接口信息，在用户添加、点赞组件时上报数据，方便进行私有仓库使用情况的统计。
+配置统计接口信息后，在用户添加、点赞组件时上报数据，方便进行私有仓库使用情况的统计。
 
 ## 依赖
 
-组件的安装需要依赖包管理工具，例如：`npm`、`yarn`或其他；
+组件的安装需要依赖包管理工具，例如：npm、yarn 或其他；
 埋点功能可能会获取当前工作区内的 git 信息，例如：用户名、email，如需使用埋点功能需要依赖 git 环境。
 
 ## 插件设置
+
+为方便团队管理，插件的配置提供了 从统一配置文件获取 和 本地配置 两种。
+
+### 配置文件
+
+在插件安装好后，编辑中右键选择 “安装组件”，第一次会弹出窗口请求输入配置文件地址，可以输入团队中已设置好的配置文件地址。
+
+在 [dendrobium-library](https://github.com/panmenglin/dendrobium-library) 项目中提供了一个配置 `https://raw.githubusercontent.com/panmenglin/dendrobium-library/main/config.json`，其中配置了 Ant Design 组件库，可以直接使用，也可参考修改配置。
+
+### 本地配置
 
 - `dendrobium.language` : 用于配置插件提醒及部分操作的语言，可设置 zh-cn 或 en，默认为中文
 
@@ -49,8 +66,7 @@ VSCode 前端组件库管理插件
 
 | | |
 | --| -- |
-| rootPath | 接口根目录 |
-| configPath | 组件库配置文件地址 | 
+| configPath | 组件库配置文件地址 |
 
 
 ```javascript
@@ -58,7 +74,6 @@ VSCode 前端组件库管理插件
   ...
 
   "dendrobium.librarysConfig": {
-    "rootPath": "",
     "configPath": ""
   }
 
@@ -66,7 +81,7 @@ VSCode 前端组件库管理插件
 }
 ```
 
-- `dendrobium.packageManagementTool`: 用于配置包管理工具和所需命令
+- `dendrobium.packageManagementTool`: 用于配置默认使用的包管理工具命令
 
 ```javascript
 {
@@ -139,11 +154,18 @@ VSCode 前端组件库管理插件
       "previewImg": "", // 组件预览图
       "code": "xxx", // 组件code，唯一值
       "importName": "xxx", // 引入时变量名称，import 时会使用该值，类型是 string ｜ string[]，当 importName 值是数组时，会使用解构引入
+      "elementTag": "", // 标签名，用于悬浮提示
       "name": "@xx/xxx", // 组件名称，执行安装操作时会使用该名称
       "doc": "xxx", // 文档地址
+      "docFile": "", // markdown 文档地址，用于抓去组件标签悬浮时需要显示的 api 提示，文档中需要有名为 API 的二级标题，及 ## API
       "snippets": "", // 获取该组件代码片段接口
       "parentCode": "", // 组件库code，唯一值
       "author": "", // 开发者
+      "installMethod": { // 安装方式
+        "package": "npm install --save", // 包管理工具，可以配置私有仓库安装方式
+        "download": "", // 下载本地，此处为下载地址
+        "script": "" // 直接插入 script 标签，例如：cdn 地址
+      }
     }
   ]
 }
