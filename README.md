@@ -199,7 +199,7 @@ VSCode 前端组件库管理插件
 
 Dendrobium（石斛兰）的命名来源于高达 0083 星尘的回忆，是高达中最早的武器库系统之一
 
-![avatar](https://user-images.githubusercontent.com/12044749/118221259-d7ef6900-b4af-11eb-8393-8020d6cde9cd.jpg)
+<img src="https://user-images.githubusercontent.com/12044749/118221259-d7ef6900-b4af-11eb-8393-8020d6cde9cd.jpg" width="360px">
 
 ## 其他
 
