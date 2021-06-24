@@ -143,18 +143,24 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
 
 
     // 解析 js ts jsx tsx
-    const ast = parse(codes, {
-        sourceType: "module",
-        plugins: [
-            "typescript",
-            "classProperties",
-            "objectRestSpread",
-            "jsx",
-            "decorators-legacy"
-        ],
-    });
-
-    console.log(ast);
+    let ast;
+    try {
+        ast = parse(codes, {
+            sourceType: "module",
+            plugins: [
+                "typescript",
+                "classProperties",
+                "objectRestSpread",
+                "jsx",
+                "decorators-legacy"
+            ],
+            errorRecovery: true
+        });
+    } catch (error) {
+        console.log(error);
+        window.showErrorMessage(chalk.red(`当前页面存在语法错误，请修改后重试。      \n\n ${error}`));
+        return;
+    }
 
     // let lastImportPath: any;
     let lastImportNode: any;
@@ -203,7 +209,7 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
     if (lastImportNode) {
         // 在最后一个 import 后插入
         const { line } = lastImportNode.loc.end;
-        const position = new vscode.Position((preLine - 1) + line, 0);
+        const position = new vscode.Position((preLine ? preLine - 1 : preLine) + line, 0);
 
         const code = specifiers ?
             specifiers instanceof Array ? `import { ${specifiers.join(', ')} } from '${source}';\n` : `import ${specifiers} from '${source}';\n`

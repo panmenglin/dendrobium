@@ -32,7 +32,7 @@ export function getLibrary(params?: {
         return;
     }
 
-    const url = params?.path ? `${params.librarysConfig.rootPath}${params?.path}` : params.librarysConfig.configPath;
+    const url = params?.path || params.librarysConfig.configPath;
     return request(url, {
         method: 'GET',
     });

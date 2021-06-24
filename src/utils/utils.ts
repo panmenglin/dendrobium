@@ -190,7 +190,7 @@ export function downloadTemplate(url: string, downloadPath: string) {
 export function getNpmRootPath(filePath: string): string {
   const parentPath = path.resolve(filePath, '..');
 
-  if (filePath === '/') {
+  if (!fs.existsSync(parentPath) || parentPath === filePath) {
     return '';
   }
 
@@ -207,7 +207,7 @@ export function getNpmRootPath(filePath: string): string {
 export function getGitRootPath(filePath: string): string {
   const parentPath = path.resolve(filePath, '..');
 
-  if (filePath === '/') {
+  if (!fs.existsSync(parentPath) || parentPath === filePath) {
     return '';
   }
 
@@ -224,7 +224,7 @@ export function getGitRootPath(filePath: string): string {
 export function getVSCodeRootPath(filePath: string): string {
   const parentPath = path.resolve(filePath, '..');
 
-  if (filePath === '/') {
+  if (!fs.existsSync(parentPath) || parentPath === filePath) {
     return '';
   }
 

@@ -156,6 +156,7 @@
 .block-star {
   font-size: 14px;
   line-height: 16px;
+  margin-left: 8px;
 }
 
 .block-star svg {

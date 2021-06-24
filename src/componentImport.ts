@@ -60,7 +60,7 @@ export default async function componentImport(
   const librarysConfig: LibrarysConfig | undefined = pluginConfiguration(state).get('dendrobium.librarysConfig');
 
   // do not set material config
-  if (!librarysConfig?.configPath || !librarysConfig?.rootPath) {
+  if (!librarysConfig?.configPath) {
     window.showErrorMessage(chalk.red(intl.get('noMaterialConfig')));
     return;
   }
