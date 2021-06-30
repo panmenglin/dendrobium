@@ -9,7 +9,7 @@ import { ComponentConfig } from '../types';
 
 const { default: traverse } = require('@babel/traverse');
 import { parse } from '@babel/parser';
-const compiler = require('vue-template-compiler')
+const compiler = require('vue-template-compiler');
 
 const fs = require('fs');
 const chalk = require('chalk');
@@ -230,4 +230,7 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
             builder.insert(position, code);
         });
     }
+
+    // 保存修改
+    editor.document.save();
 }

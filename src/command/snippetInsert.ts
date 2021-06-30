@@ -1,9 +1,15 @@
 /**
  * 插入代码片段
  */
+import * as vscode from 'vscode';
 import { Memento, ExtensionContext, window, Position, SnippetString, TextEditor } from 'vscode';
 import statistics from '../statistics';
 const chalk = require('chalk');
+
+const fs = require('fs');
+import { parse } from '@babel/parser';
+const compiler = require('vue-template-compiler');
+const { default: traverse } = require('@babel/traverse');
 
 export default async function snippetInsert(
     context: ExtensionContext,
@@ -34,7 +40,6 @@ export default async function snippetInsert(
 
     window.setStatusBarMessage(chalk.green(intl.get('successInsert')), 1000);
 
-
     // 代码片段插入埋点
     statistics({
         type: 'snippetInsert',
@@ -45,6 +50,73 @@ export default async function snippetInsert(
         },
         library: {
             code: snippetItem.item.libraryCode,
+        }
+    });
+
+    if (!snippetItem.item?.componentFunction || !editor.document.uri.fsPath.match(/(.+\.(jsx|tsx))/g)) {
+        return;
+    }
+
+    // 插入关联方法
+
+    let codes = fs.readFileSync(editor.document.uri.fsPath, 'utf8');
+    let preLine = 0;
+
+    // 处理 vue 中 import 的插入位置
+    if (editor.document.uri.fsPath.match(/(.+\.vue)/g)) {
+        const vueContent = codes.split('<script');
+        preLine = vueContent[0].split('\n').length;
+
+        const result = compiler.parseComponent(codes);
+        codes = result.script.content;
+    }
+
+
+    // 解析 js ts jsx tsx
+    let ast;
+    try {
+        ast = parse(codes, {
+            sourceType: "module",
+            plugins: [
+                "typescript",
+                "classProperties",
+                "objectRestSpread",
+                "jsx",
+                "decorators-legacy"
+            ],
+            errorRecovery: true
+        });
+    } catch (error) {
+        console.log(error);
+        window.showErrorMessage(chalk.red(`当前页面存在语法错误，请修改后重试。      \n\n ${error}`));
+        return;
+    }
+
+
+    traverse(ast, {
+        /**
+         * 更新 import
+         * @param path
+         */
+        ClassDeclaration(path: any) {
+            const curNode = path.node;
+
+            const classBody = curNode.body?.body;
+
+            if (!classBody) {
+                return;
+            }
+
+            const preItem = classBody[classBody.length - 2];
+            const line = preItem.loc.end.line;
+
+            const position = new vscode.Position(line + preLine, 0);
+
+            let content = snippetItem.item.componentFunction.join('\n  ');
+
+            content = '\n  ' + content;
+
+            editor.insertSnippet(new SnippetString(content), position);
         }
     });
 }
