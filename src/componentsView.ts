@@ -1,8 +1,9 @@
-import { TreeItem, TreeDataProvider, workspace, ThemeIcon, Event, EventEmitter, Memento } from 'vscode';
+import { TreeItem, TreeDataProvider, workspace, ThemeIcon, Event, EventEmitter, Memento, window } from 'vscode';
 import { LibrarysConfig } from './types';
 import { getLibrary } from './service';
 import { pluginConfiguration } from './utils/utils';
 
+const chalk = require('chalk');
 const fs = require('fs');
 export class TreeItemNode extends TreeItem {
 
@@ -92,7 +93,7 @@ export class TreeViewProvider implements TreeDataProvider<TreeItemNode>{
             return library.library.map((item: any) => {
 
                 // TODO 根据本地目录是否有该组件判断是否显示
-                // const snippetsRootPath = `${item.uri.path}/.vscode/${element.command.code}.code-snippets`;
+                // const snippetsRootPath = `${item.uri.path}/.vscode/dendrobiu.snippets.json`;
                 // const docsRootPath = `${item.uri.path}/.vscode/${element.command.code}.component-docs`;
                 // if (fs.existsSync(snippetsRootPath) || fs.existsSync(docsRootPath)) {
                 return new TreeItemNode({
@@ -108,21 +109,31 @@ export class TreeViewProvider implements TreeDataProvider<TreeItemNode>{
             if (element.item.treeType === 'snippets') {
                 const snippets: any[] = [];
                 workspace.workspaceFolders?.map(item => {
-                    const rootPath = `${item.uri.path}/.vscode/${element.item.code}.code-snippets`;
+                    // const rootPath = `${item.uri.path}/.vscode/${element.item.code}.code-snippets`;
+                    const rootPath = `${item.uri.path}/.vscode/dendrobium.snippets.json`;
 
                     let currentSnippets: { [key: string]: any } = {};
                     if (fs.existsSync(rootPath)) {
                         const _currentSnippets = fs.readFileSync(rootPath, 'utf-8');
 
                         if (_currentSnippets) {
-                            currentSnippets = JSON.parse(_currentSnippets);
+                            try {
+                                currentSnippets = JSON.parse(_currentSnippets);
+                            } catch (error) {
+                                window.showErrorMessage(chalk.red(`.vscode/dendrobium.snippets.json 语法错误，请检查配置文件是否正确 json 格式`));
+                                return;
+                            }
                         }
                     }
 
-                    Object.keys(currentSnippets).forEach(key => {
-                        currentSnippets[key].name = key;
-                        snippets.push(currentSnippets[key]);
-                    });
+                    const library = currentSnippets[element.item.code]?.children;
+
+                    if (library) {
+                        Object.keys(library).forEach(key => {
+                            library[key].name = key;
+                            snippets.push(library[key]);
+                        });
+                    }
                 });
 
                 return snippets.map((item: any) => new TreeItemNode({

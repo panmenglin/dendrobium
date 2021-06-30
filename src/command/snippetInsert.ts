@@ -11,7 +11,7 @@ import { parse } from '@babel/parser';
 const compiler = require('vue-template-compiler');
 const { default: traverse } = require('@babel/traverse');
 
-export default async function snippetInsert(
+export async function snippetInsert(
     context: ExtensionContext,
     state: Memento,
     snippetItem: any,
@@ -53,9 +53,41 @@ export default async function snippetInsert(
         }
     });
 
+    functionInsert(context, state, snippetItem, intl);
+}
+
+/**
+ * 插入关联方法
+ * @param context 
+ * @param state 
+ * @param snippetItem 
+ * @param intl 
+ * @returns 
+ */
+export async function functionInsert(
+    context: ExtensionContext,
+    state: Memento,
+    snippetItem: any,
+    intl: { get: (key: string) => string }
+) {
+
+    console.log(snippetItem);
+
+    let editor: any | undefined = state.get('activeTextEditor');
+    let activeEditor: TextEditor[] = window.visibleTextEditors.filter((item: any) => {
+        return item.id === editor.id;
+    });
+
+    editor = activeEditor.find(item => {
+        return item.document.uri.scheme === 'file';
+    });
+
+
     if (!snippetItem.item?.componentFunction || !editor.document.uri.fsPath.match(/(.+\.(jsx|tsx))/g)) {
         return;
     }
+
+    console.log(123);
 
     // 插入关联方法
 

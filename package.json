@@ -94,6 +94,10 @@
       {
         "command": "dendrobium.configChange",
         "title": "Dendrobium:configChange"
+      },
+      {
+        "command": "dendrobium.functionInsert",
+        "title": "Dendrobium:functionInsert"
       }
     ],
     "menus": {

@@ -157,7 +157,6 @@ function insertImportDeclaration(editor: any, specifiers: string | string[], sou
             errorRecovery: true
         });
     } catch (error) {
-        console.log(error);
         window.showErrorMessage(chalk.red(`当前页面存在语法错误，请修改后重试。      \n\n ${error}`));
         return;
     }

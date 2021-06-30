@@ -335,20 +335,42 @@ async function selectComponent(
           fs.mkdirSync(`${item.uri.path}/.vscode`);
         }
 
-        const rootPath = `${item.uri.path}/.vscode/${component?.parentCode}.code-snippets`;
+        const rootPath = `${item.uri.path}/.vscode/dendrobium.snippets.json`;
+        let isError = false;
 
         let currentSnippets: { [key: string]: any } = {};
         if (fs.existsSync(rootPath)) {
           const _currentSnippets = fs.readFileSync(rootPath, 'utf-8');
 
           if (_currentSnippets) {
-            currentSnippets = JSON.parse(_currentSnippets);
+            try {
+              currentSnippets = JSON.parse(_currentSnippets);
+            } catch (error) {
+              isError = true;
+              window.showErrorMessage(chalk.red(`.vscode/dendrobium.snippets.json 语法错误，请检查配置文件是否正确 json 格式`));
+            }
           }
+        }
+
+        if (isError) {
+          return;
         }
 
         // 合并现有的代码片段
         Object.keys(snippet).forEach(key => {
-          currentSnippets[key] = snippet[key];
+          if (snippet[key].libraryCode) {
+            if (!currentSnippets[snippet[key].libraryCode]) {
+              currentSnippets[snippet[key].libraryCode] = {
+                children: {}
+              };
+            }
+
+            if (!currentSnippets[snippet[key].libraryCode].children) {
+              currentSnippets[snippet[key].libraryCode].children = {};
+            }
+
+            currentSnippets[snippet[key].libraryCode].children[key] = snippet[key];
+          }
         });
 
         // 更新文件
