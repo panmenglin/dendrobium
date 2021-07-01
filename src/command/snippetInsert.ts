@@ -87,8 +87,6 @@ export async function functionInsert(
         return;
     }
 
-    console.log(123);
-
     // 插入关联方法
 
     let codes = fs.readFileSync(editor.document.uri.fsPath, 'utf8');
@@ -139,14 +137,19 @@ export async function functionInsert(
                 return;
             }
 
-            const preItem = classBody[classBody.length - 2];
-            const line = preItem.loc.end.line;
+            const preItem = classBody.find((item: any) => item.key?.name === 'render');
+
+            if (!preItem) {
+                return;
+            }
+
+            const line = preItem.loc.start.line - 2;
 
             const position = new vscode.Position(line + preLine, 0);
 
             let content = snippetItem.item.componentFunction.join('\n  ');
 
-            content = '\n  ' + content;
+            content = '\n  ' + content + '\n';
 
             editor.insertSnippet(new SnippetString(content), position);
         }
