@@ -7,8 +7,7 @@ import docPreview from './command/docPreview';
 import { snippetInsert, functionInsert } from './command/snippetInsert';
 import snippetHover from './command/snippetHover';
 import configChange from './command/configChange';
-import componentInstall from './command/componentInstall';
-import { completionItemsProvide, completionItemResolve } from './command/completionItemsProvider';
+import { completionItemsProvide } from './command/completionItemsProvider';
 import localize from './locales';
 
 // this method is called when your extension is activated
@@ -63,22 +62,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		provideCompletionItems(document, position) {
 			return completionItemsProvide(document, position);
 		},
-		// resolveCompletionItem(item, token) {
-		// 	// return completionItemResolve();
-		// // 	console.log(1212121);
-		// 	console.log(item);
-		// 	// const completionItem2 = new vscode.CompletionItem(`
-		// 	// 	<Table
-		// 	// 		columns={this.columns}
-		// 	// 		rowKey={record => record.id}
-		// 	// 		dataSource={data}
-		// 	// 		pagination={pagination}
-		// 	// 		loading={this.loading}
-		// 	// 		onChange={this.handleTableChange}
-		// 	// 	/>
-		// 	// `);
-		// 	return item;
-		// }
 	}));
 
 

@@ -167,8 +167,6 @@ function blockListRender(blocks) {
     let list = '';
     const beginIndex = (pageNo - 1) * pageSize;
 
-    console.log(selectedLibrary);
-
     list += `<div class="block-operation" style="height:auto;">
         <a href="javascript:;" id="getSnippets">安装物料库全部代码片段</a>
       </div>`;

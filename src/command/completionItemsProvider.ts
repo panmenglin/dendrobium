@@ -20,9 +20,10 @@ export async function completionItemsProvide(document: any, position: any) {
             const snippet = library[name];
 
             const snippetCompletion = new vscode.CompletionItem(snippet.prefix);
-            snippetCompletion.insertText = new vscode.SnippetString(snippet.body.join('\n'));
+            const snippetElementContent = snippet.body.element?.join('\n') || snippet.body.join('\n');
+            snippetCompletion.insertText = new vscode.SnippetString(snippetElementContent);
             snippetCompletion.detail = snippet.description;
-            snippetCompletion.documentation = new vscode.MarkdownString(" ```" + `\n` + snippet.body.join('\n') + `\n` + "``` ");
+            snippetCompletion.documentation = new vscode.MarkdownString(" ```" + `\n` + snippetElementContent + `\n` + "``` ");
             snippetCompletion.label = name;
             snippetCompletion.filterText = snippet.prefix;
             snippetCompletion.command = {
@@ -37,8 +38,3 @@ export async function completionItemsProvide(document: any, position: any) {
 
     return snippetsArray;
 };
-
-
-export function completionItemResolve(item: any, token: any) {
-    console.log(item);
-}
