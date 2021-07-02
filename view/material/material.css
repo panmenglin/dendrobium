@@ -113,6 +113,10 @@
   overflow: auto;
 }
 
+#getSnippets {
+  margin: 20px 0;
+}
+
 .block-item {
   border-bottom: 1px solid var(--vscode-tab-border);
   padding-bottom: 20px;

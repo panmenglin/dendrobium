@@ -26,7 +26,8 @@ export default function requestSingleton() {
                 }
 
                 return res.json();
-            });
+            })
+            .catch(error => console.error(error));
     }
 
     return request;

@@ -176,6 +176,11 @@ function initLibraryPanel(
       selectComponent(message.componentSelected, state, intl);
     }
 
+    // 安装组件代码片段
+    if (message.getSnippets) {
+      getSnippetsByList(message.getSnippets);
+    }
+
     // 切换组件库
     // change library
     if (message.warehouseSelected) {
@@ -326,61 +331,7 @@ async function selectComponent(
       path: component.snippets
     });
 
-    if (snippet) {
-      // 遍历工作区所有文件夹添加代码片段
-      // TODO 根据组件安装目录添加代码片段
-      workspace.workspaceFolders?.map(item => {
-
-        if (!fs.existsSync(`${item.uri.path}/.vscode`)) {
-          fs.mkdirSync(`${item.uri.path}/.vscode`);
-        }
-
-        const rootPath = `${item.uri.path}/.vscode/dendrobium.snippets.json`;
-        let isError = false;
-
-        let currentSnippets: { [key: string]: any } = {};
-        if (fs.existsSync(rootPath)) {
-          const _currentSnippets = fs.readFileSync(rootPath, 'utf-8');
-
-          if (_currentSnippets) {
-            try {
-              currentSnippets = JSON.parse(_currentSnippets);
-            } catch (error) {
-              isError = true;
-              window.showErrorMessage(chalk.red(`.vscode/dendrobium.snippets.json 语法错误，请检查配置文件是否正确 json 格式`));
-            }
-          }
-        }
-
-        if (isError) {
-          return;
-        }
-
-        // 合并现有的代码片段
-        Object.keys(snippet).forEach(key => {
-          if (snippet[key].libraryCode) {
-            if (!currentSnippets[snippet[key].libraryCode]) {
-              currentSnippets[snippet[key].libraryCode] = {
-                children: {}
-              };
-            }
-
-            if (!currentSnippets[snippet[key].libraryCode].children) {
-              currentSnippets[snippet[key].libraryCode].children = {};
-            }
-
-            currentSnippets[snippet[key].libraryCode].children[key] = snippet[key];
-          }
-        });
-
-        // 更新文件
-        fs.writeFile(rootPath, JSON.stringify(currentSnippets, undefined, '\t'), function (err: any) {
-          if (err) {
-            throw err;
-          }
-        });
-      });
-    }
+    updateSnippets(snippet);
   }
 
   switch (component.installBy) {
@@ -423,4 +374,118 @@ async function selectComponent(
     default:
       break;
   }
+}
+
+// 获取全部代码片段
+async function getSnippetsByList(components: any) {
+
+  let snippets = {};
+
+  const snippetsPromiseList: any = [];
+  components.map((item: any) => {
+    snippetsPromiseList.push(getSnippets({
+      path: item.snippets
+    }));
+  });
+
+  Promise.all(snippetsPromiseList).then((res) => {
+    res?.map((list: any) => {
+      if (list && Object.keys(list)) {
+        snippets = {
+          ...snippets,
+          ...list
+        };
+      }
+    });
+
+    if (!res?.length) {
+      panel.webview.postMessage({
+        snippets: {
+          status: 'finish'
+        }
+      });
+
+      window.showErrorMessage(chalk.red(`当前物料库没有代码片段`));
+    }
+
+    updateSnippets(snippets, true);
+  });
+}
+
+
+/**
+ * 更新代码片段
+ * @param snippet
+ * @returns
+ */
+function updateSnippets(snippet: { [key: string]: any }, showStatus?: boolean) {
+
+  if (!snippet) {
+    return;
+  }
+
+  // 遍历工作区所有文件夹添加代码片段
+  // TODO 根据组件安装目录添加代码片段
+  workspace.workspaceFolders?.map(item => {
+
+    if (!fs.existsSync(`${item.uri.path}/.vscode`)) {
+      fs.mkdirSync(`${item.uri.path}/.vscode`);
+    }
+
+    const rootPath = `${item.uri.path}/.vscode/dendrobium.snippets.json`;
+    let isError = false;
+
+    let currentSnippets: { [key: string]: any } = {};
+    if (fs.existsSync(rootPath)) {
+      const _currentSnippets = fs.readFileSync(rootPath, 'utf-8');
+
+      if (_currentSnippets) {
+        try {
+          currentSnippets = JSON.parse(_currentSnippets);
+        } catch (error) {
+          isError = true;
+          window.showErrorMessage(chalk.red(`.vscode/dendrobium.snippets.json 语法错误，请检查配置文件是否正确 json 格式`));
+        }
+      }
+    }
+
+    if (isError) {
+      return;
+    }
+
+    // 合并现有的代码片段
+    Object.keys(snippet).forEach(key => {
+      if (snippet[key].libraryCode) {
+        if (!currentSnippets[snippet[key].libraryCode]) {
+          currentSnippets[snippet[key].libraryCode] = {
+            children: {}
+          };
+        }
+
+        if (!currentSnippets[snippet[key].libraryCode].children) {
+          currentSnippets[snippet[key].libraryCode].children = {};
+        }
+
+        currentSnippets[snippet[key].libraryCode].children[key] = snippet[key];
+      }
+    });
+
+    // 更新文件
+    fs.writeFile(rootPath, JSON.stringify(currentSnippets, undefined, '\t'), function (err: any) {
+      if (err) {
+        throw err;
+      } else {
+        if (showStatus) {
+          window.setStatusBarMessage(chalk.green('🎉 安装成功'), 1000);
+          window.showInformationMessage('🎉 安装成功');
+        }
+      }
+
+      panel.webview.postMessage({
+        snippets: {
+          status: 'finish'
+        }
+      });
+    });
+  });
 }
