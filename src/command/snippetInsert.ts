@@ -3,13 +3,20 @@
  */
 import * as vscode from 'vscode';
 import { Memento, ExtensionContext, window, Position, SnippetString, TextEditor } from 'vscode';
-import statistics from '../statistics';
-const chalk = require('chalk');
 
+import statistics from '../statistics';
+
+const chalk = require('chalk');
 const fs = require('fs');
-import { parse } from '@babel/parser';
 const compiler = require('vue-template-compiler');
+
+import { parse } from '@babel/parser';
 const { default: traverse } = require('@babel/traverse');
+const t = require('@babel/types');
+const { default: generate } = require('@babel/generator');
+
+import { codeReplace, codeInsert } from '../utils/codeInsert';
+
 
 export async function snippetInsert(
     context: ExtensionContext,
@@ -98,7 +105,7 @@ export async function functionInsert(
     }
 
     // 解析 js ts jsx tsx
-    let ast;
+    let ast: any;
     try {
         ast = parse(codes, {
             sourceType: "module",
@@ -117,105 +124,102 @@ export async function functionInsert(
         return;
     }
 
+    const { state: stateContent, property: propertyContent, method: methodContent } = snippetItem.item.body;
 
+    // React state property method
+    const stateAst = stateContent ? parse(stateContent.join('\n'), { errorRecovery: true }) : null;
+    const propertyAst = propertyContent ? parse(propertyContent.join('\n'), { errorRecovery: true }) : null;
+    const methodAst = methodContent ? parse(methodContent.join('\n'), { errorRecovery: true }) : null;
+
+    // state property
+    const stateProperty: any[] = [];
+    let stateInserted = false;
+
+    // 获取代码片段关联的 state
+    traverse(stateAst, {
+        ObjectProperty(path: any) {
+            stateProperty.push(path.node);
+        }
+    });
+
+    // React Class 组件有 constructor
+    traverse(ast, {
+        ClassMethod(path: any) {
+            const curNode = path.node;
+            if (curNode.kind === 'constructor' && !stateInserted && stateProperty.length > 0) {
+                curNode.body.body.map((expressionItem: any) => {
+                    if (expressionItem.expression.type === 'AssignmentExpression' && expressionItem.expression.left.property.name === 'state') {
+
+                        stateProperty.map(item => {
+                            expressionItem.expression.right.properties.push(item);
+                        });
+
+                        stateInserted = true;
+
+                        const { code } = generate(expressionItem, { /* options */ }, codes);
+
+                        codeReplace(code, expressionItem, editor);
+                    }
+                });
+            }
+        },
+    });
+
+    // React Class 组件 property 有 state
+    traverse(ast, {
+        ClassProperty(path: any) {
+            const curNode = path.node;
+            if (curNode.key.name === 'state' && !stateInserted && stateProperty.length > 0) {
+
+                stateProperty.map(item => {
+                    curNode.value.properties.push(item);
+                });
+
+                stateInserted = true;
+
+                const { code } = generate(curNode, { /* options */ }, codes);
+
+                codeReplace(code, curNode, editor);
+            }
+        },
+    });
+
+
+    // React Class 组件 property
     traverse(ast, {
         /**
          * 更新 import
          * @param path
          */
-        ClassDeclaration(path: any) {
+        ClassBody(path: any) {
+
             const curNode = path.node;
 
-            console.log(curNode);
+            if (!stateInserted && stateProperty.length > 0) {
+                curNode.body.unshift(t.classProperty(t.identifier('state'), t.objectExpression(stateProperty)));
 
-            const classBody = curNode.body?.body;
+                const { code } = generate(curNode.body[0], { /* options */ }, codes);
 
-            if (!classBody) {
-                return;
-            }
-
-            const preItem = classBody.find((item: any) => item.key?.name === 'render') || classBody[classBody.length - 1];
-
-            if (!preItem) {
-                return;
-            }
-
-            const { column } = preItem.loc.start;
-            console.log(column);
-
-            const { tabSize } = editor.options;
-
-            console.log(tabSize);
-
-            // react
-
-
-            // state
-            // console.log()
-
-            let content = '';
-
-            // property
-            const property = snippetItem.item.body.property.map((item: any) => {
-                const indentation = item.match(/^\s+/);
-                let editorIndentation = '';
-
-                if (indentation) {
-                    editorIndentation = indentation[0].replace(/(\s{2})/g, new Array(tabSize + 1).join(' '));
-
-                    if (item) {
-                        item = item.replace(/^\s+/, editorIndentation);
-                    }
+                if (curNode.body.length > 0) {
+                    codeInsert(code, curNode.body[curNode.body.length - 1], editor);
                 }
-
-                return new Array(column + 1).join(' ') + item;
-            });
-
-            const propertyContent = property.join('\n');
-
-            if (propertyContent) {
-                content = content + propertyContent;
             }
 
+            if (propertyAst) {
+                const { code } = generate(propertyAst.program, { /* options */ }, codes);
 
-            // method
-            const method = snippetItem.item.body.method.map((item: any) => {
-                const indentation = item.match(/^\s+/);
-                let editorIndentation = '';
-
-                if (indentation) {
-                    editorIndentation = indentation[0].replace(/(\s{2})/g, new Array(tabSize + 1).join(' '));
-
-                    if (item) {
-                        item = item.replace(/^\s+/, editorIndentation);
-                    }
+                if (curNode.body.length > 0) {
+                    codeInsert(code, curNode.body[curNode.body.length - 1], editor);
                 }
+            }
 
-                return new Array(column + 1).join(' ') + item;
-            });
+            if (methodAst) {
+                const { code } = generate(methodAst.program, { /* options */ }, codes);
 
-            const methodContent = method.join('\n');
-
-            if (methodContent) {
-
-                if (propertyContent) {
-                    content = content + '\n\n';
+                if (curNode.body.length > 0) {
+                    codeInsert(code, curNode.body[curNode.body.length - 1], editor);
                 }
-
-                content = content + methodContent;
             }
-
-            if (content) {
-                content = '\n' + content + '\n';
-            } else {
-                return;
-            }
-
-            const line = preItem.loc.start.line - 2;
-
-            const position = new vscode.Position(line + preLine, column);
-
-            editor.insertSnippet(new SnippetString(content), position);
         }
     });
 }
