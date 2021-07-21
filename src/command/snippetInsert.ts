@@ -128,8 +128,8 @@ export async function functionInsert(
 
     // React state property method
     const stateAst = stateContent ? parse(stateContent.join('\n'), { errorRecovery: true }) : null;
-    const propertyAst = propertyContent ? parse(propertyContent.join('\n'), { errorRecovery: true }) : null;
-    const methodAst = methodContent ? parse(methodContent.join('\n'), { errorRecovery: true }) : null;
+    // const propertyAst = propertyContent ? parse(propertyContent.join('\n'), { errorRecovery: true }) : null;
+    // const methodAst = methodContent ? parse(methodContent.join('\n'), { errorRecovery: true }) : null;
 
     // state property
     const stateProperty: any[] = [];
@@ -205,19 +205,19 @@ export async function functionInsert(
                 }
             }
 
-            if (propertyAst) {
-                const { code } = generate(propertyAst.program, { /* options */ }, codes);
+            if (propertyContent) {
+                // const { code } = generate(propertyAst.program, { /* options */ }, codes);
 
                 if (curNode.body.length > 0) {
-                    codeInsert(code, curNode.body[curNode.body.length - 1], editor);
+                    codeInsert(propertyContent, curNode.body[curNode.body.length - 1], editor);
                 }
             }
 
-            if (methodAst) {
-                const { code } = generate(methodAst.program, { /* options */ }, codes);
+            if (methodContent) {
+                // const { code } = generate(methodAst.program, { /* options */ }, codes);
 
                 if (curNode.body.length > 0) {
-                    codeInsert(code, curNode.body[curNode.body.length - 1], editor);
+                    codeInsert(methodContent, curNode.body[curNode.body.length - 1], editor);
                 }
             }
         }

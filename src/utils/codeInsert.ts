@@ -1,7 +1,7 @@
 import { Position, Range, SnippetString } from 'vscode';
 
 function codeFormat(code: any, astNode: any, editor: any) {
-    const codeArray = code.split('\n');
+    const codeArray = code instanceof Array ? code : code.split('\n');
     const { tabSize } = editor.options;
     const { column } = astNode.loc.start;
 
@@ -17,7 +17,7 @@ function codeFormat(code: any, astNode: any, editor: any) {
             }
         }
 
-        return new Array(column + 1).join(' ') + item;
+        return item ? new Array(column + 1).join(' ') + item : item;
     });
 
     const stateContent = stateCode.join('\n');
@@ -78,7 +78,7 @@ export function codeInsert(code: any, astNode: any, editor: any) {
     let codes = codeFormat(code, astNode, editor);
     const position = new Position(astNode.loc.start.line - 1, 0);
 
-    codes = codes + '\n\n';
+    codes = '\n' + codes + '\n\n';
 
     setQueue(() => {
 
