@@ -20,7 +20,11 @@ export async function completionItemsProvide(document: any, position: any) {
             const snippet = library[name];
 
             const snippetCompletion = new vscode.CompletionItem(snippet.prefix);
-            const snippetElementContent = snippet.body.element?.join('\n') || snippet.body.join('\n');
+            const snippetElementContent = snippet.snippets?.body?.element;
+            if (!snippetElementContent) {
+                return;
+            }
+
             snippetCompletion.insertText = new vscode.SnippetString(snippetElementContent);
             snippetCompletion.detail = snippet.description;
             snippetCompletion.documentation = new vscode.MarkdownString(" ```" + `\n` + snippetElementContent + `\n` + "``` ");

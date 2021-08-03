@@ -1,8 +1,9 @@
 import { Position, Range, SnippetString } from 'vscode';
 
 function codeFormat(code: any, astNode: any, editor: any, options?: any) {
-    code = code.join('\n');
-    // const codeArray = code instanceof Array ? code : code.split('\n');
+    if (code instanceof Array) {
+        code = code.join('\n\n');
+    }
     const codeArray = code.split('\n');
     const { tabSize } = editor.options;
     let { column } = astNode.loc.start;
@@ -22,7 +23,6 @@ function codeFormat(code: any, astNode: any, editor: any, options?: any) {
                 item = item.replace(/^\s+/, editorIndentation);
             }
         }
-
         return item ? new Array(column + 1).join(' ') + item : item;
     });
 
@@ -47,7 +47,7 @@ function debounce(fn: any, delay: number) {
     };
 }
 
-function ssss() {
+function runQueneItem() {
     clearInterval(editorQueueTimer);
     editorQueueTimer = setInterval(() => {
         const run = editorQueue.pop();
@@ -55,10 +55,10 @@ function ssss() {
         if (editorQueue.length <= 0) {
             clearInterval(editorQueueTimer);
         }
-    }, 100);
+    }, 50);
 }
 
-const runQueue = debounce(ssss, 200);
+const runQueue = debounce(runQueneItem, 200);
 
 function setQueue(callback: any) {
     editorQueue.push(callback);
@@ -72,8 +72,11 @@ function setQueue(callback: any) {
  * @param editor
  */
 export function codeReplace(code: any, astNode: any, editor: any) {
-
     const codes = codeFormat(code, astNode, editor);
+
+    if (!codes) {
+        return;
+    }
 
     const start = new Position(astNode.loc.start.line - 1, 0);
     const end = new Position(astNode.loc.end.line - 1, astNode.loc.end.column);
@@ -96,18 +99,17 @@ export function codeReplace(code: any, astNode: any, editor: any) {
  */
 export function codeInsert(code: any, astNode: any, editor: any) {
     let codes = codeFormat(code, astNode, editor);
+
+    if (!codes) {
+        return;
+    }
+
     const position = new Position(astNode.loc.end.line, 0);
 
     codes = '\n' + codes + '\n\n';
 
     setQueue(() => {
-
-        // editor.edit((builder: any) => {
-        //     builder.insert(position, codes);
-        // });
-
         editor.insertSnippet(new SnippetString(codes), position);
-
         // 保存修改
         editor.document.save();
     });
@@ -121,18 +123,17 @@ export function codeInsert(code: any, astNode: any, editor: any) {
  */
 export function codeInsertBefore(code: any, astNode: any, editor: any, options?: any) {
     let codes = codeFormat(code, astNode, editor, options);
+
+    if (!codes) {
+        return;
+    }
+
     const position = new Position(astNode.loc.start.line - 1, 0);
 
     codes = '\n' + codes + '\n\n';
 
     setQueue(() => {
-
-        // editor.edit((builder: any) => {
-        //     builder.insert(position, codes);
-        // });
-
         editor.insertSnippet(new SnippetString(codes), position);
-
         // 保存修改
         editor.document.save();
     });
