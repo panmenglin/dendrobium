@@ -96,7 +96,7 @@ The main fields reported in data statistics include:
 | libraryCode | library code | |
 | componentName | component name | Only the installation type is determined by this value |
 | componentCode | component code | |
-| type | 操作类型 | 0（view library）、1（install component）、2（view document）、3（insert snippet） |
+| type | The type of operation | 0（view library）、1（install component）、2（view document）、3（insert snippet） |
 
 
 ```javascript
